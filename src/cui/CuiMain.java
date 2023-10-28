@@ -22,6 +22,7 @@ public class CuiMain {
         /*** 仮処理 ************************************/
         Player player1 = new Player(AlgorithmType.CuiManual);
         Player player2 = new Player(AlgorithmType.CuiManual);
+        reversi.showCui();
         showResult(ResultType.Drow);
         
         
@@ -37,7 +38,7 @@ public class CuiMain {
     public static Scanner getScanner() {
         return scanner;
     }
-
+    
     /**
      * ゲーム結果を表示する
      * @param result
