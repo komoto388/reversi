@@ -22,7 +22,7 @@ public class CuiMain {
         /*** 仮処理 ************************************/
         Player player1 = new Player(AlgorithmType.CuiManual);
         Player player2 = new Player(AlgorithmType.CuiManual);
-        reversi.showCui();
+        reversi.getBoard().showCui();
         showResult(ResultType.Drow);
         
         
@@ -45,7 +45,7 @@ public class CuiMain {
      */
     private static void showResult(ResultType result) {
         System.out.printf("%d手、黒%2d個、白%2d個で、",
-                reversi.getTurnCount(), reversi.getBlackDiscNum(), reversi.getWhiteDiscNum());
+                reversi.getTurnCount(), reversi.getBoard().getBlackDiscNum(), reversi.getBoard().getWhiteDiscNum());
 
         switch (result) {
         case Black: {
