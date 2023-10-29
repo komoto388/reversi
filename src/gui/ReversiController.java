@@ -43,9 +43,9 @@ public class ReversiController {
                 boardPane[i][j].setPrefHeight(GRID_SIZE);
                 
                 if ((i + j) % 2 == 0) {
-                    boardPane[i][j].setId("even-number-grid");
+                    boardPane[i][j].setId("grid1");
                 } else {
-                    boardPane[i][j].setId("odd-number-grid");
+                    boardPane[i][j].setId("grid2");
                 }
                 
                 // 石が初期から存在している場合、石をマスの上に描画する
