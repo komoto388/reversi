@@ -385,10 +385,10 @@ public class Board {
         if (canPut(target, isBlack) == false) {
             return false;
         }
-        
+
         // 各方向に対して石を反転させる
         int reverseCount = 0;
-        
+
         if (countReversibleDiscUp(target, isBlack) > 0) {
             reverseCount += reverseDiscUp(target, isBlack);
         }
@@ -416,10 +416,9 @@ public class Board {
 
         // 反転できる石がないのはルール違反のため、石を置く処理を行わず終了する。
         if (reverseCount == 0) {
-            System.out.printf("反転できる石がありません。位置:%s\n", target.getString());
             return false;
         }
-        
+
         if (isBlack) {
             board[target.getRow()][target.getColumn()] = DiscStatus.BLACK;
             blackDiscNum++;
@@ -427,9 +426,6 @@ public class Board {
             board[target.getRow()][target.getColumn()] = DiscStatus.WHITE;
             whiteDiscNum++;
         }
-
-        System.out.printf("反転させた石の個数は、%d個です。\n", reverseCount);
-        
         return true;
     }
 
@@ -462,7 +458,7 @@ public class Board {
         int reverseDisc = 0;
         int column = target.getColumn();
 
-        for (int i = target.getColumn() - 1; i >= 0 && i < size.getRow(); i--) {
+        for (int i = target.getRow() - 1; i >= 0 && i < size.getRow(); i--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension target2 = new Dimension(i, column);
             if (isDifferentDisc(target2, isBlack)) {

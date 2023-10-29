@@ -31,7 +31,7 @@ public class GuiMain extends Application {
         ReversiController controller = (ReversiController) fxmlloader.getController();
         controller.init(reversi);
         
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 700, 700);
         scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
         
         primaryStage.setScene(scene);
