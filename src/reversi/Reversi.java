@@ -86,13 +86,7 @@ public class Reversi {
      * @return 対象の座標に石を置いた場合は真 {@code true}、ルールにより石を置けない場合は偽 {@code false} を返す。
      */
     public Boolean put(Dimension target) {
-        try {
-            board.put(target, playerIsBlack);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return board.put(target, playerIsBlack);
     }
 
     /**
