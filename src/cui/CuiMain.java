@@ -3,9 +3,7 @@ package cui;
 import java.util.Scanner;
 
 import algorithm.AlgorithmType;
-import reversi.Board;
 import reversi.Dimension;
-import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -20,11 +18,10 @@ public class CuiMain {
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
         reversi = new Reversi();
+        reversi.setPlayer(true, AlgorithmType.CuiManual);
+        reversi.setPlayer(false, AlgorithmType.CuiManual);
 
-        /*** 仮処理 ************************************/
-        Player player1 = new Player(AlgorithmType.CuiManual);
-        Player player2 = new Player(AlgorithmType.CuiManual);
-
+        ResultType result;
         do {
             // 描画
             System.out.printf("(%d手目) ", reversi.getTurnCount());
@@ -34,23 +31,24 @@ public class CuiMain {
                 System.out.printf("白 ● のターンです。\n");
             }
             reversi.getBoard().showCui();
-            ;
 
             if (reversi.isSkip()) {
                 System.out.printf("置ける場所がないため、スキップします。\n");
             } else {
-                System.out.printf("置ける場所があります。\n");
                 reversi.put(new Dimension(3 - 1, 4 - 1));
 
-                reversi.next();
-                break;
+                // 勝敗判定を行う
+                result = reversi.judge();
+                if (result == ResultType.None) {
+                    reversi.next();
+                } else {
+                    break;
+                }
             }
         } while (true);
 
         reversi.getBoard().showCui();
-        showResult(ResultType.Drow);
-
-        /*** 仮処理 ************************************/
+        showResult(result);
 
         scanner.close();
     }

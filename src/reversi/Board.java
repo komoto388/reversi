@@ -377,13 +377,12 @@ public class Board {
      * 石を置き、状態を更新する
      * @param target 石を置く座標
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
-     * @return 設置できる場合は真 {@code true}、既に設置されている石の場合は偽 {@code false} を返す。
-     * @throws Exception 
+     * @throws Exception 石を設置できない場合はエラーを返す。
      */
-    public Boolean put(Dimension target, Boolean isBlack) {
+    public void put(Dimension target, Boolean isBlack) throws Exception {
         // 対象の位置に石を置けるか判定する
         if (canPut(target, isBlack) == false) {
-            return false;
+            throw new Exception(String.format("既に石が存在します。%s", target.getString()));
         }
 
         // 各方向に対して石を反転させる
@@ -416,7 +415,7 @@ public class Board {
 
         // 反転できる石がないのはルール違反のため、石を置く処理を行わず終了する。
         if (reverseCount == 0) {
-            return false;
+            throw new Exception(String.format("反転できる石がありません。%s", target.getString()));
         }
 
         if (isBlack) {
@@ -426,7 +425,6 @@ public class Board {
             board[target.getRow()][target.getColumn()] = DiscStatus.WHITE;
             whiteDiscNum++;
         }
-        return true;
     }
 
     /**

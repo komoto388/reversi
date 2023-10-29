@@ -135,8 +135,29 @@ public class ReversiController {
          */
         @Override
         public void handle(MouseEvent event) {
+            // 石を置く処理を行う
             if (reversi.put(dim)) {
-                reversi.next();
+                // 勝敗判定を行う
+                switch (reversi.judge()) {
+                case None: {
+                    reversi.next();
+                    break;
+                }
+                case Drow: {
+                    System.out.printf("引き分けです。\n");
+                    break;
+                }
+                case Black: {
+                    System.out.printf("黒の勝ちです。\n");
+                    break;
+                }
+                case White: {
+                    System.out.printf("白の勝ちです。\n");
+                    break;
+                }
+                default:
+                    throw new IllegalArgumentException("Unexpected value: " + reversi.judge());
+                }
                 update();
             } else {
                 System.out.printf("%sのマスには石を置けません。\n", dim.getString());

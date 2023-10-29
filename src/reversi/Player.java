@@ -8,15 +8,21 @@ import algorithm.AlgorithmType;
  * @author komoto
  */
 public class Player {
+    /** プレイヤーの石の色が黒かどうか */
+    Boolean isBlack;
+    
     /** プレイヤーが使用するアルゴリズムの種類 */
     Algorithm algorithm = null;
 
     /**
      * プレイヤーの初期設定を行う。
      * 使用するアルゴリズムを決定する。
+     * @param isBlack プレイヤーの石の色が黒かどうか
      * @param type 使用するアルゴリズムの種類
      */
-    public Player(AlgorithmType type) {
+    public Player(Boolean isBlack, AlgorithmType type) {
+        this.isBlack = isBlack;
+        
         switch (type) {
         case CuiManual: {
             break;
@@ -34,10 +40,10 @@ public class Player {
     
     /**
      * 石を置く座標を決定する
-     * @param reversi リバーシのゲーム情報
+     * @param board リバーシ盤の情報
      * @return 決定した石を置く座標
      */
-    public Dimension play(Reversi reversi) {
-        return algorithm.run(reversi);
+    public Dimension play(Board board) {
+        return algorithm.run(board, isBlack);
     }
 }

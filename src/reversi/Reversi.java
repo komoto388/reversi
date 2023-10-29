@@ -1,17 +1,26 @@
 package reversi;
 
+import algorithm.AlgorithmType;
+
 /**
  * リバーシのゲームを定義・処理するクラス
  * @author komoto
  */
 public class Reversi {
+    /** リバーシ盤状態を表す */
     private Board board;
 
-    /** 現在のプレイヤーが黒かどうかを表す。*/
+    /** 現在のプレイヤーが黒かどうかを表す */
     private Boolean playerIsBlack;
 
     /** 経過したターン数 */
     private int turnCount;
+
+    /** 黒側のプレイヤー */
+    Player playerBlack = null;
+
+    /** 白側のプレイヤー */
+    Player playerWhite = null;
 
     /**
      * リバーシ盤の初期化を行う
@@ -20,6 +29,19 @@ public class Reversi {
         board = new Board();
         playerIsBlack = true;
         turnCount = 1;
+    }
+
+    /**
+     * プレイヤーを設定する
+     * @param isBlack 設定対象のプレイヤーが黒の場合は真 {@code true}、白の場合は偽 {@code false} を指定する。
+     * @oaram type プレイヤーが使用するアルゴリズムのタイプ
+     */
+    public void setPlayer(Boolean isBlack, AlgorithmType type) {
+        if (isBlack) {
+            this.playerBlack = new Player(true, type);
+        } else {
+            this.playerWhite = new Player(false, type);
+        }
     }
 
     /**
@@ -64,11 +86,39 @@ public class Reversi {
      * @return 対象の座標に石を置いた場合は真 {@code true}、ルールにより石を置けない場合は偽 {@code false} を返す。
      */
     public Boolean put(Dimension target) {
-        if (board.put(target, playerIsBlack)) {
+        try {
+            board.put(target, playerIsBlack);
             return true;
-        } else {
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * 勝敗結果を判定する。
+     * @return 結果を返す。勝敗がつかない場合は {@code Result.None} を返す。
+     */
+    public ResultType judge() {
+        if (board.getEmptyNum() > 0) {
+            // 盤上に空きがあっても片方の石が全てなくなった場合は勝敗をつける。
+            if (board.getWhiteDiscNum() <= 0 && board.getBlackDiscNum() > 0) {
+                return ResultType.Black;
+            }
+            if (board.getBlackDiscNum() <= 0 && board.getWhiteDiscNum() > 0) {
+                return ResultType.White;
+            }
+        } else {
+            // 盤上に空きがない場合は石の多さで勝敗をつける。
+            if (board.getBlackDiscNum() == board.getWhiteDiscNum()) {
+                return ResultType.Drow;
+            } else if (board.getBlackDiscNum() > board.getWhiteDiscNum()) {
+                return ResultType.Black;
+            } else {
+                return ResultType.White;
+            }
+        }
+        return ResultType.None;
     }
 
     /**
