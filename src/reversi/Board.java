@@ -1,5 +1,7 @@
 package reversi;
 
+import common.Convert;
+
 /**
  * リバーシ盤の定義・処理をするクラス
  * @author komoto
@@ -83,8 +85,13 @@ public class Board {
      * 石が黒かどうかを返す
      * @param target 調べる石の座標
      * @return 黒であれば真 {@code true}、それ以外（白、空）であれば偽 {@code false} を返す。
+     * @throws NullPointerException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean isBlack(Dimension target) {
+    public Boolean isBlack(Dimension target) throws NullPointerException {
+        if (target == null) {
+            throw new NullPointerException("変数がNullです。 \"target\"\n");
+        }
+
         if (board[target.getRow()][target.getColumn()] == DiscStatus.BLACK) {
             return true;
         } else {
@@ -96,8 +103,13 @@ public class Board {
      * 石が白かどうかを返す
      * @param target 調べる石の座標
      * @return 白であれば真 {@code true}、それ以外（黒、空）であれば偽 {@code false} を返す。
+     * @throws NullPointerException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean isWhite(Dimension target) {
+    public Boolean isWhite(Dimension target) throws NullPointerException {
+        if (target == null) {
+            throw new NullPointerException("変数がNullです。 \"target\"\n");
+        }
+
         if (board[target.getRow()][target.getColumn()] == DiscStatus.WHITE) {
             return true;
         } else {
@@ -109,8 +121,13 @@ public class Board {
      * 石が置かれていないかどうかを返す
      * @param target 調べる石の座標
      * @return 未設置であれば真 {@code true}、設置済みであれば偽 {@code false} を返す。
+     * @throws NullPointerException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean isEmpty(Dimension target) {
+    public Boolean isEmpty(Dimension target) throws NullPointerException {
+        if (target == null) {
+            throw new NullPointerException("変数がNullです。 \"target\"\n");
+        }
+
         if (board[target.getRow()][target.getColumn()] == DiscStatus.EMPTY) {
             return true;
         } else {
@@ -123,8 +140,16 @@ public class Board {
      * @param target 石を置く座標
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
      * @return 設置できる場合は真 {@code true}、石を設置できない場合は偽 {@code false} を返す。
+     * @throws NullPointerException 引数 {@code target, isBlack} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean canPut(Dimension target, Boolean isBlack) {
+    public Boolean canPut(Dimension target, Boolean isBlack) throws NullPointerException {
+        if (target == null) {
+            throw new NullPointerException("変数がNullです。 \"target\"\n");
+        }
+        if (isBlack == null) {
+            throw new NullPointerException("変数がNullです。 \"isBlack\"\n");
+        }
+
         // マスに石が既に置かれていない確認する
         if (board[target.getRow()][target.getColumn()] != DiscStatus.EMPTY) {
             return false;
@@ -179,8 +204,16 @@ public class Board {
      * @param target 対象の石の座標
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
      * @return 石の色が異なる場合は真 {@true}, 同じ場合は偽 {@code false} を返す。
+     * @throws NullPointerException 引数 {@code target, isBlack} が {@code NULL} の場合、エラーを返す。
      */
-    private Boolean isDifferentDisc(Dimension target, Boolean isBlack) {
+    private Boolean isDifferentDisc(Dimension target, Boolean isBlack) throws NullPointerException {
+        if (target == null) {
+            throw new NullPointerException("変数がNullです。 \"target\"\n");
+        }
+        if (isBlack == null) {
+            throw new NullPointerException("変数がNullです。 \"isBlack\"\n");
+        }
+
         int row = target.getRow();
         int column = target.getColumn();
 
@@ -190,6 +223,40 @@ public class Board {
         } else {
             return false;
         }
+    }
+
+    /**
+     * 対象の座標に石を置いた時、反転する石の個数を返す
+     * @param target 石を置く座標
+     * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
+     * @return 反転可能な石の数を返す
+     * @throws NullPointerException 引数 {@code target, isBlack} が {@code NULL} の場合、エラーを返す。
+     */
+    public int countReversibleDisc(Dimension target, Boolean isBlack) throws NullPointerException {
+        if (target == null) {
+            throw new NullPointerException("変数がNullです。 \"target\"\n");
+        }
+        if (isBlack == null) {
+            throw new NullPointerException("変数がNullです。 \"isBlack\"\n");
+        }
+
+        // マスに石が既に置かれていない確認する
+        if (board[target.getRow()][target.getColumn()] != DiscStatus.EMPTY) {
+            return 0;
+        }
+
+        // 反転できる石があるか
+        int reuslt = 0;
+        reuslt += countReversibleDiscUp(target, isBlack);
+        reuslt += countReversibleDiscDown(target, isBlack);
+        reuslt += countReversibleDiscLeft(target, isBlack);
+        reuslt += countReversibleDiscRight(target, isBlack);
+        reuslt += countReversibleDiscLeftUp(target, isBlack);
+        reuslt += countReversibleDiscRightUp(target, isBlack);
+        reuslt += countReversibleDiscLeftDown(target, isBlack);
+        reuslt += countReversibleDiscRightDown(target, isBlack);
+
+        return reuslt;
     }
 
     /**
@@ -378,8 +445,16 @@ public class Board {
      * @param target 石を置く座標
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
      * @return 石を設置できる場合は真 {@code true}、設置できない場合は偽 {@code false} を返す。
+     * @throws NullPointerException 引数 {@code target, isBlack} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean put(Dimension target, Boolean isBlack) {
+    public Boolean put(Dimension target, Boolean isBlack) throws NullPointerException {
+        if (target == null) {
+            throw new NullPointerException("変数がNullです。 \"target\"\n");
+        }
+        if (isBlack == null) {
+            throw new NullPointerException("変数がNullです。 \"isBlack\"\n");
+        }
+
         // 対象の位置に石を置けるか判定する
         if (canPut(target, isBlack) == false) {
             return false;
@@ -459,9 +534,9 @@ public class Board {
 
         for (int i = target.getRow() - 1; i >= 0 && i < size.getRow(); i--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
-            Dimension target2 = new Dimension(i, column);
-            if (isDifferentDisc(target2, isBlack)) {
-                reverse(target2);
+            Dimension reverseTarget = new Dimension(i, column);
+            if (isDifferentDisc(reverseTarget, isBlack)) {
+                reverse(reverseTarget);
                 reverseDisc++;
             } else {
                 break;
@@ -482,9 +557,9 @@ public class Board {
 
         for (int i = target.getRow() + 1; i >= 0 && i < size.getRow(); i++) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
-            Dimension target2 = new Dimension(i, column);
-            if (isDifferentDisc(target2, isBlack)) {
-                reverse(target2);
+            Dimension reverseTarget = new Dimension(i, column);
+            if (isDifferentDisc(reverseTarget, isBlack)) {
+                reverse(reverseTarget);
                 reverseDisc++;
             } else {
                 break;
@@ -505,9 +580,9 @@ public class Board {
 
         for (int j = target.getColumn() - 1; j >= 0 && j < size.getColumn(); j--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
-            Dimension target2 = new Dimension(row, j);
-            if (isDifferentDisc(target2, isBlack)) {
-                reverse(target2);
+            Dimension reverseTarget = new Dimension(row, j);
+            if (isDifferentDisc(reverseTarget, isBlack)) {
+                reverse(reverseTarget);
                 reverseDisc++;
             } else {
                 break;
@@ -528,9 +603,9 @@ public class Board {
 
         for (int j = target.getColumn() + 1; j >= 0 && j < size.getColumn(); j++) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
-            Dimension target2 = new Dimension(row, j);
-            if (isDifferentDisc(target2, isBlack)) {
-                reverse(target2);
+            Dimension reverseTarget = new Dimension(row, j);
+            if (isDifferentDisc(reverseTarget, isBlack)) {
+                reverse(reverseTarget);
                 reverseDisc++;
             } else {
                 break;
@@ -551,9 +626,9 @@ public class Board {
         for (int i = target.getRow() - 1, j = target.getColumn() - 1; i >= 0 && i < size.getRow() && j >= 0
                 && j < size.getColumn(); i--, j--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
-            Dimension target2 = new Dimension(i, j);
-            if (isDifferentDisc(target2, isBlack)) {
-                reverse(target2);
+            Dimension reverseTarget = new Dimension(i, j);
+            if (isDifferentDisc(reverseTarget, isBlack)) {
+                reverse(reverseTarget);
                 reverseDisc++;
             } else {
                 break;
@@ -574,9 +649,9 @@ public class Board {
         for (int i = target.getRow() - 1, j = target.getColumn() + 1; i >= 0 && i < size.getRow() && j >= 0
                 && j < size.getColumn(); i--, j++) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
-            Dimension target2 = new Dimension(i, j);
-            if (isDifferentDisc(target2, isBlack)) {
-                reverse(target2);
+            Dimension reverseTarget = new Dimension(i, j);
+            if (isDifferentDisc(reverseTarget, isBlack)) {
+                reverse(reverseTarget);
                 reverseDisc++;
             } else {
                 break;
@@ -597,9 +672,9 @@ public class Board {
         for (int i = target.getRow() + 1, j = target.getColumn() - 1; i >= 0 && i < size.getRow() && j >= 0
                 && j < size.getColumn(); i++, j--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
-            Dimension target2 = new Dimension(i, j);
-            if (isDifferentDisc(target2, isBlack)) {
-                reverse(target2);
+            Dimension reverseTarget = new Dimension(i, j);
+            if (isDifferentDisc(reverseTarget, isBlack)) {
+                reverse(reverseTarget);
                 reverseDisc++;
             } else {
                 break;
@@ -620,9 +695,9 @@ public class Board {
         for (int i = target.getRow() + 1, j = target.getColumn() + 1; i >= 0 && i < size.getRow() && j >= 0
                 && j < size.getColumn(); i++, j++) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
-            Dimension target2 = new Dimension(i, j);
-            if (isDifferentDisc(target2, isBlack)) {
-                reverse(target2);
+            Dimension reverseTarget = new Dimension(i, j);
+            if (isDifferentDisc(reverseTarget, isBlack)) {
+                reverse(reverseTarget);
                 reverseDisc++;
             } else {
                 break;
@@ -637,7 +712,7 @@ public class Board {
     public void showCui() {
         System.out.printf(" ");
         for (int j = 0; j < size.getColumn(); j++) {
-            System.out.printf(" %2d", j + 1);
+            System.out.printf("  %c", Convert.convertIntToChar(j));
         }
         System.out.printf("\n");
 

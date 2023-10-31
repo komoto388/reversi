@@ -1,5 +1,7 @@
 package reversi;
 
+import common.Convert;
+
 /**
  * 行・列の値を定義するクラス
  * @author komoto
@@ -42,6 +44,6 @@ public class Dimension {
      * @return (x,y)表記の座標の文字列
      */
     public String getString() {
-        return String.format("(%d, %d)", column + 1, row + 1);
+        return String.format("%c%d", Convert.convertIntToChar(column), row + 1);
     }
 }

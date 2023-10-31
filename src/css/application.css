@@ -1,8 +1,20 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
 .label {
-    -fx-font-family: sans-serif;
-    -fx-font-size: 24;
+    -fx-font-family: "Meiryo";
+    -fx-font-size: 14;
+}
+
+#blackDiscNum,
+#whiteDiscNum,
+#turnLabel {
+    -fx-font-size: 20;
+}
+
+#board-row-num,
+#board-column-num {
+    -fx-font-size: 20;
+    -fx-alignment: CENTER;
 }
 
 #grid1 {
@@ -14,7 +26,7 @@
 #grid2 {
     -fx-border-color: black;
     -fx-border-width: 1;
-    -fx-background-color: #8fbc8f;  
+    -fx-background-color: #8fbc8f;
 }
 
 #disc-black {
@@ -26,4 +38,3 @@
     -fx-fill: white;
     -fx-stroke: black;
 }
-

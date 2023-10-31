@@ -1,6 +1,7 @@
 package reversi;
 
 import algorithm.AlgorithmType;
+import common.Convert;
 
 /**
  * リバーシのゲームを定義・処理するクラス
@@ -64,12 +65,30 @@ public class Reversi {
      * @return 手動操作のプレイヤーである場合は真 {@code true}、自動処理のプレイヤーの場合は偽 {@code false} を返す。
      */
     public Boolean isCurrentPlayerManual() {
-        if ((playerIsBlack && playerBlack.getType() == AlgorithmType.Manual) ||
-                (playerIsBlack == false && playerWhite.getType() == AlgorithmType.Manual)) {
+        if ((playerIsBlack && playerBlack.isManual()) ||
+                (playerIsBlack == false && playerWhite.isManual())) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public Dimension run() {
+        Dimension target = null;
+        Player currentPlayer;
+
+        if (playerIsBlack) {
+            currentPlayer = playerBlack;
+        } else {
+            currentPlayer = playerWhite;
+        }
+
+        try {
+            target = currentPlayer.run(board, playerIsBlack);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return target;
     }
 
     /**
@@ -138,13 +157,7 @@ public class Reversi {
      */
     public void showCui() {
         System.out.printf("(%d手目)\n", turnCount);
-
         board.showCui();
-
-        if (playerIsBlack) {
-            System.out.printf("【黒◯】のターンです。\n");
-        } else {
-            System.out.printf("【白●】のターンです。\n");
-        }
+        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(playerIsBlack));
     }
 }

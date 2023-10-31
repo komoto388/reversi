@@ -1,5 +1,6 @@
 package gui;
 
+import common.Convert;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -16,49 +17,68 @@ import reversi.Board;
 import reversi.Dimension;
 import reversi.Reversi;
 
+/**
+ * リバーシのゲーム画面を処理するコントローラー
+ */
 public class ReversiController {
-
     /** 1秒間に画面描画する回数(FPS) */
     private final int FPS = 30;
+
+    /** 手動操作中の待ち時間（待ち状態を無限にする） */
+    private final int WAIT_INFINITE = -1;
+
+    /** ターン間のインターバル（ミリ秒） */
+    private final int INTERVAL_WAIT = 500;
 
     /** マスの大きさ（縦・横同じ） */
     private final double GRID_SIZE = 60;
 
     /** 石の半径 */
-    private final double DISC_RADIUS = GRID_SIZE / 2.0 - 10;
-
-    /** 石をおいた後の待ち時間(ミリ秒) */
-    private final int WAIT_MILLISEC = 1000;
-
-    /** 手動操作時の待ち時間 */
-    private final int WAIT_INFINITE = -1;
-
-    /** リバーシを制御するインスタンス */
-    private Reversi reversi;
+    private final double DISC_RADIUS = (GRID_SIZE / 2.0 - 10);
 
     /** リバーシ盤の手動入力を無効する時間（フレーム数） */
     private int waitFrame;
 
+    /** 現在のFPS */
+    private int currnetFps;
+    
+    /** リバーシを制御するインスタンス */
+    private Reversi reversi;
+
     /** リバーシ盤のマス */
     private Pane[][] boardPane;
 
+    /** リバーシ盤を描画するペイン */
     @FXML
     private GridPane gridPane;
 
+    /** 現在のプレイヤーの石の色を表示するオブジェクト */
     @FXML
     private Circle currentDisc;
 
+    /** 現在の経過ターン数を表示するラベル */
     @FXML
     private Label turnLabel;
 
+    /** 現在の黒石の数を表示するラベル */
     @FXML
     private Label blackDiscNum;
 
+    /** 現在の白石の数を表示するラベル */
     @FXML
     private Label whiteDiscNum;
 
+    /** 現在のステータスを表示するラベル */
     @FXML
     private Label statusLabel;
+
+    /** デバッグ情報を表示するラベル */
+    @FXML
+    private Label debugLabel;
+
+    /** 現在のFPS情報を表示するラベル */
+    @FXML
+    private Label fpsLabel;
 
     /**
      * リバーシ盤を初期化する
@@ -68,24 +88,48 @@ public class ReversiController {
         this.reversi = reversi;
         Board board = reversi.getBoard();
         boardPane = new Pane[board.getSize().getRow()][board.getSize().getColumn()];
-        waitFrame = 0;
+        waitFrame = convertFrame(2000);
+        statusLabel.setText(null);
+        debugLabel.setText(null);
 
-        for (int i = 0; i < board.getSize().getRow(); i++) {
-            for (int j = 0; j < board.getSize().getColumn(); j++) {
-                Dimension target = new Dimension(i, j);
-
-                // 描画用マスを作成する
-                boardPane[i][j] = new Pane();
-                boardPane[i][j].setPrefWidth(GRID_SIZE);
-                boardPane[i][j].setPrefHeight(GRID_SIZE);
-                boardPane[i][j].setOnMouseClicked(new GridHandler(target));
-
-                if ((i + j) % 2 == 0) {
-                    boardPane[i][j].setId("grid1");
+        for (int i = 0; i < board.getSize().getRow() + 1; i++) {
+            for (int j = 0; j < board.getSize().getColumn() + 1; j++) {
+                if (i == 0) {
+                    // リバーシ盤の列番号を付与する
+                    if (j > 0) {
+                        Label boardColumnNum = new Label(String.valueOf(Convert.convertIntToChar(j - 1)));
+                        boardColumnNum.setId("board-column-num");
+                        boardColumnNum.setPrefWidth(GRID_SIZE);
+                        boardColumnNum.setPrefHeight(GRID_SIZE / 2);
+                        gridPane.add(boardColumnNum, j, i);
+                    }
+                } else if (j == 0) {
+                    // リバーシ盤の行番号を付与する
+                    if (i > 0) {
+                        Label boardRowNum = new Label(Integer.toString(i));
+                        boardRowNum.setId("board-row-num");
+                        boardRowNum.setPrefWidth(GRID_SIZE / 2);
+                        boardRowNum.setPrefHeight(GRID_SIZE);
+                        gridPane.add(boardRowNum, j, i);
+                    }
                 } else {
-                    boardPane[i][j].setId("grid2");
+                    // リバーシ盤のマスを生成する
+                    Dimension target = new Dimension(i - 1, j - 1);
+
+                    // 描画用マスを作成する
+                    boardPane[i - 1][j - 1] = new Pane();
+                    boardPane[i - 1][j - 1].setPrefWidth(GRID_SIZE);
+                    boardPane[i - 1][j - 1].setPrefHeight(GRID_SIZE);
+                    boardPane[i - 1][j - 1].setOnMouseClicked(new GridHandler(target));
+                    boardPane[i - 1][j - 1].setDisable(true);
+
+                    if ((i + j) % 2 == 0) {
+                        boardPane[i - 1][j - 1].setId("grid1");
+                    } else {
+                        boardPane[i - 1][j - 1].setId("grid2");
+                    }
+                    gridPane.add(boardPane[i - 1][j - 1], j, i);
                 }
-                gridPane.add(boardPane[i][j], j, i);
             }
         }
 
@@ -99,10 +143,37 @@ public class ReversiController {
      * 画面描画など周期的に実行するイベントを定義するクラス
      */
     private class TimerHandler implements EventHandler<ActionEvent> {
+        long startTime;
+        int countFrame;
 
+        /**
+         * タイムイベントの初期化を行う。
+         */
+        public TimerHandler() {
+            startTime = System.currentTimeMillis();
+            countFrame = 0;
+            currnetFps = 0;
+        }
+
+        /**
+         * 周期的に実行する処理を行う。
+         * @param event イベントのインスタンス
+         */
         @Override
         public void handle(ActionEvent event) {
+            // リバーシのゲーム処理を行う
             gameRun();
+
+            // 現在のFPSを計算する
+            countFrame++;
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - startTime > 1000) {
+                currnetFps = (int) (countFrame * 1000 / (currentTime - startTime));
+                startTime = currentTime;
+                countFrame = 0;
+            }
+
+            // 画面描画を行う
             update();
         }
 
@@ -110,36 +181,20 @@ public class ReversiController {
          * リバーシのスキップ判定、プレイヤーのプレイ処理、勝敗判定を行う
          */
         private void gameRun() {
-            ///------ デバッグ用 -----------------------------
-            if (waitFrame > 0) {
-                statusLabel.setText(String.format("処理中です。残りフレーム: %d", waitFrame));
-                waitFrame--;
-            } else {
-                statusLabel.setText("入力待ちです。");
-            }
-            ///------ デバッグ用 -----------------------------
-
             // 手動入力待ち状態出ない場合、スキップ判定とCOM側操作を行う。
             if (waitFrame == 0) {
                 if (reversi.isSkip()) {
                     // 石がどこにも置けない時のスキップ処理を定義
-                    System.out.printf("石を置く場所がないため、スキップします。\n");
+                    statusLabel.setText(Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " はスキップします。");
                     reversi.next();
                 } else {
                     // 石を置く処理を行う。手入力の場合は入力待ち、それ以外はアルゴリズムに従い処理を行う
-                    System.out.printf("石を置く処理を行います。\n");
-                    
                     if (reversi.isCurrentPlayerManual()) {
                         // 手動入力待ち状態にする。手動入力はここではなく、マウスのイベントハンドラーで処理する。
-                        System.out.printf("今のプレイヤーはマニュアルです。\n");
-                        waitFrame = WAIT_INFINITE;
-                        setGridPaneDisable(false);
+                        setWaitMode(WAIT_INFINITE, true);
                     } else {
-                        System.out.printf("今のプレイヤーはCOMです。\n");
-                        Dimension target = null;
+                        Dimension target = reversi.run();
                         play(target);
-                        waitFrame = FPS * WAIT_MILLISEC / 1000;
-                        setGridPaneDisable(true);
                     }
                 }
             }
@@ -184,6 +239,15 @@ public class ReversiController {
             turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
             blackDiscNum.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
             whiteDiscNum.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
+            fpsLabel.setText(Integer.toString(currnetFps) + " fps");
+            
+            // デバッグ文の表示
+            if (waitFrame > 0) {
+                debugLabel.setText(String.format("処理中です。待ちフレーム数:%3d", waitFrame));
+                waitFrame--;
+            } else {
+                debugLabel.setText(String.format("入力可能です。待ちフレーム数:%3d", waitFrame));
+            }
         }
     }
 
@@ -213,52 +277,75 @@ public class ReversiController {
 
     private Boolean play(Dimension target) {
         if (reversi.put(target)) {
-            statusLabel.setText(String.format("%sに石を置きました。\n", target.getString()));
+            statusLabel.setText(
+                    Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " は " + target.getString() + " に石を置きました。");
 
             // 勝敗判定を行う
             switch (reversi.judge()) {
             case None: {
                 reversi.next();
-                waitFrame = FPS * WAIT_MILLISEC / 1000;
+                setWaitMode(INTERVAL_WAIT, false);
                 break;
             }
             case Drow: {
                 System.out.printf("引き分けです。\n");
-                waitFrame = WAIT_INFINITE;
+                statusLabel.setText("引き分けです。");
+                setWaitMode(WAIT_INFINITE, false);
                 break;
             }
             case Black: {
                 System.out.printf("黒の勝ちです。\n");
-                waitFrame = WAIT_INFINITE;
+                statusLabel.setText("黒の勝ちです。");
+                setWaitMode(WAIT_INFINITE, false);
                 break;
             }
             case White: {
                 System.out.printf("白の勝ちです。\n");
-                waitFrame = WAIT_INFINITE;
+                statusLabel.setText("白の勝ちです。");
+                setWaitMode(WAIT_INFINITE, false);
                 break;
             }
             default:
                 throw new IllegalArgumentException("Unexpected value: " + reversi.judge());
             }
-            setGridPaneDisable(true);
             return true;
         } else {
-            System.out.printf("%sのマスには石を置けません。\n", target.getString());
+            System.out.printf("%s のマスには石を置けません。\n", target.getString());
             return false;
         }
     }
 
     /**
-     * リバーシ盤のクリックアクションを無効化する
-     * @param isDisable アクションを無効にする場合は {@code true}, 有効にする場合は {@code false} を設定する。 
+     * 待ち時間を設定し、待ち時間中はリバーシ盤の操作を無効にする。
+     * @param waitMilliSec 待ち時間。
+     * @param isInputEnable 画面操作を受け付ける場合は{@code true}, 受け付けない場合は {@code false} にする。
      */
-    private void setGridPaneDisable(Boolean isDisable) {
+    private void setWaitMode(int waitMilliSec, Boolean isInputEnable) {
         Dimension boardSize = reversi.getBoard().getSize();
+
+        if (waitMilliSec >= 0) {
+            waitFrame = convertFrame(waitMilliSec);
+        } else {
+            waitFrame = WAIT_INFINITE;
+        }
 
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
-                boardPane[i][j].setDisable(isDisable);
+                boardPane[i][j].setDisable(!isInputEnable);
             }
+        }
+    }
+
+    /**
+     * 指定したミリ秒をフレーム数に変換する
+     * @param millisec 指定したミリ秒
+     * @return 指定したミリ秒から算出したフレーム数。{@code millisec}の値が{@code 0}以下の場合、{@code 0}を返す。
+     */
+    private int convertFrame(int millisec) {
+        if (millisec > 0) {
+            return (FPS * millisec / 1000);
+        } else {
+            return 0;
         }
     }
 }

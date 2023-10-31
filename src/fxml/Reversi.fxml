@@ -19,10 +19,13 @@
             </Label>
             <VBox alignment="CENTER" minWidth="100.0">
                <HBox.margin>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </HBox.margin>
                <children>
-                  <Circle fx:id="currentDisc" fill="WHITE" radius="15.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Circle fx:id="currentDisc" fill="WHITE" radius="15.0" stroke="BLACK" strokeType="INSIDE">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin></Circle>
                   <Label fx:id="turnLabel" text="1手目">
                      <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -39,14 +42,25 @@
       </HBox>
    </top>
    <center>
-      <GridPane fx:id="gridPane" minHeight="480.0" minWidth="480.0" style="-fx-alignment: CENTER" BorderPane.alignment="CENTER">
-      </GridPane>
+      <GridPane fx:id="gridPane" alignment="TOP_CENTER" minHeight="540.0" minWidth="540.0" style="-fx-alignment: CENTER" BorderPane.alignment="TOP_CENTER">
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin></GridPane>
    </center>
    <bottom>
-      <Label fx:id="statusLabel" prefHeight="20.0" prefWidth="680.0" BorderPane.alignment="CENTER_LEFT">
+      <HBox alignment="BOTTOM_LEFT" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
-      </Label>
+         <children>
+            <Label fx:id="statusLabel" prefHeight="20.0" prefWidth="360.0" text="ステータス文" />
+            <VBox>
+               <children>
+                  <Label fx:id="debugLabel" alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="360.0" text="デバッグ文" />
+                  <Label fx:id="fpsLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="360.0" text="FPS" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
    </bottom>
 </BorderPane>
