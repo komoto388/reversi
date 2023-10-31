@@ -63,6 +63,14 @@ public class Reversi {
     public Boolean getPlayerIsBlack() {
         return playerIsBlack;
     }
+    
+    /**
+     * 記録された棋譜のインスタンスを返す
+     * @return 記録された棋譜のインスタンス
+     */
+    public RecordList getRecordList() {
+        return recordList;
+    }
 
     /**
      * 現在のプレイヤーが手動かどうかを返す
@@ -173,14 +181,4 @@ public class Reversi {
         board.showCui();
         System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(playerIsBlack));
     }
-
-    /**
-     * 棋譜を表示する
-     */
-    public void showRecordCui() {
-        do {
-            System.out.printf("%s\n", recordList.poll());
-        } while (!recordList.isEmpty());
-    }
-
 }

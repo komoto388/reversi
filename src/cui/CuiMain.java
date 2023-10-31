@@ -88,7 +88,9 @@ public class CuiMain {
 
         // 譜面記録を表示する。
         System.out.printf("\n棋譜\n");
-        reversi.showRecordCui();
+        while(reversi.getRecordList().isEmpty() == false) {
+            System.out.printf("%s\n", reversi.getRecordList().poll());
+        }
 
         // 対戦結果を表示する。
         System.out.printf("\n結果\n%d手、黒%2d個、白%2d個を以って、",

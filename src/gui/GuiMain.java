@@ -17,7 +17,7 @@ public class GuiMain extends Application {
     public void start(Stage primaryStage) {
         FXMLLoader fxmlloader = null;
         Pane root = null;
-        Reversi reversi = new Reversi(AlgorithmType.Manual, AlgorithmType.Random);
+        Reversi reversi = new Reversi(AlgorithmType.Random, AlgorithmType.Random);
 
         primaryStage.setTitle("リバーシ");
         primaryStage.setResizable(false);
@@ -30,7 +30,7 @@ public class GuiMain extends Application {
         }
 
         ReversiController controller = (ReversiController) fxmlloader.getController();
-        controller.init(reversi);
+        controller.init(primaryStage, reversi);
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
