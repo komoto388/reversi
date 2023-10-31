@@ -8,6 +8,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.fxml.FXMLLoader;
 
+/**
+ * GUIのメイン処理を行うクラス
+ * @author komoto
+ */
 public class GuiMain extends Application {
     public static void main(String[] args) {
         launch(args);
@@ -20,6 +24,8 @@ public class GuiMain extends Application {
         Reversi reversi = new Reversi(AlgorithmType.Random, AlgorithmType.Random);
 
         primaryStage.setTitle("リバーシ");
+        primaryStage.setWidth(800);
+        primaryStage.setHeight(800);
         primaryStage.setResizable(false);
 
         try {

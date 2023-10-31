@@ -63,7 +63,7 @@ public class Reversi {
     public Boolean getPlayerIsBlack() {
         return playerIsBlack;
     }
-    
+
     /**
      * 記録された棋譜のインスタンスを返す
      * @return 記録された棋譜のインスタンス

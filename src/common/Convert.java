@@ -45,7 +45,7 @@ public class Convert {
             return "後手・白";
         }
     }
-    
+
     /**
      * 指定したミリ秒をフレーム数に変換する
      * @param millisec 指定したミリ秒

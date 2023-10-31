@@ -14,7 +14,7 @@ public class Player {
 
     /** プレイヤーが使用するアルゴリズムの種類 */
     AlgorithmType type;
-    
+
     Algorithm algorithm;
 
     /**
@@ -26,7 +26,7 @@ public class Player {
     public Player(Boolean isBlack, AlgorithmType type) {
         this.isBlack = isBlack;
         this.type = type;
-        
+
         switch (type) {
         case Manual: {
             algorithm = null;
@@ -46,13 +46,13 @@ public class Player {
      * @return 使用アルゴリズムがマニュアルの場合は {@code true}, それ以外の場合は {@code false} を返す。
      */
     public Boolean isManual() {
-        if(type == AlgorithmType.Manual) {
+        if (type == AlgorithmType.Manual) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     /**
      * 石を置く座標を決定する
      * @param reversi リバーシのゲーム情報
@@ -61,7 +61,7 @@ public class Player {
      * @throws IllegalAccessException アルゴリズムがマニュアルの場合に呼ばれた場合、エラーを返す
      */
     public Dimension run(Board board, Boolean playerIsBlack) throws IllegalAccessException {
-        if(type != AlgorithmType.Manual) {
+        if (type != AlgorithmType.Manual) {
             return algorithm.run(board, playerIsBlack);
         } else {
             throw new IllegalAccessException("Unexpected Algorithm Type; Manual");
