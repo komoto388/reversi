@@ -19,7 +19,7 @@ public abstract class Algorithm {
     public Algorithm() {
         random = new Random(System.currentTimeMillis());
     }
-    
+
     /**
      * 石を置く座標を決定する
      * @param reversi リバーシのゲーム情報

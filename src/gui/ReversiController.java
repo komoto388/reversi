@@ -6,15 +6,19 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.ResultType;
 import reversi.Reversi;
 
 /**
@@ -36,12 +40,15 @@ public class ReversiController {
     /** 石の半径 */
     private final double DISC_RADIUS = (GRID_SIZE / 2.0 - 10);
 
+    /** フレーム情報 */
+    private Stage stage;
+
     /** リバーシ盤の手動入力を無効する時間（フレーム数） */
     private int waitFrame;
 
     /** 現在のFPS */
     private int currnetFps;
-    
+
     /** リバーシを制御するインスタンス */
     private Reversi reversi;
 
@@ -82,13 +89,15 @@ public class ReversiController {
 
     /**
      * リバーシ盤を初期化する
-     * @param board リバーシ盤の状態を表す
+     * @param stage フレーム情報
+     * @param reversi リバーシの処理を行うインスタンス
      */
-    public void init(Reversi reversi) {
+    public void init(Stage stage, Reversi reversi) {
+        this.stage = stage;
         this.reversi = reversi;
         Board board = reversi.getBoard();
         boardPane = new Pane[board.getSize().getRow()][board.getSize().getColumn()];
-        waitFrame = convertFrame(2000);
+        waitFrame = Convert.convertFrame(2000, FPS);
         statusLabel.setText(null);
         debugLabel.setText(null);
 
@@ -240,7 +249,7 @@ public class ReversiController {
             blackDiscNum.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
             whiteDiscNum.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
             fpsLabel.setText(Integer.toString(currnetFps) + " fps");
-            
+
             // デバッグ文の表示
             if (waitFrame > 0) {
                 debugLabel.setText(String.format("処理中です。待ちフレーム数:%3d", waitFrame));
@@ -275,34 +284,46 @@ public class ReversiController {
         }
     }
 
+    /**
+     * 石の設置、勝利判定を行う
+     * @param target プレイヤーが石を置く座標
+     * @return 石の設置ができた場合は真 {@code true}, 既に石が存在している等で設置できなかった場合は偽 {@code false} を返す。
+     */
     private Boolean play(Dimension target) {
         if (reversi.put(target)) {
             statusLabel.setText(
                     Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " は " + target.getString() + " に石を置きました。");
 
             // 勝敗判定を行う
-            switch (reversi.judge()) {
+            ResultType result = reversi.judge();
+            switch (result) {
             case None: {
                 reversi.next();
                 setWaitMode(INTERVAL_WAIT, false);
                 break;
             }
-            case Drow: {
-                System.out.printf("引き分けです。\n");
-                statusLabel.setText("引き分けです。");
-                setWaitMode(WAIT_INFINITE, false);
-                break;
-            }
-            case Black: {
-                System.out.printf("黒の勝ちです。\n");
-                statusLabel.setText("黒の勝ちです。");
-                setWaitMode(WAIT_INFINITE, false);
-                break;
-            }
+            case Drow:
+            case Black:
             case White: {
-                System.out.printf("白の勝ちです。\n");
-                statusLabel.setText("白の勝ちです。");
-                setWaitMode(WAIT_INFINITE, false);
+                // 結果表示画面を呼び出す
+                FXMLLoader fxmlloader = null;
+                Pane root = null;
+
+                try {
+                    fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Result.fxml"));
+                    root = (Pane) fxmlloader.load();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                ResultController controller = (ResultController) fxmlloader.getController();
+                controller.init(stage, reversi, result);
+
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
+
+                stage.setScene(scene);
+                stage.show();
                 break;
             }
             default:
@@ -324,7 +345,7 @@ public class ReversiController {
         Dimension boardSize = reversi.getBoard().getSize();
 
         if (waitMilliSec >= 0) {
-            waitFrame = convertFrame(waitMilliSec);
+            waitFrame = Convert.convertFrame(waitMilliSec, FPS);
         } else {
             waitFrame = WAIT_INFINITE;
         }
@@ -333,19 +354,6 @@ public class ReversiController {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 boardPane[i][j].setDisable(!isInputEnable);
             }
-        }
-    }
-
-    /**
-     * 指定したミリ秒をフレーム数に変換する
-     * @param millisec 指定したミリ秒
-     * @return 指定したミリ秒から算出したフレーム数。{@code millisec}の値が{@code 0}以下の場合、{@code 0}を返す。
-     */
-    private int convertFrame(int millisec) {
-        if (millisec > 0) {
-            return (FPS * millisec / 1000);
-        } else {
-            return 0;
         }
     }
 }

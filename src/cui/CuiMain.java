@@ -7,6 +7,7 @@ import common.Convert;
 import reversi.Dimension;
 import reversi.ResultType;
 import reversi.Reversi;
+import reversi.Record;
 
 /**
  * CUI版リバーシの処理を行うクラス
@@ -18,11 +19,11 @@ public class CuiMain {
 
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
-        reversi = new Reversi(AlgorithmType.Manual, AlgorithmType.Random);
+        reversi = new Reversi(AlgorithmType.Random, AlgorithmType.Random);
 
         ResultType result;
         do {
-            reversi.showCui();
+            reversi.showBoardCui();
 
             if (reversi.isSkip()) {
                 System.out.printf("置ける場所がないため、スキップします。\n");
@@ -70,7 +71,6 @@ public class CuiMain {
         } while (true);
 
         // 結果を表示し、ゲームを終了する
-        reversi.showCui();
         showResult(result);
         scanner.close();
     }
@@ -80,7 +80,24 @@ public class CuiMain {
      * @param result
      */
     private static void showResult(ResultType result) {
-        System.out.printf("%d手、黒%2d個、白%2d個で、",
+        System.out.printf("\n------------------------------\n");
+        System.out.printf("対戦結果は以下の通りです。\n\n");
+
+        // 最終のリバーシ盤を表示する。
+        System.out.printf("最終盤面\n");
+        reversi.getBoard().showCui();
+
+        // 譜面記録を表示する。
+        System.out.printf("\n棋譜\n");
+        while (reversi.getRecordList().isEmpty() == false) {
+            Record record = reversi.getRecordList().poll();
+            System.out.printf("%2d手目  %s  %-4s  黒 %2d個 (%+3d)  白 %2d個 (%+3d)\n",
+                    record.turn, record.playerString, record.dimString, record.blackDiscNum, record.increaseBlackNum,
+                    record.whiteDiscNum, record.increaseWhiteNum);
+        }
+
+        // 対戦結果を表示する。
+        System.out.printf("\n結果\n%d手、黒%2d個、白%2d個を以って、",
                 reversi.getTurnCount(), reversi.getBoard().getBlackDiscNum(), reversi.getBoard().getWhiteDiscNum());
 
         switch (result) {
@@ -100,5 +117,6 @@ public class CuiMain {
         default:
             throw new IllegalArgumentException("Unexpected value: " + result);
         }
+        System.out.printf("------------------------------\n");
     }
 }

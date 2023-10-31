@@ -18,11 +18,10 @@ public class RandomAlgorithm extends Algorithm {
                 Dimension target = new Dimension(i, j);
                 if (board.countReversibleDisc(target, playerIsBlack) > 0) {
                     evaluate.set(target, random.nextInt(100) + 1);
-                    System.out.printf("設置可能な座標: %s, 評価値: %d\n", target.getString(), evaluate.getValue(target));
+                    // System.out.printf("設置可能な座標: %s, 評価値: %d\n", target.getString(), evaluate.getValue(target));
                 }
             }
         }
-        
         return evaluate.getMaxPointDimension();
     }
 }

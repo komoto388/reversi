@@ -1,39 +1,51 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
+/*文字ラベル（デフォルト）*/
 .label {
     -fx-font-family: "Meiryo";
     -fx-font-size: 14;
 }
 
+/*石の個数・ターン数のラベル*/
 #blackDiscNum,
 #whiteDiscNum,
 #turnLabel {
     -fx-font-size: 20;
 }
 
+/*リバーシ盤の行番号・列番号のラベル*/
 #board-row-num,
 #board-column-num {
     -fx-font-size: 20;
     -fx-alignment: CENTER;
 }
 
+/*棋譜ヘッダーのラベル*/
+#recordHeader {
+    -fx-font-weight: bold;
+}
+
+/*リバーシ盤のマス（偶数マス）*/
 #grid1 {
     -fx-border-color: black;
     -fx-border-width: 1;
     -fx-background-color: #f0f8ff;
 }
 
+/*リバーシ盤のマス（奇数マス）*/
 #grid2 {
     -fx-border-color: black;
     -fx-border-width: 1;
     -fx-background-color: #8fbc8f;
 }
 
+/*黒石の円描画*/
 #disc-black {
     -fx-fill: black;
     -fx-stroke: black;
 }
 
+/*白石の円描画*/
 #disc-white {
     -fx-fill: white;
     -fx-stroke: black;

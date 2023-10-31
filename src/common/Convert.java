@@ -33,7 +33,6 @@ public class Convert {
         }
     }
 
-
     /**
      * 先手後手、石の色といった、プレイヤー情報の文字列を返す
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
@@ -44,6 +43,20 @@ public class Convert {
             return "先手・黒";
         } else {
             return "後手・白";
+        }
+    }
+
+    /**
+     * 指定したミリ秒をフレーム数に変換する
+     * @param millisec 指定したミリ秒
+     * @param fps 1秒間に描画するフレーム数(FPS)
+     * @return 指定したミリ秒から算出したフレーム数。{@code millisec}の値が{@code 0}以下の場合、{@code 0}を返す。
+     */
+    public static int convertFrame(int millisec, int fps) {
+        if (millisec > 0) {
+            return (fps * millisec / 1000);
+        } else {
+            return 0;
         }
     }
 
