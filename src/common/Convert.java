@@ -33,7 +33,6 @@ public class Convert {
         }
     }
 
-
     /**
      * 先手後手、石の色といった、プレイヤー情報の文字列を返す
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。

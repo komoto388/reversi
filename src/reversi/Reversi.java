@@ -23,17 +23,21 @@ public class Reversi {
     /** 経過したターン数 */
     private int turnCount;
 
+    /** 棋譜の記録を行うインスタンス */
+    RecordList recordList;
+
     /**
      * リバーシ盤の初期化を行う
      * @param typeBlack 先手・黒が使用するアルゴリズム
      * @param typeWhite 後手・白が使用するアルゴリズム
      */
     public Reversi(AlgorithmType typeBlack, AlgorithmType typeWhite) {
-        this.board = new Board();
-        this.playerBlack = new Player(true, typeBlack);
-        this.playerWhite = new Player(false, typeWhite);
-        this.turnCount = 1;
-        this.playerIsBlack = true;
+        board = new Board();
+        playerBlack = new Player(true, typeBlack);
+        playerWhite = new Player(false, typeWhite);
+        turnCount = 1;
+        playerIsBlack = true;
+        recordList = new RecordList();
     }
 
     /**
@@ -73,6 +77,10 @@ public class Reversi {
         }
     }
 
+    /**
+     * プレイヤー毎のアルゴリズムに基づき、石を打つ座標を決定する
+     * @return 石を打つ座業
+     */
     public Dimension run() {
         Dimension target = null;
         Player currentPlayer;
@@ -99,6 +107,7 @@ public class Reversi {
         if (board.canPutAll(playerIsBlack)) {
             return false;
         } else {
+            recordList.addSkip(turnCount, playerIsBlack, board.getBlackDiscNum(), board.getWhiteDiscNum());
             return true;
         }
     }
@@ -109,7 +118,11 @@ public class Reversi {
      * @return 対象の座標に石を置いた場合は真 {@code true}、ルールにより石を置けない場合は偽 {@code false} を返す。
      */
     public Boolean put(Dimension target) {
-        return board.put(target, playerIsBlack);
+        Boolean isPut = board.put(target, playerIsBlack);
+        if (isPut) {
+            recordList.add(turnCount, playerIsBlack, target, board.getBlackDiscNum(), board.getWhiteDiscNum());
+        }
+        return isPut;
     }
 
     /**
@@ -155,9 +168,19 @@ public class Reversi {
     /**
      * 現在の手番とリバーシ盤の状態を表示する
      */
-    public void showCui() {
+    public void showBoardCui() {
         System.out.printf("(%d手目)\n", turnCount);
         board.showCui();
         System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(playerIsBlack));
     }
+
+    /**
+     * 棋譜を表示する
+     */
+    public void showRecordCui() {
+        do {
+            System.out.printf("%s\n", recordList.poll());
+        } while (!recordList.isEmpty());
+    }
+
 }
