@@ -7,6 +7,7 @@ import common.Convert;
 import reversi.Dimension;
 import reversi.ResultType;
 import reversi.Reversi;
+import reversi.Record;
 
 /**
  * CUI版リバーシの処理を行うクラス
@@ -88,8 +89,11 @@ public class CuiMain {
 
         // 譜面記録を表示する。
         System.out.printf("\n棋譜\n");
-        while(reversi.getRecordList().isEmpty() == false) {
-            System.out.printf("%s\n", reversi.getRecordList().poll());
+        while (reversi.getRecordList().isEmpty() == false) {
+            Record record = reversi.getRecordList().poll();
+            System.out.printf("%2d手目  %s  %-4s  黒 %2d個 (%+3d)  白 %2d個 (%+3d)\n",
+                    record.turn, record.playerString, record.dimString, record.blackDiscNum, record.increaseBlackNum,
+                    record.whiteDiscNum, record.increaseWhiteNum);
         }
 
         // 対戦結果を表示する。

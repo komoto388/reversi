@@ -1,6 +1,5 @@
 package gui;
 
-import algorithm.AlgorithmType;
 import common.Convert;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -40,7 +39,7 @@ public class ReversiController {
 
     /** 石の半径 */
     private final double DISC_RADIUS = (GRID_SIZE / 2.0 - 10);
-    
+
     /** フレーム情報 */
     private Stage stage;
 
@@ -49,10 +48,10 @@ public class ReversiController {
 
     /** 現在のFPS */
     private int currnetFps;
-    
+
     /** リバーシを制御するインスタンス */
     private Reversi reversi;
-    
+
     /** リバーシ盤のマス */
     private Pane[][] boardPane;
 
@@ -91,7 +90,7 @@ public class ReversiController {
     /**
      * リバーシ盤を初期化する
      * @param stage フレーム情報
-     * @param board リバーシ盤の状態を表す
+     * @param reversi リバーシの処理を行うインスタンス
      */
     public void init(Stage stage, Reversi reversi) {
         this.stage = stage;
@@ -250,7 +249,7 @@ public class ReversiController {
             blackDiscNum.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
             whiteDiscNum.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
             fpsLabel.setText(Integer.toString(currnetFps) + " fps");
-            
+
             // デバッグ文の表示
             if (waitFrame > 0) {
                 debugLabel.setText(String.format("処理中です。待ちフレーム数:%3d", waitFrame));
@@ -285,6 +284,11 @@ public class ReversiController {
         }
     }
 
+    /**
+     * 石の設置、勝利判定を行う
+     * @param target プレイヤーが石を置く座標
+     * @return 石の設置ができた場合は真 {@code true}, 既に石が存在している等で設置できなかった場合は偽 {@code false} を返す。
+     */
     private Boolean play(Dimension target) {
         if (reversi.put(target)) {
             statusLabel.setText(
@@ -301,9 +305,10 @@ public class ReversiController {
             case Drow:
             case Black:
             case White: {
+                // 結果表示画面を呼び出す
                 FXMLLoader fxmlloader = null;
                 Pane root = null;
-                
+
                 try {
                     fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Result.fxml"));
                     root = (Pane) fxmlloader.load();
@@ -312,7 +317,7 @@ public class ReversiController {
                 }
 
                 ResultController controller = (ResultController) fxmlloader.getController();
-                controller.init(reversi, result);
+                controller.init(stage, reversi, result);
 
                 Scene scene = new Scene(root);
                 scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
@@ -320,21 +325,6 @@ public class ReversiController {
                 stage.setScene(scene);
                 stage.show();
                 break;
-//                
-//                System.out.printf("引き分けです。\n");
-//                statusLabel.setText("引き分けです。");
-//                setWaitMode(WAIT_INFINITE, false);
-//                break;
-//            }
-//                System.out.printf("黒の勝ちです。\n");
-//                statusLabel.setText("黒の勝ちです。");
-//                setWaitMode(WAIT_INFINITE, false);
-//                break;
-//            }
-//                System.out.printf("白の勝ちです。\n");
-//                statusLabel.setText("白の勝ちです。");
-//                setWaitMode(WAIT_INFINITE, false);
-//                break;
             }
             default:
                 throw new IllegalArgumentException("Unexpected value: " + reversi.judge());
