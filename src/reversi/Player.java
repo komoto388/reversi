@@ -1,6 +1,5 @@
 package reversi;
 
-import algorithm.Algorithm;
 import algorithm.AlgorithmType;
 
 /**
@@ -10,9 +9,9 @@ import algorithm.AlgorithmType;
 public class Player {
     /** プレイヤーの石の色が黒かどうか */
     Boolean isBlack;
-    
+
     /** プレイヤーが使用するアルゴリズムの種類 */
-    Algorithm algorithm = null;
+    AlgorithmType type;
 
     /**
      * プレイヤーの初期設定を行う。
@@ -22,28 +21,14 @@ public class Player {
      */
     public Player(Boolean isBlack, AlgorithmType type) {
         this.isBlack = isBlack;
-        
-        switch (type) {
-        case CuiManual: {
-            break;
-        }
-        case GuiManual: {
-            break;
-        }
-        case Random: {
-            break;
-        }
-        default:
-            throw new IllegalArgumentException("Unexpected value: " + type);
-        }
+        this.type = type;
     }
-    
+
     /**
-     * 石を置く座標を決定する
-     * @param board リバーシ盤の情報
-     * @return 決定した石を置く座標
+     * プレイヤーが使用するアルゴリズムの種類を返す
+     * @return 使用するアルゴリズムの種類
      */
-    public Dimension play(Board board) {
-        return algorithm.run(board, isBlack);
+    public AlgorithmType getType() {
+        return type;
     }
 }

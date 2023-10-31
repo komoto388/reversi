@@ -3,14 +3,12 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ReversiController">
+<BorderPane prefHeight="720.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ReversiController">
    <top>
       <HBox alignment="CENTER" minHeight="60.0" minWidth="400.0" BorderPane.alignment="CENTER">
          <children>
@@ -41,7 +39,14 @@
       </HBox>
    </top>
    <center>
-      <GridPane fx:id="gridPane" minHeight="480.0" minWidth="480.0" BorderPane.alignment="CENTER" style="-fx-alignment: CENTER">
+      <GridPane fx:id="gridPane" minHeight="480.0" minWidth="480.0" style="-fx-alignment: CENTER" BorderPane.alignment="CENTER">
       </GridPane>
    </center>
+   <bottom>
+      <Label fx:id="statusLabel" prefHeight="20.0" prefWidth="680.0" BorderPane.alignment="CENTER_LEFT">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </Label>
+   </bottom>
 </BorderPane>

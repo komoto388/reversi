@@ -10,38 +10,29 @@ public class Reversi {
     /** リバーシ盤状態を表す */
     private Board board;
 
-    /** 現在のプレイヤーが黒かどうかを表す */
-    private Boolean playerIsBlack;
-
-    /** 経過したターン数 */
-    private int turnCount;
-
     /** 黒側のプレイヤー */
     Player playerBlack = null;
 
     /** 白側のプレイヤー */
     Player playerWhite = null;
 
-    /**
-     * リバーシ盤の初期化を行う
-     */
-    public Reversi() {
-        board = new Board();
-        playerIsBlack = true;
-        turnCount = 1;
-    }
+    /** 現在のプレイヤーが黒かどうかを表す */
+    private Boolean playerIsBlack;
+
+    /** 経過したターン数 */
+    private int turnCount;
 
     /**
-     * プレイヤーを設定する
-     * @param isBlack 設定対象のプレイヤーが黒の場合は真 {@code true}、白の場合は偽 {@code false} を指定する。
-     * @oaram type プレイヤーが使用するアルゴリズムのタイプ
+     * リバーシ盤の初期化を行う
+     * @param typeBlack 先手・黒が使用するアルゴリズム
+     * @param typeWhite 後手・白が使用するアルゴリズム
      */
-    public void setPlayer(Boolean isBlack, AlgorithmType type) {
-        if (isBlack) {
-            this.playerBlack = new Player(true, type);
-        } else {
-            this.playerWhite = new Player(false, type);
-        }
+    public Reversi(AlgorithmType typeBlack, AlgorithmType typeWhite) {
+        this.board = new Board();
+        this.playerBlack = new Player(true, typeBlack);
+        this.playerWhite = new Player(false, typeWhite);
+        this.turnCount = 1;
+        this.playerIsBlack = true;
     }
 
     /**
@@ -66,6 +57,19 @@ public class Reversi {
      */
     public Boolean getPlayerIsBlack() {
         return playerIsBlack;
+    }
+
+    /**
+     * 現在のプレイヤーが手動かどうかを返す
+     * @return 手動操作のプレイヤーである場合は真 {@code true}、自動処理のプレイヤーの場合は偽 {@code false} を返す。
+     */
+    public Boolean isCurrentPlayerManual() {
+        if ((playerIsBlack && playerBlack.getType() == AlgorithmType.Manual) ||
+                (playerIsBlack == false && playerWhite.getType() == AlgorithmType.Manual)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -126,6 +130,21 @@ public class Reversi {
             playerIsBlack = false;
         } else {
             playerIsBlack = true;
+        }
+    }
+
+    /**
+     * 現在の手番とリバーシ盤の状態を表示する
+     */
+    public void showCui() {
+        System.out.printf("(%d手目)\n", turnCount);
+
+        board.showCui();
+
+        if (playerIsBlack) {
+            System.out.printf("【黒◯】のターンです。\n");
+        } else {
+            System.out.printf("【白●】のターンです。\n");
         }
     }
 }

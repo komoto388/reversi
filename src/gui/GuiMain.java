@@ -1,5 +1,6 @@
 package gui;
 
+import algorithm.AlgorithmType;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import reversi.Reversi;
@@ -16,7 +17,7 @@ public class GuiMain extends Application {
     public void start(Stage primaryStage) {
         FXMLLoader fxmlloader = null;
         Pane root = null;
-        Reversi reversi = new Reversi();
+        Reversi reversi = new Reversi(AlgorithmType.Manual, AlgorithmType.Manual);
 
         primaryStage.setTitle("リバーシ");
         primaryStage.setResizable(false);
@@ -31,7 +32,7 @@ public class GuiMain extends Application {
         ReversiController controller = (ReversiController) fxmlloader.getController();
         controller.init(reversi);
         
-        Scene scene = new Scene(root, 700, 700);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
         
         primaryStage.setScene(scene);
