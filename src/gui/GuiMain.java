@@ -5,7 +5,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
 import reversi.Reversi;
 
@@ -36,7 +36,7 @@ public class GuiMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         FXMLLoader fxmlloader = null;
-        Pane reversiPane = null;
+        BorderPane reversiPane = null;
         Reversi reversi = new Reversi(AlgorithmType.Random, AlgorithmType.Random);
 
         // フレームの設定
@@ -48,7 +48,7 @@ public class GuiMain extends Application {
         // リバーシのゲーム画面の呼び出し
         try {
             fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Reversi.fxml"));
-            reversiPane = (Pane) fxmlloader.load();
+            reversiPane = (BorderPane) fxmlloader.load();
         } catch (Exception e) {
             e.printStackTrace();
         }

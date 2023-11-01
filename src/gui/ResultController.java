@@ -103,7 +103,7 @@ public class ResultController {
         pane.setPrefSize(640, 480);
 
         DetailResultController controller = (DetailResultController) fxmlloader.getController();
-        controller.init(reversi);
+        controller.init(reversi.getBoard());
 
         return pane;
     }
