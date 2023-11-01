@@ -2,11 +2,14 @@ package gui;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import reversi.Record;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -17,6 +20,10 @@ import reversi.Reversi;
 public class ResultController {
     /** フレーム情報 */
     private Stage stage;
+
+    /** 結果を表示するペイン（自分自身） */
+    @FXML
+    private BorderPane resultRootPane;
 
     /** 対戦結果を表すラベル */
     @FXML
@@ -30,9 +37,13 @@ public class ResultController {
     @FXML
     private Label whiteDiscNumLabel;
 
-    /** 棋譜を表示する表ペイン */
+    /** 詳細情報として最終盤面を表示するタブ */
     @FXML
-    private GridPane recordPane;
+    private Tab detailResultTab;
+
+    /** 棋譜を表示するタブ */
+    @FXML
+    private Tab recordTab;
 
     /** ゲームを終了するボタン */
     @FXML
@@ -51,7 +62,7 @@ public class ResultController {
         blackDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getBlackDiscNum()));
         whiteDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getWhiteDiscNum()));
 
-        String turnString = String.format("%d手を以て、", reversi.getTurnCount());
+        String turnString = String.format("%d手をもって、", reversi.getTurnCount());
         switch (result) {
         case Black: {
             resultLabel.setText(turnString + "先手・黒の勝ちです！");
@@ -70,33 +81,58 @@ public class ResultController {
             throw new IllegalArgumentException("Unexpected value: " + result);
         }
 
-        // 棋譜を表示する
-        for (int i = 1; reversi.getRecordList().isEmpty() == false; i++) {
-            Record record = reversi.getRecordList().poll();
+        // 各タブ内の画面を生成する
+        recordTab.setContent(generateRecordPane(reversi));
+        detailResultTab.setContent(generateDetailResultPane(reversi));
+    }
 
-            Label turnLabel = new Label(Integer.toString(record.turn));
-            Label playerLabel = new Label(record.playerString);
-            Label dimLabel = new Label(record.dimString);
-            Label blackNumLabel = new Label(String.format("%2d個 (%+3d)", record.blackDiscNum, record.increaseBlackNum));
-            Label whiteNumLabel = new Label(String.format("%2d個 (%+3d)", record.whiteDiscNum, record.increaseWhiteNum));
+    /**
+     * 詳細結果画面（最終盤面）を生成する
+     * @param reversi リバーシの処理を行うインスタンス
+     */
+    private VBox generateDetailResultPane(Reversi reversi) {
+        FXMLLoader fxmlloader = null;
+        VBox pane = null;
 
-            turnLabel.setMaxWidth(Double.MAX_VALUE);
-            playerLabel.setMaxWidth(Double.MAX_VALUE);
-            dimLabel.setMaxWidth(Double.MAX_VALUE);
-            blackNumLabel.setMaxWidth(Double.MAX_VALUE);
-            whiteNumLabel.setMaxWidth(Double.MAX_VALUE);
-
-            recordPane.add(turnLabel, 0, i);
-            recordPane.add(playerLabel, 1, i);
-            recordPane.add(dimLabel, 2, i);
-            recordPane.add(blackNumLabel, 3, i);
-            recordPane.add(whiteNumLabel, 4, i);
+        try {
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/DetailResult.fxml"));
+            pane = (VBox) fxmlloader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        pane.setPrefSize(640, 480);
+
+        DetailResultController controller = (DetailResultController) fxmlloader.getController();
+        controller.init(reversi.getBoard());
+
+        return pane;
+    }
+
+    /**
+     * 棋譜画面を生成する
+     * @param reversi リバーシの処理を行うインスタンス
+     */
+    private ScrollPane generateRecordPane(Reversi reversi) {
+        FXMLLoader fxmlloader = null;
+        ScrollPane pane = null;
+
+        try {
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Record.fxml"));
+            pane = (ScrollPane) fxmlloader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        pane.setPrefSize(640, 480);
+
+        RecordController controller = (RecordController) fxmlloader.getController();
+        controller.init(reversi);
+
+        return pane;
     }
 
     /**
      * 終了ボタンが押された時のウィンドウを閉じる
-     * @param event
+     * @param event イベントのインスタンス
      */
     @FXML
     void onExitButtonAction(ActionEvent event) {
