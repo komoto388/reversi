@@ -374,7 +374,7 @@ public class ReversiController {
         rootPane.getChildren().add(resultPane);
 
         // 結果画面のサイズを調整し、表示位置を中央にする
-        resultPane.setPrefSize(rootPane.getWidth() * 0.8, rootPane.getHeight() * 0.8);
+        resultPane.setPrefSize(rootPane.getWidth() * 0.8, rootPane.getHeight() * 0.9);
         double dWidth = rootPane.getWidth() - resultPane.getPrefWidth();
         double dHeight = rootPane.getHeight() - resultPane.getPrefHeight();
         AnchorPane.setTopAnchor(resultPane, dHeight / 2);

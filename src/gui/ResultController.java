@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import reversi.ResultType;
 import reversi.Reversi;
@@ -35,6 +36,10 @@ public class ResultController {
     /** 白石の個数を表すラベル */
     @FXML
     private Label whiteDiscNumLabel;
+
+    /** 詳細情報として最終盤面を表示するタブ */
+    @FXML
+    private Tab detailResultTab;
 
     /** 棋譜を表示するタブ */
     @FXML
@@ -76,28 +81,53 @@ public class ResultController {
             throw new IllegalArgumentException("Unexpected value: " + result);
         }
 
+        // 各タブ内の画面を生成する
         recordTab.setContent(generateRecordPane(reversi));
+        detailResultTab.setContent(generateDetailResultPane(reversi));
     }
 
     /**
-     * 結果画面を生成する
-     * @param result 勝敗結果を表す値
+     * 詳細結果画面（最終盤面）を生成する
+     * @param reversi リバーシの処理を行うインスタンス
      */
-    private ScrollPane generateRecordPane(Reversi reversi) {
+    private VBox generateDetailResultPane(Reversi reversi) {
         FXMLLoader fxmlloader = null;
-        ScrollPane recordPane = null;
+        VBox pane = null;
 
         try {
-            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Record.fxml"));
-            recordPane = (ScrollPane) fxmlloader.load();
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/DetailResult.fxml"));
+            pane = (VBox) fxmlloader.load();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        pane.setPrefSize(640, 480);
+
+        DetailResultController controller = (DetailResultController) fxmlloader.getController();
+        controller.init(reversi);
+
+        return pane;
+    }
+
+    /**
+     * 棋譜画面を生成する
+     * @param reversi リバーシの処理を行うインスタンス
+     */
+    private ScrollPane generateRecordPane(Reversi reversi) {
+        FXMLLoader fxmlloader = null;
+        ScrollPane pane = null;
+
+        try {
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Record.fxml"));
+            pane = (ScrollPane) fxmlloader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        pane.setPrefSize(640, 480);
 
         RecordController controller = (RecordController) fxmlloader.getController();
         controller.init(reversi);
 
-        return recordPane;
+        return pane;
     }
 
     /**

@@ -7,6 +7,10 @@ import reversi.Record;
 import reversi.RecordList;
 import reversi.Reversi;
 
+/**
+ * 棋譜を表示するクラス
+ * @author komoto
+ */
 public class RecordController {
 
     @FXML
