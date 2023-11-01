@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import reversi.Record;
 import reversi.ResultType;
@@ -17,6 +19,9 @@ import reversi.Reversi;
 public class ResultController {
     /** フレーム情報 */
     private Stage stage;
+
+    @FXML
+    private VBox resultRootPane;
 
     /** 対戦結果を表すラベル */
     @FXML
@@ -34,9 +39,13 @@ public class ResultController {
     @FXML
     private GridPane recordPane;
 
-    /** ゲームを終了するボタン */
+    /** 棋譜を表示する表のヘッダーラベル */
     @FXML
-    private Button exitButton;
+    private Label recordHeaderLabel;
+
+    /** 結果画面を閉じるボタン */
+    @FXML
+    private Button closeButton;
 
     /**
      * 対戦結果内容を画面に設定する
@@ -95,11 +104,12 @@ public class ResultController {
     }
 
     /**
-     * 終了ボタンが押された時のウィンドウを閉じる
-     * @param event
+     * 閉じるボタンが押された時に、結果ペインのみ閉じる
+     * @param event イベントのインスタンス
      */
     @FXML
-    void onExitButtonAction(ActionEvent event) {
-        stage.close();
+    void onCloseButtonAction(ActionEvent event) {
+        Pane rootPane = (Pane) stage.getScene().getRoot();
+        rootPane.getChildren().remove(resultRootPane);
     }
 }

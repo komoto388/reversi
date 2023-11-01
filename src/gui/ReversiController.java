@@ -8,10 +8,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -43,6 +46,9 @@ public class ReversiController {
     /** フレーム情報 */
     private Stage stage;
 
+    /** タイマーイベントを制御するインスタンス */
+    private Timeline timer;
+
     /** リバーシ盤の手動入力を無効する時間（フレーム数） */
     private int waitFrame;
 
@@ -55,13 +61,17 @@ public class ReversiController {
     /** リバーシ盤のマス */
     private Pane[][] boardPane;
 
+    /** リバーシ画面のルートペイン */
+    @FXML
+    private BorderPane reversiRootPane;
+
     /** リバーシ盤を描画するペイン */
     @FXML
     private GridPane gridPane;
 
     /** 現在のプレイヤーの石の色を表示するオブジェクト */
     @FXML
-    private Circle currentDisc;
+    private Circle currentDiscCircle;
 
     /** 現在の経過ターン数を表示するラベル */
     @FXML
@@ -69,11 +79,11 @@ public class ReversiController {
 
     /** 現在の黒石の数を表示するラベル */
     @FXML
-    private Label blackDiscNum;
+    private Label blackDiscNumLabel;
 
     /** 現在の白石の数を表示するラベル */
     @FXML
-    private Label whiteDiscNum;
+    private Label whiteDiscNumLabel;
 
     /** 現在のステータスを表示するラベル */
     @FXML
@@ -87,6 +97,10 @@ public class ReversiController {
     @FXML
     private Label fpsLabel;
 
+    /** ウィンドウを閉じるボタン */
+    @FXML
+    private Button exitButton;
+
     /**
      * リバーシ盤を初期化する
      * @param stage フレーム情報
@@ -95,11 +109,13 @@ public class ReversiController {
     public void init(Stage stage, Reversi reversi) {
         this.stage = stage;
         this.reversi = reversi;
+
         Board board = reversi.getBoard();
         boardPane = new Pane[board.getSize().getRow()][board.getSize().getColumn()];
         waitFrame = Convert.convertFrame(2000, FPS);
         statusLabel.setText(null);
         debugLabel.setText(null);
+        exitButton.setVisible(false);
 
         for (int i = 0; i < board.getSize().getRow() + 1; i++) {
             for (int j = 0; j < board.getSize().getColumn() + 1; j++) {
@@ -143,7 +159,7 @@ public class ReversiController {
         }
 
         // 画面描画イベントを設定する
-        Timeline timer = new Timeline(new KeyFrame(new Duration(1000 / FPS), new TimerHandler()));
+        timer = new Timeline(new KeyFrame(new Duration(1000 / FPS), new TimerHandler()));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
     }
@@ -241,13 +257,13 @@ public class ReversiController {
 
             // 現在の手番、石の個数を更新する
             if (reversi.getPlayerIsBlack()) {
-                currentDisc.setFill(Paint.valueOf("black"));
+                currentDiscCircle.setFill(Paint.valueOf("black"));
             } else {
-                currentDisc.setFill(Paint.valueOf("white"));
+                currentDiscCircle.setFill(Paint.valueOf("white"));
             }
             turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
-            blackDiscNum.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
-            whiteDiscNum.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
+            blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
+            whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
             fpsLabel.setText(Integer.toString(currnetFps) + " fps");
 
             // デバッグ文の表示
@@ -305,13 +321,16 @@ public class ReversiController {
             case Drow:
             case Black:
             case White: {
-                // 結果表示画面を呼び出す
+                timer.stop();
+                exitButton.setVisible(true);
+
+                // 結果画面を呼び出す
                 FXMLLoader fxmlloader = null;
-                Pane root = null;
+                Pane resultPane = null;
 
                 try {
                     fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Result.fxml"));
-                    root = (Pane) fxmlloader.load();
+                    resultPane = (Pane) fxmlloader.load();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -319,11 +338,18 @@ public class ReversiController {
                 ResultController controller = (ResultController) fxmlloader.getController();
                 controller.init(stage, reversi, result);
 
-                Scene scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
+                // 現在の画面のシーンとルートペインを取得する
+                Scene scene = stage.getScene();
+                AnchorPane rootPane = (AnchorPane) scene.getRoot();
+                rootPane.getChildren().add(resultPane);
 
-                stage.setScene(scene);
-                stage.show();
+                // 結果画面の表示位置を中央にする
+                double dWidth = rootPane.getWidth() - resultPane.getPrefWidth();
+                double dHeight = rootPane.getHeight() - resultPane.getPrefHeight();
+                AnchorPane.setTopAnchor(resultPane, dHeight / 2);
+                AnchorPane.setBottomAnchor(resultPane, dHeight / 2);
+                AnchorPane.setLeftAnchor(resultPane, dWidth / 2);
+                AnchorPane.setRightAnchor(resultPane, dWidth / 2);
                 break;
             }
             default:
@@ -355,5 +381,14 @@ public class ReversiController {
                 boardPane[i][j].setDisable(!isInputEnable);
             }
         }
+    }
+
+    /**
+     * 終了ボタンが押された時のウィンドウを閉じる
+     * @param event イベントのインスタンス
+     */
+    @FXML
+    void onExitButtonAction(ActionEvent event) {
+        stage.close();
     }
 }

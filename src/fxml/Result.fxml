@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ResultController">
+<VBox fx:id="resultRootPane" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ResultController">
    <children>
       <GridPane alignment="CENTER" maxWidth="480.0">
         <columnConstraints>
@@ -33,8 +33,8 @@
             <Label fx:id="whiteDiscNumLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="個" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <Label fx:id="resultLabel" alignment="CENTER" maxWidth="400.0" text="結果" />
-      <ScrollPane prefHeight="400.0">
+      <Label fx:id="resultLabel" alignment="CENTER" minHeight="40.0" minWidth="400.0" text="結果" />
+      <ScrollPane prefHeight="380.0">
          <VBox.margin>
             <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
          </VBox.margin>
@@ -51,11 +51,11 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label fx:id="recordHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="ターン" />
-                  <Label fx:id="recordHeader" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="プレイヤー" GridPane.columnIndex="1" />
-                  <Label fx:id="recordHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="位置" GridPane.columnIndex="2" />
-                  <Label fx:id="recordHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="黒石の数（増減）" GridPane.columnIndex="3" />
-                  <Label fx:id="recordHeader" layoutX="310.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="白石の数（増減）" GridPane.columnIndex="4" />
+                  <Label fx:id="recordHeaderLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="ターン" />
+                  <Label fx:id="recordHeaderLabel" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="プレイヤー" GridPane.columnIndex="1" />
+                  <Label fx:id="recordHeaderLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="位置" GridPane.columnIndex="2" />
+                  <Label fx:id="recordHeaderLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="黒石の数（増減）" GridPane.columnIndex="3" />
+                  <Label fx:id="recordHeaderLabel" layoutX="310.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="白石の数（増減）" GridPane.columnIndex="4" />
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -65,7 +65,10 @@
       </ScrollPane>
       <HBox alignment="CENTER">
          <children>
-            <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExitButtonAction" text="終了" />
+            <Button fx:id="closeButton" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#onCloseButtonAction" text="閉じる">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin></Button>
          </children>
       </HBox>
    </children>
