@@ -2,13 +2,13 @@ package gui;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import reversi.Record;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -20,8 +20,9 @@ public class ResultController {
     /** フレーム情報 */
     private Stage stage;
 
+    /** 結果を表示するペイン（自分自身） */
     @FXML
-    private VBox resultRootPane;
+    private BorderPane resultRootPane;
 
     /** 対戦結果を表すラベル */
     @FXML
@@ -35,17 +36,13 @@ public class ResultController {
     @FXML
     private Label whiteDiscNumLabel;
 
-    /** 棋譜を表示する表ペイン */
+    /** 棋譜を表示するタブ */
     @FXML
-    private GridPane recordPane;
+    private Tab recordTab;
 
-    /** 棋譜を表示する表のヘッダーラベル */
+    /** ゲームを終了するボタン */
     @FXML
-    private Label recordHeaderLabel;
-
-    /** 結果画面を閉じるボタン */
-    @FXML
-    private Button closeButton;
+    private Button exitButton;
 
     /**
      * 対戦結果内容を画面に設定する
@@ -60,7 +57,7 @@ public class ResultController {
         blackDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getBlackDiscNum()));
         whiteDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getWhiteDiscNum()));
 
-        String turnString = String.format("%d手を以て、", reversi.getTurnCount());
+        String turnString = String.format("%d手をもって、", reversi.getTurnCount());
         switch (result) {
         case Black: {
             resultLabel.setText(turnString + "先手・黒の勝ちです！");
@@ -79,37 +76,36 @@ public class ResultController {
             throw new IllegalArgumentException("Unexpected value: " + result);
         }
 
-        // 棋譜を表示する
-        for (int i = 1; reversi.getRecordList().isEmpty() == false; i++) {
-            Record record = reversi.getRecordList().poll();
-
-            Label turnLabel = new Label(Integer.toString(record.turn));
-            Label playerLabel = new Label(record.playerString);
-            Label dimLabel = new Label(record.dimString);
-            Label blackNumLabel = new Label(String.format("%2d個 (%+3d)", record.blackDiscNum, record.increaseBlackNum));
-            Label whiteNumLabel = new Label(String.format("%2d個 (%+3d)", record.whiteDiscNum, record.increaseWhiteNum));
-
-            turnLabel.setMaxWidth(Double.MAX_VALUE);
-            playerLabel.setMaxWidth(Double.MAX_VALUE);
-            dimLabel.setMaxWidth(Double.MAX_VALUE);
-            blackNumLabel.setMaxWidth(Double.MAX_VALUE);
-            whiteNumLabel.setMaxWidth(Double.MAX_VALUE);
-
-            recordPane.add(turnLabel, 0, i);
-            recordPane.add(playerLabel, 1, i);
-            recordPane.add(dimLabel, 2, i);
-            recordPane.add(blackNumLabel, 3, i);
-            recordPane.add(whiteNumLabel, 4, i);
-        }
+        recordTab.setContent(generateRecordPane(reversi));
     }
 
     /**
-     * 閉じるボタンが押された時に、結果ペインのみ閉じる
+     * 結果画面を生成する
+     * @param result 勝敗結果を表す値
+     */
+    private ScrollPane generateRecordPane(Reversi reversi) {
+        FXMLLoader fxmlloader = null;
+        ScrollPane recordPane = null;
+
+        try {
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Record.fxml"));
+            recordPane = (ScrollPane) fxmlloader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        RecordController controller = (RecordController) fxmlloader.getController();
+        controller.init(reversi);
+
+        return recordPane;
+    }
+
+    /**
+     * 終了ボタンが押された時のウィンドウを閉じる
      * @param event イベントのインスタンス
      */
     @FXML
-    void onCloseButtonAction(ActionEvent event) {
-        Pane rootPane = (Pane) stage.getScene().getRoot();
-        rootPane.getChildren().remove(resultRootPane);
+    void onExitButtonAction(ActionEvent event) {
+        stage.close();
     }
 }

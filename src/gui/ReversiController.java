@@ -8,7 +8,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -97,10 +96,6 @@ public class ReversiController {
     @FXML
     private Label fpsLabel;
 
-    /** ウィンドウを閉じるボタン */
-    @FXML
-    private Button exitButton;
-
     /**
      * リバーシ盤を初期化する
      * @param stage フレーム情報
@@ -115,7 +110,6 @@ public class ReversiController {
         waitFrame = Convert.convertFrame(2000, FPS);
         statusLabel.setText(null);
         debugLabel.setText(null);
-        exitButton.setVisible(false);
 
         for (int i = 0; i < board.getSize().getRow() + 1; i++) {
             for (int j = 0; j < board.getSize().getColumn() + 1; j++) {
@@ -322,34 +316,7 @@ public class ReversiController {
             case Black:
             case White: {
                 timer.stop();
-                exitButton.setVisible(true);
-
-                // 結果画面を呼び出す
-                FXMLLoader fxmlloader = null;
-                Pane resultPane = null;
-
-                try {
-                    fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Result.fxml"));
-                    resultPane = (Pane) fxmlloader.load();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                ResultController controller = (ResultController) fxmlloader.getController();
-                controller.init(stage, reversi, result);
-
-                // 現在の画面のシーンとルートペインを取得する
-                Scene scene = stage.getScene();
-                AnchorPane rootPane = (AnchorPane) scene.getRoot();
-                rootPane.getChildren().add(resultPane);
-
-                // 結果画面の表示位置を中央にする
-                double dWidth = rootPane.getWidth() - resultPane.getPrefWidth();
-                double dHeight = rootPane.getHeight() - resultPane.getPrefHeight();
-                AnchorPane.setTopAnchor(resultPane, dHeight / 2);
-                AnchorPane.setBottomAnchor(resultPane, dHeight / 2);
-                AnchorPane.setLeftAnchor(resultPane, dWidth / 2);
-                AnchorPane.setRightAnchor(resultPane, dWidth / 2);
+                showResult(result);
                 break;
             }
             default:
@@ -384,11 +351,35 @@ public class ReversiController {
     }
 
     /**
-     * 終了ボタンが押された時のウィンドウを閉じる
-     * @param event イベントのインスタンス
+     * 結果画面を生成し、表示する
+     * @param result 勝敗結果を表す
      */
-    @FXML
-    void onExitButtonAction(ActionEvent event) {
-        stage.close();
+    private void showResult(ResultType result) {
+        FXMLLoader fxmlloader = null;
+        Pane resultPane = null;
+
+        try {
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Result.fxml"));
+            resultPane = (Pane) fxmlloader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ResultController controller = (ResultController) fxmlloader.getController();
+        controller.init(stage, reversi, result);
+
+        // 現在の画面のシーンとルートペインを取得する
+        Scene scene = stage.getScene();
+        AnchorPane rootPane = (AnchorPane) scene.getRoot();
+        rootPane.getChildren().add(resultPane);
+
+        // 結果画面のサイズを調整し、表示位置を中央にする
+        resultPane.setPrefSize(rootPane.getWidth() * 0.8, rootPane.getHeight() * 0.8);
+        double dWidth = rootPane.getWidth() - resultPane.getPrefWidth();
+        double dHeight = rootPane.getHeight() - resultPane.getPrefHeight();
+        AnchorPane.setTopAnchor(resultPane, dHeight / 2);
+        AnchorPane.setBottomAnchor(resultPane, dHeight / 2);
+        AnchorPane.setLeftAnchor(resultPane, dWidth / 2);
+        AnchorPane.setRightAnchor(resultPane, dWidth / 2);
     }
 }
