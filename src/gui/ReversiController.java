@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -37,11 +39,14 @@ public class ReversiController {
     /** マスの大きさ（縦・横同じ） */
     private final double GRID_SIZE = 60;
 
-    /** 石の半径 */
-    private final double DISC_RADIUS = (GRID_SIZE / 2.0 - 10);
+    //    /** 石の半径 */
+    //    private final double DISC_RADIUS = (GRID_SIZE / 2.0 - 10);
 
     /** フレーム情報 */
     private Stage stage;
+
+    /** タイマーイベントを制御するインスタンス */
+    private Timeline timer;
 
     /** リバーシ盤の手動入力を無効する時間（フレーム数） */
     private int waitFrame;
@@ -52,8 +57,12 @@ public class ReversiController {
     /** リバーシを制御するインスタンス */
     private Reversi reversi;
 
-    /** リバーシ盤のマス */
-    private Pane[][] boardPane;
+    /** リバーシ盤を描画するインスタンス */
+    private DisplayBoard displayBoard;
+
+    /** リバーシ画面のルートペイン */
+    @FXML
+    private BorderPane reversiRootPane;
 
     /** リバーシ盤を描画するペイン */
     @FXML
@@ -61,7 +70,7 @@ public class ReversiController {
 
     /** 現在のプレイヤーの石の色を表示するオブジェクト */
     @FXML
-    private Circle currentDisc;
+    private Circle currentDiscCircle;
 
     /** 現在の経過ターン数を表示するラベル */
     @FXML
@@ -69,11 +78,11 @@ public class ReversiController {
 
     /** 現在の黒石の数を表示するラベル */
     @FXML
-    private Label blackDiscNum;
+    private Label blackDiscNumLabel;
 
     /** 現在の白石の数を表示するラベル */
     @FXML
-    private Label whiteDiscNum;
+    private Label whiteDiscNumLabel;
 
     /** 現在のステータスを表示するラベル */
     @FXML
@@ -95,55 +104,26 @@ public class ReversiController {
     public void init(Stage stage, Reversi reversi) {
         this.stage = stage;
         this.reversi = reversi;
-        Board board = reversi.getBoard();
-        boardPane = new Pane[board.getSize().getRow()][board.getSize().getColumn()];
-        waitFrame = Convert.convertFrame(2000, FPS);
+
         statusLabel.setText(null);
         debugLabel.setText(null);
 
-        for (int i = 0; i < board.getSize().getRow() + 1; i++) {
-            for (int j = 0; j < board.getSize().getColumn() + 1; j++) {
-                if (i == 0) {
-                    // リバーシ盤の列番号を付与する
-                    if (j > 0) {
-                        Label boardColumnNum = new Label(String.valueOf(Convert.convertIntToChar(j - 1)));
-                        boardColumnNum.setId("board-column-num");
-                        boardColumnNum.setPrefWidth(GRID_SIZE);
-                        boardColumnNum.setPrefHeight(GRID_SIZE / 2);
-                        gridPane.add(boardColumnNum, j, i);
-                    }
-                } else if (j == 0) {
-                    // リバーシ盤の行番号を付与する
-                    if (i > 0) {
-                        Label boardRowNum = new Label(Integer.toString(i));
-                        boardRowNum.setId("board-row-num");
-                        boardRowNum.setPrefWidth(GRID_SIZE / 2);
-                        boardRowNum.setPrefHeight(GRID_SIZE);
-                        gridPane.add(boardRowNum, j, i);
-                    }
-                } else {
-                    // リバーシ盤のマスを生成する
-                    Dimension target = new Dimension(i - 1, j - 1);
+        // リバーシ盤の描画を行う
+        Dimension boardSize = reversi.getBoard().getSize();
+        displayBoard = new DisplayBoard(gridPane, boardSize, GRID_SIZE);
 
-                    // 描画用マスを作成する
-                    boardPane[i - 1][j - 1] = new Pane();
-                    boardPane[i - 1][j - 1].setPrefWidth(GRID_SIZE);
-                    boardPane[i - 1][j - 1].setPrefHeight(GRID_SIZE);
-                    boardPane[i - 1][j - 1].setOnMouseClicked(new GridHandler(target));
-                    boardPane[i - 1][j - 1].setDisable(true);
-
-                    if ((i + j) % 2 == 0) {
-                        boardPane[i - 1][j - 1].setId("grid1");
-                    } else {
-                        boardPane[i - 1][j - 1].setId("grid2");
-                    }
-                    gridPane.add(boardPane[i - 1][j - 1], j, i);
-                }
+        // マスをクリックした時のイベントを設定する
+        for (int i = 0; i < boardSize.getRow(); i++) {
+            for (int j = 0; j < boardSize.getColumn(); j++) {
+                Pane pane = displayBoard.getBoardPane(i, j);
+                pane.setOnMouseClicked(new GridHandler(new Dimension(i, j)));
+                pane.setDisable(true);
             }
         }
 
         // 画面描画イベントを設定する
-        Timeline timer = new Timeline(new KeyFrame(new Duration(1000 / FPS), new TimerHandler()));
+        waitFrame = Convert.convertFrame(2000, FPS);
+        timer = new Timeline(new KeyFrame(new Duration(1000 / FPS), new TimerHandler()));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
     }
@@ -152,8 +132,8 @@ public class ReversiController {
      * 画面描画など周期的に実行するイベントを定義するクラス
      */
     private class TimerHandler implements EventHandler<ActionEvent> {
-        long startTime;
-        int countFrame;
+        private long startTime;
+        private int countFrame;
 
         /**
          * タイムイベントの初期化を行う。
@@ -215,39 +195,18 @@ public class ReversiController {
         private void update() {
             Board board = reversi.getBoard();
 
-            // リバーシ盤の状態を更新する
-            for (int i = 0; i < board.getSize().getRow(); i++) {
-                for (int j = 0; j < board.getSize().getColumn(); j++) {
-                    Dimension target = new Dimension(i, j);
-
-                    // マスに描画されている石を消去する
-                    boardPane[i][j].getChildren().clear();
-
-                    if (board.isEmpty(target) == false) {
-                        // リバーシの石を描画する
-                        Circle circle = new Circle(DISC_RADIUS);
-                        circle.setLayoutX(GRID_SIZE / 2.0);
-                        circle.setLayoutY(GRID_SIZE / 2.0);
-
-                        if (board.isBlack(target)) {
-                            circle.setId("disc-black");
-                        } else {
-                            circle.setId("disc-white");
-                        }
-                        boardPane[i][j].getChildren().add(circle);
-                    }
-                }
-            }
+            // リバーシ盤に石を描画する
+            displayBoard.drawStone(board);
 
             // 現在の手番、石の個数を更新する
             if (reversi.getPlayerIsBlack()) {
-                currentDisc.setFill(Paint.valueOf("black"));
+                currentDiscCircle.setFill(Paint.valueOf("black"));
             } else {
-                currentDisc.setFill(Paint.valueOf("white"));
+                currentDiscCircle.setFill(Paint.valueOf("white"));
             }
             turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
-            blackDiscNum.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
-            whiteDiscNum.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
+            blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
+            whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
             fpsLabel.setText(Integer.toString(currnetFps) + " fps");
 
             // デバッグ文の表示
@@ -305,25 +264,8 @@ public class ReversiController {
             case Drow:
             case Black:
             case White: {
-                // 結果表示画面を呼び出す
-                FXMLLoader fxmlloader = null;
-                Pane root = null;
-
-                try {
-                    fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Result.fxml"));
-                    root = (Pane) fxmlloader.load();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                ResultController controller = (ResultController) fxmlloader.getController();
-                controller.init(stage, reversi, result);
-
-                Scene scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
-
-                stage.setScene(scene);
-                stage.show();
+                timer.stop();
+                showResult(result);
                 break;
             }
             default:
@@ -352,8 +294,42 @@ public class ReversiController {
 
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
-                boardPane[i][j].setDisable(!isInputEnable);
+                Pane pane = displayBoard.getBoardPane(i, j);
+                pane.setDisable(!isInputEnable);
             }
         }
+    }
+
+    /**
+     * 結果画面を生成し、表示する
+     * @param result 勝敗結果を表す
+     */
+    private void showResult(ResultType result) {
+        FXMLLoader fxmlloader = null;
+        BorderPane resultPane = null;
+
+        try {
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Result.fxml"));
+            resultPane = (BorderPane) fxmlloader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ResultController controller = (ResultController) fxmlloader.getController();
+        controller.init(stage, reversi, result);
+
+        // 現在の画面のシーンとルートペインを取得する
+        Scene scene = stage.getScene();
+        AnchorPane rootPane = (AnchorPane) scene.getRoot();
+        rootPane.getChildren().add(resultPane);
+
+        // 結果画面のサイズを調整し、表示位置を中央にする
+        resultPane.setPrefSize(rootPane.getWidth() * 0.8, rootPane.getHeight() * 0.9);
+        double dWidth = rootPane.getWidth() - resultPane.getPrefWidth();
+        double dHeight = rootPane.getHeight() - resultPane.getPrefHeight();
+        AnchorPane.setTopAnchor(resultPane, dHeight / 2);
+        AnchorPane.setBottomAnchor(resultPane, dHeight / 2);
+        AnchorPane.setLeftAnchor(resultPane, dWidth / 2);
+        AnchorPane.setRightAnchor(resultPane, dWidth / 2);
     }
 }

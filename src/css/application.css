@@ -1,5 +1,11 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
+#resultRootPane {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
 /*文字ラベル（デフォルト）*/
 .label {
     -fx-font-family: "Meiryo";
@@ -7,10 +13,16 @@
 }
 
 /*石の個数・ターン数のラベル*/
-#blackDiscNum,
-#whiteDiscNum,
+#blackDiscNumLabel,
+#whiteDiscNumLabel,
 #turnLabel {
     -fx-font-size: 20;
+}
+
+/*結果表示のラベル*/
+#resultLabel {
+    -fx-font-size: 20;
+    -fx-text-fill: red;
 }
 
 /*リバーシ盤の行番号・列番号のラベル*/
@@ -21,7 +33,7 @@
 }
 
 /*棋譜ヘッダーのラベル*/
-#recordHeader {
+#recordHeaderLabel {
     -fx-font-weight: bold;
 }
 
