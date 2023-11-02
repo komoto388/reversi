@@ -8,13 +8,13 @@ public class Convert {
      * 数字を小文字のアルファベットに変換する。
      * 0 => a, 1 => b, 2 => c ...
      * @param num 0以上の整数
-     * @return 変換した文字列。{@code num} が0未満の場合は空文字を返す。
+     * @return 変換した文字列
      */
-    public static char convertIntToChar(int num) {
+    public static char convertIntToChar(int num) throws IllegalArgumentException {
         if (num >= 0) {
             return (char) ('a' + num);
         } else {
-            return ' ';
+            throw new IllegalArgumentException("引数が0以上でありません: " + num);
         }
     }
 
@@ -24,12 +24,12 @@ public class Convert {
      * @param c 0以上の整数
      * @return 変換した数値。正しく変換できなかった場合は {@code -1} を返す。
      */
-    public static int convertCharToInt(char c) {
+    public static int convertCharToInt(char c) throws IllegalArgumentException {
         int num = c - 'a';
         if (num >= 0) {
             return num;
         } else {
-            return -1;
+            throw new IllegalArgumentException("引数が英小文字ではありません: " + c);
         }
     }
 
