@@ -14,10 +14,10 @@ public class Global {
     
     /* 画面描画のデザインに関する定数 */
     /** ルートペインの横幅 */
-    public static final int ROOT_PANE_WIDTH = 1000;
+    public static final int ROOT_PANE_WIDTH = 1152;
 
     /** ルートペインの高さ */
-    public static final int ROOT_PANE_HEIGHT = 800;
+    public static final int ROOT_PANE_HEIGHT = 864;
 
     /** 結果表示のタブ内に表示するペインの横幅 */
     public static final int RESULT_TAB_PANE_WIDTH = 640;
@@ -32,7 +32,7 @@ public class Global {
     public static final int RADIO_BUTTON_HEIGHT = 40;
     
     /** ゲーム中に表示する、リバーシ盤のマスの大きさ（縦・横同じ） */
-    public static final double GRID_SIZE = 60;
+    public static final double GRID_SIZE = 70;
     
     /** 結果画面に表示する、リバーシ盤のマスの大きさ（縦・横同じ） */
     public static final double GRID_SIZE_RESULT = 50;

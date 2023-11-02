@@ -11,6 +11,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import reversi.Record;
+import reversi.RecordList;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -84,15 +86,23 @@ public class ResultController {
         }
 
         // 各タブ内の画面を生成する
-        recordTab.setContent(generateRecordPane(reversi));
-        detailResultTab.setContent(generateDetailResultPane(reversi));
+        generateDetailResultPane(detailResultTab, reversi);
+        RecordController recordController = generateRecordPane(recordTab, reversi);
+        
+        // 棋譜を描画する
+        RecordList recordList = reversi.getRecordList();
+        for (int i = 1; recordList.isEmpty() == false; i++) {
+            Record record = recordList.poll();
+            recordController.addRecord(i, record);
+        }
     }
 
     /**
      * 詳細結果画面（最終盤面）を生成する
+     * @param tabPane 生成したペインの描画先となるペイン
      * @param reversi リバーシの処理を行うインスタンス
      */
-    private VBox generateDetailResultPane(Reversi reversi) {
+    private void generateDetailResultPane(Tab tabPane, Reversi reversi) {
         FXMLLoader fxmlloader = null;
         VBox pane = null;
 
@@ -106,15 +116,17 @@ public class ResultController {
 
         DetailResultController controller = (DetailResultController) fxmlloader.getController();
         controller.init(reversi.getBoard());
-
-        return pane;
+        
+        tabPane.setContent(pane);
     }
 
     /**
      * 棋譜画面を生成する
+     * @param tabPane 生成したペインの描画先となるペイン
      * @param reversi リバーシの処理を行うインスタンス
+     * @param 棋譜画面のコントローラー
      */
-    private ScrollPane generateRecordPane(Reversi reversi) {
+    private RecordController generateRecordPane(Tab tabPane, Reversi reversi) {
         FXMLLoader fxmlloader = null;
         ScrollPane pane = null;
 
@@ -126,10 +138,9 @@ public class ResultController {
         }
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
-        RecordController controller = (RecordController) fxmlloader.getController();
-        controller.init(reversi);
-
-        return pane;
+        tabPane.setContent(pane);
+        
+        return (RecordController) fxmlloader.getController();
     }
 
     /**
