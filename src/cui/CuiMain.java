@@ -45,7 +45,7 @@ public class CuiMain {
         int inputNum = 0;
 
         do {
-            System.out.printf("%sが使用するアルゴリズムを選択してください。手動操作の場合は、「%s」を選択してください。\n",
+            System.out.printf("%sが使用するアルゴリズムを選択してください。手動で操作したい場合は、「%s」を選択してください。\n",
                     playerName, AlgorithmType.Manual);
             for (int i = 0; i < typeList.length; i++) {
                 System.out.printf("%2d. %s\n", i + 1, typeList[i]);
@@ -72,7 +72,7 @@ public class CuiMain {
         } while (true);
 
         AlgorithmType type = typeList[inputNum - 1];
-        System.out.printf("「%d. %s」が選択されました", inputNum, type);
+        System.out.printf("「%d. %s」が選択されました。\n\n", inputNum, type);
 
         return type;
     }
