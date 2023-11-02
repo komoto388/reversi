@@ -1,0 +1,33 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.root {
+    -fx-font-family: "Meiryo UI";
+}
+
+/*先手・黒側のタイトルラベル*/
+#blackLabel {
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: black; 
+}
+
+/*後手・白側のタイトルラベル*/
+#whiteLabel {
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-background-color: white;    
+}
+
+/*アルゴリズム選択のラジオボタン*/
+#select-radio-button {
+    -fx-font-size: 18;
+}
+
+/*ゲーム開始ボタン*/
+#startButton {
+    -fx-pref-width: 180;
+    -fx-pref-height: 50;
+    -fx-font-size: 20;
+}
