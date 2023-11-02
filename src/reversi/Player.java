@@ -9,7 +9,8 @@ import algorithm.RandomAlgorithm;
  * プレイヤーを定義・処理するクラス
  * @author komoto
  */
-public class Player {
+class Player {
+
     /** プレイヤーの石の色が黒かどうか */
     Boolean isBlack;
 

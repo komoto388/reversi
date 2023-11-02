@@ -7,6 +7,7 @@ import common.Convert;
  * @author komoto
  */
 public class Board {
+
     /** 石の状態を表す値 */
     private enum DiscStatus {
         EMPTY, // 空（設置されていない） 
@@ -18,7 +19,7 @@ public class Board {
     private DiscStatus[][] board;
 
     /** リバーシ盤のサイズ（マス） */
-    private final Dimension size = new Dimension(8, 8);
+    private final Dimension boardSize;
 
     /** 現在の黒石の数 */
     private int blackDiscNum;
@@ -26,20 +27,21 @@ public class Board {
     /** 現在の白石の数 */
     private int whiteDiscNum;
 
-    public Board() {
-        board = new DiscStatus[size.getRow()][size.getColumn()];
-        blackDiscNum = 0;
-        whiteDiscNum = 0;
+    public Board(int boardWidth, int boardHeight) {
+        this.board = new DiscStatus[boardHeight][boardWidth];
+        this.boardSize = new Dimension(boardHeight, boardWidth);
+        this.blackDiscNum = 0;
+        this.whiteDiscNum = 0;
 
-        for (int i = 0; i < size.getRow(); i++) {
-            for (int j = 0; j < size.getColumn(); j++) {
+        for (int i = 0; i < boardHeight; i++) {
+            for (int j = 0; j < boardWidth; j++) {
                 // 盤の中心に初期の石を設置する
-                if ((i == size.getRow() / 2 - 1 && j == size.getRow() / 2 - 1)
-                        || (i == size.getColumn() / 2 && j == size.getColumn() / 2)) {
+                if ((i == boardHeight / 2 - 1 && j == boardHeight / 2 - 1)
+                        || (i == boardWidth / 2 && j == boardWidth / 2)) {
                     board[i][j] = DiscStatus.WHITE;
                     whiteDiscNum++;
-                } else if ((i == size.getRow() / 2 - 1 && j == size.getColumn() / 2)
-                        || (i == size.getRow() / 2 && j == size.getColumn() / 2 - 1)) {
+                } else if ((i == boardHeight / 2 - 1 && j == boardWidth / 2)
+                        || (i == boardHeight / 2 && j == boardWidth / 2 - 1)) {
                     board[i][j] = DiscStatus.BLACK;
                     blackDiscNum++;
                 } else {
@@ -54,7 +56,7 @@ public class Board {
      * @return リバーシ盤のサイズ
      */
     public Dimension getSize() {
-        return size;
+        return boardSize;
     }
 
     /**
@@ -78,7 +80,7 @@ public class Board {
      * @return 石が置かれていない場所の数
      */
     public int getEmptyNum() {
-        return size.getRow() * size.getColumn() - blackDiscNum - whiteDiscNum;
+        return boardSize.getRow() * boardSize.getColumn() - blackDiscNum - whiteDiscNum;
     }
 
     /**
@@ -189,8 +191,8 @@ public class Board {
      * @return 反転可能な石が存在する場合は {@code true}, 存在しない場合は {@code false} を返す。
      */
     public Boolean canPutAll(Boolean isBlack) {
-        for (int i = 0; i < size.getRow(); i++) {
-            for (int j = 0; j < size.getColumn(); j++) {
+        for (int i = 0; i < boardSize.getRow(); i++) {
+            for (int j = 0; j < boardSize.getColumn(); j++) {
                 if (canPut(new Dimension(i, j), isBlack)) {
                     return true;
                 }
@@ -269,7 +271,7 @@ public class Board {
         int reversibleDisc = 0;
         int column = target.getColumn();
 
-        for (int i = target.getRow() - 1; i >= 0 && i < size.getRow(); i--) {
+        for (int i = target.getRow() - 1; i >= 0 && i < boardSize.getRow(); i--) {
             if (isDifferentDisc(new Dimension(i, column), isBlack)) {
                 // 色違いで反転可能な石である場合は、反転対象としてカウントする
                 reversibleDisc++;
@@ -295,7 +297,7 @@ public class Board {
         int reversibleDisc = 0;
         int column = target.getColumn();
 
-        for (int i = target.getRow() + 1; i >= 0 && i < size.getRow(); i++) {
+        for (int i = target.getRow() + 1; i >= 0 && i < boardSize.getRow(); i++) {
             if (isDifferentDisc(new Dimension(i, column), isBlack)) {
                 reversibleDisc++;
             } else if (board[i][column] == DiscStatus.EMPTY) {
@@ -317,7 +319,7 @@ public class Board {
         int reversibleDisc = 0;
         int row = target.getRow();
 
-        for (int j = target.getColumn() - 1; j >= 0 && j < size.getColumn(); j--) {
+        for (int j = target.getColumn() - 1; j >= 0 && j < boardSize.getColumn(); j--) {
             if (isDifferentDisc(new Dimension(row, j), isBlack)) {
                 reversibleDisc++;
             } else if (board[row][j] == DiscStatus.EMPTY) {
@@ -340,7 +342,7 @@ public class Board {
         int reversibleDisc = 0;
         int row = target.getRow();
 
-        for (int j = target.getColumn() + 1; j >= 0 && j < size.getColumn(); j++) {
+        for (int j = target.getColumn() + 1; j >= 0 && j < boardSize.getColumn(); j++) {
             if (isDifferentDisc(new Dimension(row, j), isBlack)) {
                 reversibleDisc++;
             } else if (board[row][j] == DiscStatus.EMPTY) {
@@ -361,8 +363,8 @@ public class Board {
     private int countReversibleDiscLeftUp(Dimension target, Boolean isBlack) {
         int reversibleDisc = 0;
 
-        for (int i = target.getRow() - 1, j = target.getColumn() - 1; i >= 0 && j >= 0 && i < size.getRow()
-                && j < size.getColumn(); i--, j--) {
+        for (int i = target.getRow() - 1, j = target.getColumn() - 1; i >= 0 && j >= 0 && i < boardSize.getRow()
+                && j < boardSize.getColumn(); i--, j--) {
             if (isDifferentDisc(new Dimension(i, j), isBlack)) {
                 reversibleDisc++;
             } else if (board[i][j] == DiscStatus.EMPTY) {
@@ -383,8 +385,8 @@ public class Board {
     private int countReversibleDiscRightUp(Dimension target, Boolean isBlack) {
         int reversibleDisc = 0;
 
-        for (int i = target.getRow() - 1, j = target.getColumn() + 1; i >= 0 && j >= 0 && i < size.getRow()
-                && j < size.getColumn(); i--, j++) {
+        for (int i = target.getRow() - 1, j = target.getColumn() + 1; i >= 0 && j >= 0 && i < boardSize.getRow()
+                && j < boardSize.getColumn(); i--, j++) {
             if (isDifferentDisc(new Dimension(i, j), isBlack)) {
                 reversibleDisc++;
             } else if (board[i][j] == DiscStatus.EMPTY) {
@@ -405,8 +407,8 @@ public class Board {
     private int countReversibleDiscLeftDown(Dimension target, Boolean isBlack) {
         int reversibleDisc = 0;
 
-        for (int i = target.getRow() + 1, j = target.getColumn() - 1; i >= 0 && j >= 0 && i < size.getRow()
-                && j < size.getColumn(); i++, j--) {
+        for (int i = target.getRow() + 1, j = target.getColumn() - 1; i >= 0 && j >= 0 && i < boardSize.getRow()
+                && j < boardSize.getColumn(); i++, j--) {
             if (isDifferentDisc(new Dimension(i, j), isBlack)) {
                 reversibleDisc++;
             } else if (board[i][j] == DiscStatus.EMPTY) {
@@ -427,8 +429,8 @@ public class Board {
     private int countReversibleDiscRightDown(Dimension target, Boolean isBlack) {
         int reversibleDisc = 0;
 
-        for (int i = target.getRow() + 1, j = target.getColumn() + 1; i >= 0 && j >= 0 && i < size.getRow()
-                && j < size.getColumn(); i++, j++) {
+        for (int i = target.getRow() + 1, j = target.getColumn() + 1; i >= 0 && j >= 0 && i < boardSize.getRow()
+                && j < boardSize.getColumn(); i++, j++) {
             if (isDifferentDisc(new Dimension(i, j), isBlack)) {
                 reversibleDisc++;
             } else if (board[i][j] == DiscStatus.EMPTY) {
@@ -532,7 +534,7 @@ public class Board {
         int reverseDisc = 0;
         int column = target.getColumn();
 
-        for (int i = target.getRow() - 1; i >= 0 && i < size.getRow(); i--) {
+        for (int i = target.getRow() - 1; i >= 0 && i < boardSize.getRow(); i--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension reverseTarget = new Dimension(i, column);
             if (isDifferentDisc(reverseTarget, isBlack)) {
@@ -555,7 +557,7 @@ public class Board {
         int reverseDisc = 0;
         int column = target.getColumn();
 
-        for (int i = target.getRow() + 1; i >= 0 && i < size.getRow(); i++) {
+        for (int i = target.getRow() + 1; i >= 0 && i < boardSize.getRow(); i++) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension reverseTarget = new Dimension(i, column);
             if (isDifferentDisc(reverseTarget, isBlack)) {
@@ -578,7 +580,7 @@ public class Board {
         int reverseDisc = 0;
         int row = target.getRow();
 
-        for (int j = target.getColumn() - 1; j >= 0 && j < size.getColumn(); j--) {
+        for (int j = target.getColumn() - 1; j >= 0 && j < boardSize.getColumn(); j--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension reverseTarget = new Dimension(row, j);
             if (isDifferentDisc(reverseTarget, isBlack)) {
@@ -601,7 +603,7 @@ public class Board {
         int reverseDisc = 0;
         int row = target.getRow();
 
-        for (int j = target.getColumn() + 1; j >= 0 && j < size.getColumn(); j++) {
+        for (int j = target.getColumn() + 1; j >= 0 && j < boardSize.getColumn(); j++) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension reverseTarget = new Dimension(row, j);
             if (isDifferentDisc(reverseTarget, isBlack)) {
@@ -623,8 +625,8 @@ public class Board {
     private int reverseDiscLeftUp(Dimension target, Boolean isBlack) {
         int reverseDisc = 0;
 
-        for (int i = target.getRow() - 1, j = target.getColumn() - 1; i >= 0 && i < size.getRow() && j >= 0
-                && j < size.getColumn(); i--, j--) {
+        for (int i = target.getRow() - 1, j = target.getColumn() - 1; i >= 0 && i < boardSize.getRow() && j >= 0
+                && j < boardSize.getColumn(); i--, j--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension reverseTarget = new Dimension(i, j);
             if (isDifferentDisc(reverseTarget, isBlack)) {
@@ -646,8 +648,8 @@ public class Board {
     private int reverseDiscRightUp(Dimension target, Boolean isBlack) {
         int reverseDisc = 0;
 
-        for (int i = target.getRow() - 1, j = target.getColumn() + 1; i >= 0 && i < size.getRow() && j >= 0
-                && j < size.getColumn(); i--, j++) {
+        for (int i = target.getRow() - 1, j = target.getColumn() + 1; i >= 0 && i < boardSize.getRow() && j >= 0
+                && j < boardSize.getColumn(); i--, j++) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension reverseTarget = new Dimension(i, j);
             if (isDifferentDisc(reverseTarget, isBlack)) {
@@ -669,8 +671,8 @@ public class Board {
     private int reverseDiscLeftDown(Dimension target, Boolean isBlack) {
         int reverseDisc = 0;
 
-        for (int i = target.getRow() + 1, j = target.getColumn() - 1; i >= 0 && i < size.getRow() && j >= 0
-                && j < size.getColumn(); i++, j--) {
+        for (int i = target.getRow() + 1, j = target.getColumn() - 1; i >= 0 && i < boardSize.getRow() && j >= 0
+                && j < boardSize.getColumn(); i++, j--) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension reverseTarget = new Dimension(i, j);
             if (isDifferentDisc(reverseTarget, isBlack)) {
@@ -692,8 +694,8 @@ public class Board {
     private int reverseDiscRightDown(Dimension target, Boolean isBlack) {
         int reverseDisc = 0;
 
-        for (int i = target.getRow() + 1, j = target.getColumn() + 1; i >= 0 && i < size.getRow() && j >= 0
-                && j < size.getColumn(); i++, j++) {
+        for (int i = target.getRow() + 1, j = target.getColumn() + 1; i >= 0 && i < boardSize.getRow() && j >= 0
+                && j < boardSize.getColumn(); i++, j++) {
             // プレイヤーが黒で石が白、またはプレイヤーが白で石が黒の場合、石を反転させる。
             Dimension reverseTarget = new Dimension(i, j);
             if (isDifferentDisc(reverseTarget, isBlack)) {
@@ -711,14 +713,14 @@ public class Board {
      */
     public void showCui() {
         System.out.printf(" ");
-        for (int j = 0; j < size.getColumn(); j++) {
+        for (int j = 0; j < boardSize.getColumn(); j++) {
             System.out.printf("  %c", Convert.convertIntToChar(j));
         }
         System.out.printf("\n");
 
-        for (int i = 0; i < size.getRow(); i++) {
+        for (int i = 0; i < boardSize.getRow(); i++) {
             System.out.printf("%2d", i + 1);
-            for (int j = 0; j < size.getColumn(); j++) {
+            for (int j = 0; j < boardSize.getColumn(); j++) {
                 if (board[i][j] == DiscStatus.BLACK) {
                     System.out.printf(" ◯");
                 } else if (board[i][j] == DiscStatus.WHITE) {

@@ -7,6 +7,7 @@ import common.Convert;
  * @author komoto
  */
 public class Dimension {
+    
     /** 行 */
     private int row;
 

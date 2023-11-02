@@ -2,12 +2,14 @@ package reversi;
 
 import algorithm.AlgorithmType;
 import common.Convert;
+import common.Global;
 
 /**
  * リバーシのゲームを定義・処理するクラス
  * @author komoto
  */
 public class Reversi {
+
     /** リバーシ盤状態を表す */
     private Board board;
 
@@ -32,7 +34,7 @@ public class Reversi {
      * @param typeWhite 後手・白が使用するアルゴリズム
      */
     public Reversi(AlgorithmType typeBlack, AlgorithmType typeWhite) {
-        board = new Board();
+        board = new Board(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
         playerBlack = new Player(true, typeBlack);
         playerWhite = new Player(false, typeWhite);
         turnCount = 1;

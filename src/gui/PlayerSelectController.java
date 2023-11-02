@@ -1,6 +1,7 @@
 package gui;
 
 import algorithm.AlgorithmType;
+import common.Global;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -25,15 +26,7 @@ import reversi.Reversi;
  * @author komoto
  */
 public class PlayerSelectController {
-    /** デフォルトで使用するアルゴリズムの要素番号 */
-    private final int DEFAULT_ALGORITHM = 0;
-
-    /** ラジオボタンのオブジェクトの幅 */
-    private final int RADIO_BUTTON_WIDTH = 280;
-
-    /** ラジオボタンのオブジェクトの高さ */
-    private final int RADIO_BUTTON_HEIGHT = 40;
-
+    
     /** フレーム情報 */
     private Stage primaryStage;
 
@@ -74,8 +67,8 @@ public class PlayerSelectController {
         setGridPane(whitePane, false);
 
         AlgorithmType[] algorithmTypes = AlgorithmType.values();
-        algorithmTypeBlack = algorithmTypes[DEFAULT_ALGORITHM];
-        algorithmTypeWhite = algorithmTypes[DEFAULT_ALGORITHM];
+        algorithmTypeBlack = algorithmTypes[Global.DEFAULT_ALGORITHM];
+        algorithmTypeWhite = algorithmTypes[Global.DEFAULT_ALGORITHM];
     }
 
     /**
@@ -91,10 +84,10 @@ public class PlayerSelectController {
             RadioButton radioButton = new RadioButton(String.format("%s", types[i]));
             radioButton.setId("select-radio-button");
             radioButton.setToggleGroup(group);
-            radioButton.setPrefWidth(RADIO_BUTTON_WIDTH);
-            radioButton.setPrefHeight(RADIO_BUTTON_HEIGHT);
+            radioButton.setPrefWidth(Global.RADIO_BUTTON_WIDTH);
+            radioButton.setPrefHeight(Global.RADIO_BUTTON_HEIGHT);
 
-            if (i == DEFAULT_ALGORITHM) {
+            if (i == Global.DEFAULT_ALGORITHM) {
                 radioButton.setSelected(true);
             }
             vbox.getChildren().add(radioButton);
@@ -163,7 +156,7 @@ public class PlayerSelectController {
 
         // 画面内に複数ペインを描画するために、StackPaneでルートペインを作成する
         AnchorPane rootPane = new AnchorPane();
-        rootPane.setPrefSize(previousPane.getPrefWidth(), previousPane.getPrefHeight());
+        rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
         rootPane.getChildren().add(reversiPane);
         AnchorPane.setTopAnchor(reversiPane, 0d);
         AnchorPane.setBottomAnchor(reversiPane, 0d);

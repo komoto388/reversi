@@ -1,5 +1,6 @@
 package gui;
 
+import common.Global;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -11,12 +12,6 @@ import javafx.fxml.FXMLLoader;
  * @author komoto
  */
 public class GuiMain extends Application {
-
-    /** ウィンドウの横幅 */
-    private final int ROOT_PANE_WIDTH = 1000;
-
-    /** ウィンドウの高さ */
-    private final int ROOT_PANE_HEIGHT = 800;
 
     /**
      * メインメソッド
@@ -53,7 +48,7 @@ public class GuiMain extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        rootPane.setPrefSize(ROOT_PANE_WIDTH, ROOT_PANE_HEIGHT);
+        rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
 
         PlayerSelectController controller = (PlayerSelectController) fxmlloader.getController();
         controller.init(primaryStage);

@@ -39,9 +39,12 @@ public class Original01 extends Algorithm {
                 int point = calcEvaluatePoint(board, playerIsBlack, target);
                 evaluate.add(target, point);
                 
-//                // デバッグ用
-//                if(point != MIN_POINT) {
+//                // 動作確認での表示用
+//                if(point > MIN_POINT) {
 //                    System.out.printf("座標: %s, 評価値: %d\n", target.getString(), point);
+//                }
+//                if(i == boardSize.getRow() - 1 && j == boardSize.getColumn() - 1) {
+//                    System.out.printf("\n");
 //                }
             }
         }

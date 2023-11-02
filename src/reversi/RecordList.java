@@ -8,6 +8,7 @@ import java.util.Queue;
  * @author komoto
  */
 public class RecordList {
+
     /** 棋譜情報を格納するキュー */
     private Queue<Record> recordList = new ArrayDeque<Record>();
 
@@ -17,6 +18,9 @@ public class RecordList {
     /** 1つ前の手番での白石の数 */
     private int previousWhiteNum;
 
+    /**
+     * 棋譜リストを初期化する
+     */
     public RecordList() {
         recordList = new ArrayDeque<Record>();
         previousBlackNum = 2;
@@ -36,7 +40,7 @@ public class RecordList {
         int increaseWhiteNum = whiteDiscNum - previousWhiteNum;
         previousBlackNum = blackDiscNum;
         previousWhiteNum = whiteDiscNum;
-        
+
         recordList.add(new Record(turn, playerIsBlack, target, blackDiscNum, whiteDiscNum, increaseBlackNum,
                 increaseWhiteNum));
     }
