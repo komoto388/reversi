@@ -1,5 +1,9 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
+.root {
+    -fx-font-family: "Meiryo UI";
+}
+
 #resultRootPane {
     -fx-background-color: white;
     -fx-border-color: black;
@@ -8,7 +12,6 @@
 
 /*文字ラベル（デフォルト）*/
 .label {
-    -fx-font-family: "Meiryo";
     -fx-font-size: 14;
 }
 

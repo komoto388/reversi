@@ -39,9 +39,6 @@ public class ReversiController {
     /** マスの大きさ（縦・横同じ） */
     private final double GRID_SIZE = 60;
 
-    //    /** 石の半径 */
-    //    private final double DISC_RADIUS = (GRID_SIZE / 2.0 - 10);
-
     /** フレーム情報 */
     private Stage stage;
 
@@ -122,7 +119,7 @@ public class ReversiController {
         }
 
         // 画面描画イベントを設定する
-        waitFrame = Convert.convertFrame(2000, FPS);
+        waitFrame = Convert.convertFrame(1000, FPS);
         timer = new Timeline(new KeyFrame(new Duration(1000 / FPS), new TimerHandler()));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();

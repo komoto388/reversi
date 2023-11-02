@@ -1,13 +1,10 @@
 package gui;
 
-import algorithm.AlgorithmType;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.fxml.FXMLLoader;
-import reversi.Reversi;
 
 /**
  * GUIのメイン処理を行うクラス
@@ -35,39 +32,35 @@ public class GuiMain extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        FXMLLoader fxmlloader = null;
-        BorderPane reversiPane = null;
-        Reversi reversi = new Reversi(AlgorithmType.Random, AlgorithmType.Random);
-
         // フレームの設定
         primaryStage.setTitle("リバーシ");
-        primaryStage.setWidth(ROOT_PANE_WIDTH);
-        primaryStage.setHeight(ROOT_PANE_HEIGHT);
         primaryStage.setResizable(false);
+        
+        startPlayerSelect(primaryStage);
+    }
 
-        // リバーシのゲーム画面の呼び出し
+    /**
+     * プレイヤーの使用アルゴリズムを選択する画面を表示する
+     * @param primaryStage ウィンドウのインスタンス
+     */
+    private void startPlayerSelect(Stage primaryStage) {
+        FXMLLoader fxmlloader = null;
+        VBox rootPane = null;
+
         try {
-            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Reversi.fxml"));
-            reversiPane = (BorderPane) fxmlloader.load();
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/PlayerSelect.fxml"));
+            rootPane = (VBox) fxmlloader.load();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        ReversiController controller = (ReversiController) fxmlloader.getController();
-        controller.init(primaryStage, reversi);
-
-        // 画面内に複数ペインを描画するために、StackPaneでルートペインを作成する
-        AnchorPane rootPane = new AnchorPane();
         rootPane.setPrefSize(ROOT_PANE_WIDTH, ROOT_PANE_HEIGHT);
-        rootPane.getChildren().add(reversiPane);
-        AnchorPane.setTopAnchor(reversiPane, 0d);
-        AnchorPane.setBottomAnchor(reversiPane, 0d);
-        AnchorPane.setLeftAnchor(reversiPane, 0d);
-        AnchorPane.setRightAnchor(reversiPane, 0d);
 
+        PlayerSelectController controller = (PlayerSelectController) fxmlloader.getController();
+        controller.init(primaryStage);
+        
         // 描画する画面をフレームに設定する
         Scene scene = new Scene(rootPane);
-        scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("../css/player-select.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.show();
