@@ -19,7 +19,10 @@ public class CuiMain {
 
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
-        reversi = new Reversi(AlgorithmType.Random, AlgorithmType.Random);
+
+        AlgorithmType typeBlack = selectAlgorithm("先手・黒");
+        AlgorithmType typeWhite = selectAlgorithm("後手・白");
+        reversi = new Reversi(typeBlack, typeWhite);
 
         ResultType result;
         do {
@@ -73,6 +76,50 @@ public class CuiMain {
         // 結果を表示し、ゲームを終了する
         showResult(result);
         scanner.close();
+    }
+
+    /**
+     * プレイヤーが使用するアルゴリズムを選択する
+     * @return 選択したアルゴリズムを表す値
+     */
+    private static AlgorithmType selectAlgorithm(String playerName) {
+        AlgorithmType[] typeList = AlgorithmType.values();
+        int inputNum = 0;
+
+        System.out.printf("%sが使用するアルゴリズムを選択してください。手動操作の場合は、「%s」を選択してください。\n", 
+                playerName, AlgorithmType.Manual);
+        
+        do {
+            for (int i = 0; i < typeList.length; i++) {
+                System.out.printf("%2d. %s\n", i + 1, typeList[i]);
+            }
+            System.out.printf("\n選択肢？: ");
+
+            try {
+                inputNum = scanner.nextInt();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("数字以外の文字は想定されていません。");
+                System.err.flush();
+                System.out.println("使用するアルゴリズムを再度入力してください");
+            }
+            
+            if (inputNum > 0 && inputNum <= typeList.length) {
+                // 範囲内の数値が入力された場合は、次の処理に進む
+                break;
+            } else {
+                // 範囲外の数値が入力された場合は、再入力を促す
+                System.err.println("想定されていない値です: " + inputNum);
+                System.err.flush();
+                System.out.println("使用するアルゴリズムを再度入力してください");
+                continue;
+            }
+        } while (true);
+        
+        AlgorithmType type = typeList[inputNum - 1];
+        System.out.printf("「%d. %s」が選択されました", inputNum, type);
+
+        return type;
     }
 
     /**
