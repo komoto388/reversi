@@ -2,6 +2,7 @@ package reversi;
 
 import algorithm.Algorithm;
 import algorithm.AlgorithmType;
+import algorithm.Original01;
 import algorithm.RandomAlgorithm;
 
 /**
@@ -34,6 +35,10 @@ public class Player {
         }
         case Random: {
             algorithm = new RandomAlgorithm();
+            break;
+        }
+        case Original_01: {
+            algorithm = new Original01();
             break;
         }
         default:

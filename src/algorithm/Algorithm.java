@@ -31,7 +31,7 @@ public abstract class Algorithm {
 
     /**
      * 石を置く座標を決定する
-     * @param reversi リバーシのゲーム情報
+     * @param board リバーシ盤の状態
      * @param playerIsBlack プレイヤーの石の色が黒かどうか
      * @return 決定した石を置く座標
      */
