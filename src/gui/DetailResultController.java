@@ -1,5 +1,6 @@
 package gui;
 
+import common.Global;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -10,6 +11,7 @@ import reversi.Board;
  * @author komoto
  */
 public class DetailResultController {
+
     /** 詳細結果を表示する画面のルートペイン */
     @FXML
     private VBox detailResultRootPane;
@@ -23,10 +25,7 @@ public class DetailResultController {
      * @param board リバーシ盤の盤面情報を持つインスタンス
      */
     public void init(Board board) {
-        // マスの大きさ（縦・横同じ）
-        final double GRID_SIZE = 50;
-
-        DisplayBoard displayBoard = new DisplayBoard(gridPane, board.getSize(), GRID_SIZE);
+        DisplayBoard displayBoard = new DisplayBoard(gridPane, board.getSize(), Global.GRID_SIZE_RESULT);
         displayBoard.drawStone(board);
     }
 }

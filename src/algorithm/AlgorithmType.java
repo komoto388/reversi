@@ -5,5 +5,5 @@ package algorithm;
  * @author komoto
  */
 public enum AlgorithmType {
-    Manual, Random
+    Manual, Random, Original_01
 }

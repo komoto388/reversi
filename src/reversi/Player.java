@@ -2,13 +2,15 @@ package reversi;
 
 import algorithm.Algorithm;
 import algorithm.AlgorithmType;
+import algorithm.Original01;
 import algorithm.RandomAlgorithm;
 
 /**
  * プレイヤーを定義・処理するクラス
  * @author komoto
  */
-public class Player {
+class Player {
+
     /** プレイヤーの石の色が黒かどうか */
     Boolean isBlack;
 
@@ -34,6 +36,10 @@ public class Player {
         }
         case Random: {
             algorithm = new RandomAlgorithm();
+            break;
+        }
+        case Original_01: {
+            algorithm = new Original01();
             break;
         }
         default:

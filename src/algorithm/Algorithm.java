@@ -10,8 +10,17 @@ import reversi.Dimension;
  * @author komoto
  */
 public abstract class Algorithm {
+    /** 評価関数のデフォルト値を表す定数 */
+    private final int DEFAULT_POINT = 0;
+    
+    /** 評価関数の最小値を表す定数 */
+    protected final int MIN_POINT = Integer.MIN_VALUE;
+
+    /** 評価関数の最大値を表す定数 */
+    protected final int MAX_POINT = Integer.MAX_VALUE;
+
     /** ランダム値を扱うインスタンス */
-    Random random;
+    protected Random random;
 
     /**
      * ランダムシード値を設定する
@@ -22,7 +31,7 @@ public abstract class Algorithm {
 
     /**
      * 石を置く座標を決定する
-     * @param reversi リバーシのゲーム情報
+     * @param board リバーシ盤の状態
      * @param playerIsBlack プレイヤーの石の色が黒かどうか
      * @return 決定した石を置く座標
      */
@@ -32,22 +41,27 @@ public abstract class Algorithm {
      * 評価関数を定義・処理するクラス
      */
     protected class Evaluate {
-        int[][] evaluateList;
-        Dimension maxPointDim = null;
-        int maxValue;
+        /** 各マスの評価値を格納する配列 */
+        private int[][] evaluateList;
+
+        /** 現時点での評価値が最大であるマスの座標 */
+        private Dimension maxPointDim;
+
+        /** 現時点での最大の評価値 */
+        private int maxPoint;
 
         /**
          * 評価関数を初期化する
          * @param boardSize リバーシ盤の大きさ
-         * @param defaultValue 評価の初期値
          */
-        public Evaluate(Dimension boardSize, int defaultValue) {
+        public Evaluate(Dimension boardSize) {
             evaluateList = new int[boardSize.getRow()][boardSize.getColumn()];
-            maxValue = defaultValue - 1;
+            maxPointDim = null;
+            maxPoint = MIN_POINT;
 
             for (int i = 0; i < boardSize.getRow(); i++) {
                 for (int j = 0; j < boardSize.getColumn(); j++) {
-                    evaluateList[i][j] = defaultValue;
+                    evaluateList[i][j] = DEFAULT_POINT;
                 }
             }
         }
@@ -97,9 +111,9 @@ public abstract class Algorithm {
          * @param target 評価値を更新した対象の座標
          */
         private void updateMaxPoint(Dimension target) {
-            if (evaluateList[target.getRow()][target.getColumn()] > maxValue) {
+            if (evaluateList[target.getRow()][target.getColumn()] > maxPoint) {
                 maxPointDim = target;
-                maxValue = evaluateList[target.getRow()][target.getColumn()];
+                maxPoint = evaluateList[target.getRow()][target.getColumn()];
             }
         }
     }

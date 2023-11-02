@@ -13,17 +13,18 @@ import reversi.Dimension;
  * @author komoto
  */
 public class DisplayBoard {
+
     /** マスの大きさ */
-    private final double GRID_SIZE;
+    private final double gridSize;
 
     /** 石の半径 */
-    private final double DISC_RADIUS;
+    private final double discRadius;
 
     /** リバーシ盤の幅（マス） */
-    private final int BOARD_WIDTH;
+    private final int boardWidth;
 
     /** リバーシ盤の高さ幅（マス） */
-    private final int BOARD_HEIGHT;
+    private final int boardHeight;
 
     /** 描画するリバーシ盤のマスの配列 */
     private Pane[][] boardPane;
@@ -35,53 +36,65 @@ public class DisplayBoard {
      * @param gridSize マス１つのサイズ（縦・横同じ） 
      */
     public DisplayBoard(GridPane gridPane, Dimension boardSize, double gridSize) {
-        this.GRID_SIZE = gridSize;
-        this.DISC_RADIUS = (gridSize / 2.0 - 10);
-        this.BOARD_WIDTH = boardSize.getColumn();
-        this.BOARD_HEIGHT = boardSize.getRow();
+        this.gridSize = gridSize;
+        this.discRadius = (gridSize / 2.0 - 10);
+        this.boardWidth = boardSize.getColumn();
+        this.boardHeight = boardSize.getRow();
 
-        boardPane = new Pane[BOARD_HEIGHT][BOARD_WIDTH];
+        boardPane = new Pane[boardHeight][boardWidth];
 
         // リバーシ盤のマス毎に描画する
-        for (int i = 0; i < BOARD_HEIGHT + 1; i++) {
-            for (int j = 0; j < BOARD_WIDTH + 1; j++) {
+        for (int i = 0; i < boardHeight + 1; i++) {
+            for (int j = 0; j < boardWidth + 1; j++) {
                 // リバーシ盤の上部に列番号を描画する
                 if (i == 0 && j > 0) {
-                    Label boardColumnNum = new Label(String.valueOf(Convert.convertIntToChar(j - 1)));
-                    boardColumnNum.setId("board-column-num");
-                    boardColumnNum.setPrefWidth(GRID_SIZE);
-                    boardColumnNum.setPrefHeight(GRID_SIZE / 2);
-                    gridPane.add(boardColumnNum, j, i);
+                    Label label = generateRecordLabel("board-column-num",
+                            String.valueOf(Convert.convertIntToChar(j - 1)));
+                    gridPane.add(label, j, i);
                     continue;
                 }
 
                 // リバーシ盤の左側に行番号を描画する
                 if (j == 0 && i > 0) {
-                    Label boardRowNum = new Label(Integer.toString(i));
-                    boardRowNum.setId("board-row-num");
-                    boardRowNum.setPrefWidth(GRID_SIZE / 2);
-                    boardRowNum.setPrefHeight(GRID_SIZE);
-                    gridPane.add(boardRowNum, j, i);
+                    Label label = generateRecordLabel("board-row-num", Integer.toString(i));
+                    gridPane.add(label, j, i);
                     continue;
                 }
 
                 // マスの描画を行う
                 if (i > 0 && j > 0) {
-                    boardPane[i - 1][j - 1] = new Pane();
-                    boardPane[i - 1][j - 1].setPrefWidth(GRID_SIZE);
+                    Pane pane = new Pane();
+                    pane.setPrefWidth(gridSize);
+                    pane.setPrefHeight(gridSize);
 
                     if ((i + j) % 2 == 0) {
-                        boardPane[i - 1][j - 1].setId("grid1");
+                        pane.setId("grid1");
                     } else {
-                        boardPane[i - 1][j - 1].setId("grid2");
+                        pane.setId("grid2");
                     }
 
                     // コンストラクタで生成した、リバーシ盤のマスを描画する
-                    // 行番号・列番号を描画する関係で座標が右下に1ズレているため、-1を付けている
-                    gridPane.add(boardPane[i - 1][j - 1], j, i);
+                    // 行番号・列番号を描画する関係で座標が右下に1ズレているため、boardPaneの要素番号に1を減算する。
+                    boardPane[i - 1][j - 1] = pane;
+                    gridPane.add(pane, j, i);
                 }
             }
         }
+    }
+
+    /**
+     * リバーシ盤の行番号・列番号のラベルを生成する
+     * @param fxId ラベルに付与するfxid
+     * @param numString 行番号または列番号に表示する文字列
+     * @return 生成した行番号・列番号のラベル
+     */
+    private Label generateRecordLabel(String fxId, String numString) {
+        Label boardLabel = new Label(numString);
+        boardLabel.setId(fxId);
+        boardLabel.setPrefWidth(gridSize);
+        boardLabel.setPrefHeight(gridSize);
+
+        return boardLabel;
     }
 
     /**
@@ -108,8 +121,8 @@ public class DisplayBoard {
      * @param board リバーシ盤の盤面情報
      */
     public void drawStone(Board board) {
-        for (int i = 0; i < BOARD_HEIGHT; i++) {
-            for (int j = 0; j < BOARD_WIDTH; j++) {
+        for (int i = 0; i < boardHeight; i++) {
+            for (int j = 0; j < boardWidth; j++) {
                 Dimension target = new Dimension(i, j);
 
                 // マスに描画されている石を消去する
@@ -117,9 +130,9 @@ public class DisplayBoard {
 
                 if (board.isEmpty(target) == false) {
                     // リバーシの石を描画する
-                    Circle circle = new Circle(DISC_RADIUS);
-                    circle.setLayoutX(GRID_SIZE / 2.0);
-                    circle.setLayoutY(GRID_SIZE / 2.0);
+                    Circle circle = new Circle(discRadius);
+                    circle.setLayoutX(gridSize / 2.0);
+                    circle.setLayoutY(gridSize / 2.0);
 
                     if (board.isBlack(target)) {
                         circle.setId("disc-black");

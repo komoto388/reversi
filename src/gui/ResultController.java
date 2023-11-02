@@ -1,5 +1,6 @@
 package gui;
 
+import common.Global;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +19,7 @@ import reversi.Reversi;
  * @author komoto
  */
 public class ResultController {
+
     /** フレーム情報 */
     private Stage stage;
 
@@ -100,7 +102,7 @@ public class ResultController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        pane.setPrefSize(640, 480);
+        pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
         DetailResultController controller = (DetailResultController) fxmlloader.getController();
         controller.init(reversi.getBoard());
@@ -122,7 +124,7 @@ public class ResultController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        pane.setPrefSize(640, 480);
+        pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
         RecordController controller = (RecordController) fxmlloader.getController();
         controller.init(reversi);

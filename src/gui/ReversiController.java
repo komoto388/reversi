@@ -1,6 +1,7 @@
 package gui;
 
 import common.Convert;
+import common.Global;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -27,17 +28,6 @@ import reversi.Reversi;
  * リバーシのゲーム画面を処理するコントローラー
  */
 public class ReversiController {
-    /** 1秒間に画面描画する回数(FPS) */
-    private final int FPS = 30;
-
-    /** 手動操作中の待ち時間（待ち状態を無限にする） */
-    private final int WAIT_INFINITE = -1;
-
-    /** ターン間のインターバル（ミリ秒） */
-    private final int INTERVAL_WAIT = 500;
-
-    /** マスの大きさ（縦・横同じ） */
-    private final double GRID_SIZE = 60;
 
     /** フレーム情報 */
     private Stage stage;
@@ -107,7 +97,7 @@ public class ReversiController {
 
         // リバーシ盤の描画を行う
         Dimension boardSize = reversi.getBoard().getSize();
-        displayBoard = new DisplayBoard(gridPane, boardSize, GRID_SIZE);
+        displayBoard = new DisplayBoard(gridPane, boardSize, Global.GRID_SIZE);
 
         // マスをクリックした時のイベントを設定する
         for (int i = 0; i < boardSize.getRow(); i++) {
@@ -119,8 +109,8 @@ public class ReversiController {
         }
 
         // 画面描画イベントを設定する
-        waitFrame = Convert.convertFrame(1000, FPS);
-        timer = new Timeline(new KeyFrame(new Duration(1000 / FPS), new TimerHandler()));
+        waitFrame = Convert.convertFrame(Global.WAIT_MILLISEC_START, Global.FPS);
+        timer = new Timeline(new KeyFrame(new Duration(1000 / Global.FPS), new TimerHandler()));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
     }
@@ -177,7 +167,7 @@ public class ReversiController {
                     // 石を置く処理を行う。手入力の場合は入力待ち、それ以外はアルゴリズムに従い処理を行う
                     if (reversi.isCurrentPlayerManual()) {
                         // 手動入力待ち状態にする。手動入力はここではなく、マウスのイベントハンドラーで処理する。
-                        setWaitMode(WAIT_INFINITE, true);
+                        setWaitMode(Global.WAIT_FRAME_INFINITE, true);
                     } else {
                         Dimension target = reversi.run();
                         play(target);
@@ -255,7 +245,7 @@ public class ReversiController {
             switch (result) {
             case None: {
                 reversi.next();
-                setWaitMode(INTERVAL_WAIT, false);
+                setWaitMode(Global.WAIT_MILLISEC_INTERVAL, false);
                 break;
             }
             case Drow:
@@ -284,9 +274,9 @@ public class ReversiController {
         Dimension boardSize = reversi.getBoard().getSize();
 
         if (waitMilliSec >= 0) {
-            waitFrame = Convert.convertFrame(waitMilliSec, FPS);
+            waitFrame = Convert.convertFrame(waitMilliSec, Global.FPS);
         } else {
-            waitFrame = WAIT_INFINITE;
+            waitFrame = Global.WAIT_FRAME_INFINITE;
         }
 
         for (int i = 0; i < boardSize.getRow(); i++) {

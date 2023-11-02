@@ -13,11 +13,13 @@ import reversi.Reversi;
  */
 public class RecordController {
 
-    @FXML
-    private Label recordHeaderLabel;
-
+    /** 棋譜を描画するグリッドペイン */
     @FXML
     private GridPane recordPane;
+    
+    /** 棋譜のヘッダー情報 */
+    @FXML
+    private Label recordHeaderLabel;
 
     /**
      * 棋譜を表示する
