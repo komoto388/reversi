@@ -4,8 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import reversi.Record;
-import reversi.RecordList;
-import reversi.Reversi;
 
 /**
  * 棋譜を表示するクラス

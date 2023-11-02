@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -48,6 +49,10 @@ public class ResultController {
     /** 棋譜を表示するタブ */
     @FXML
     private Tab recordTab;
+    
+    /** 推移グラフを表示するタブ */
+    @FXML
+    private Tab graphTab;
 
     /** ゲームを終了するボタン */
     @FXML
@@ -87,13 +92,15 @@ public class ResultController {
 
         // 各タブ内の画面を生成する
         generateDetailResultPane(detailResultTab, reversi);
-        RecordController recordController = generateRecordPane(recordTab, reversi);
+        RecordController recordController = generateRecordPane(recordTab);
+        GraphResultController graphResultController = generateGraphResultPane(graphTab);
         
-        // 棋譜を描画する
+        // 棋譜リストを元に、棋譜・グラフを描画する
         RecordList recordList = reversi.getRecordList();
         for (int i = 1; recordList.isEmpty() == false; i++) {
             Record record = recordList.poll();
             recordController.addRecord(i, record);
+            graphResultController.addData(i, record);
         }
     }
 
@@ -123,10 +130,9 @@ public class ResultController {
     /**
      * 棋譜画面を生成する
      * @param tabPane 生成したペインの描画先となるペイン
-     * @param reversi リバーシの処理を行うインスタンス
      * @param 棋譜画面のコントローラー
      */
-    private RecordController generateRecordPane(Tab tabPane, Reversi reversi) {
+    private RecordController generateRecordPane(Tab tabPane) {
         FXMLLoader fxmlloader = null;
         ScrollPane pane = null;
 
@@ -143,6 +149,28 @@ public class ResultController {
         return (RecordController) fxmlloader.getController();
     }
 
+    /**
+     * グラフ画面を生成する
+     * @param tabPane 生成したペインの描画先となるペイン
+     * @param グラフ画面のコントローラー
+     */
+    private GraphResultController generateGraphResultPane(Tab tabPane) {
+        FXMLLoader fxmlloader = null;
+        AnchorPane pane = null;
+
+        try {
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/GraphResult.fxml"));
+            pane = (AnchorPane) fxmlloader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
+
+        tabPane.setContent(pane);
+        
+        return (GraphResultController) fxmlloader.getController();
+    }
+    
     /**
      * 終了ボタンが押された時のウィンドウを閉じる
      * @param event イベントのインスタンス

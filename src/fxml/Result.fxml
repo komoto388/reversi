@@ -47,7 +47,8 @@
         <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
             <Tab fx:id="detailResultTab" text="最終盤面" />
-                <Tab fx:id="recordTab" text="棋譜" />
+            <Tab fx:id="recordTab" text="棋譜" />
+            <Tab fx:id="graphTab" text="推移" />
             </tabs>
         </TabPane>
     </center>
