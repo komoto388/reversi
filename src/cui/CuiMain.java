@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import algorithm.AlgorithmType;
 import common.Convert;
-import common.Global;
 import reversi.Dimension;
 import reversi.ResultType;
 import reversi.Reversi;

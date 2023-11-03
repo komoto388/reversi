@@ -1,5 +1,7 @@
 package reversi;
 
+import java.rmi.UnexpectedException;
+
 import algorithm.Algorithm;
 import algorithm.AlgorithmType;
 import algorithm.Original01;
@@ -12,13 +14,21 @@ import common.Global;
  */
 class Player {
 
-    /** プレイヤーの石の色が黒かどうか */
-    Boolean isBlack;
+    /**
+     * 使用する石の色を表す
+     */
+    private enum DiscColor {
+        BLACK, WHITE
+    }
+
+    /** プレイヤーが使用する石の色を表す */
+    private DiscColor discColor;
 
     /** プレイヤーが使用するアルゴリズムの種類 */
-    AlgorithmType type;
+    private AlgorithmType algorithmType;
 
-    Algorithm algorithm;
+    /** プレイヤーが使用するアルゴリズムのインスタンス */
+    private Algorithm algorithm;
 
     /**
      * プレイヤーの初期設定を行う。
@@ -42,8 +52,12 @@ class Player {
             System.exit(exitCode);
         }
 
-        this.isBlack = isBlack;
-        this.type = type;
+        if (isBlack) {
+            this.discColor = DiscColor.BLACK;
+        } else {
+            this.discColor = DiscColor.WHITE;
+        }
+        this.algorithmType = type;
 
         switch (type) {
         case Manual: {
@@ -64,11 +78,23 @@ class Player {
     }
 
     /**
+     * プレイヤーの石の色が黒かどうか
+     * @return 使用する石の色が黒の場合は真 {@code true}, 白の場合は偽 {@code false} を返す。
+     */
+    public Boolean isDiscBlack() {
+        if (discColor == DiscColor.BLACK) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * プレイヤーの使用するアルゴリズムが手動か返す
-     * @return 使用アルゴリズムがマニュアルの場合は {@code true}, それ以外の場合は {@code false} を返す。
+     * @return 使用アルゴリズムがマニュアルの場合は真 {@code true}, それ以外の場合は偽 {@code false} を返す。
      */
     public Boolean isManual() {
-        if (type == AlgorithmType.Manual) {
+        if (algorithmType == AlgorithmType.Manual) {
             return true;
         } else {
             return false;
@@ -77,16 +103,15 @@ class Player {
 
     /**
      * 石を置く座標を決定する
-     * @param reversi リバーシのゲーム情報
-     * @param playerIsBlack プレイヤーの石の色が黒かどうか
-     * @return 決定した石を置く座標
-     * @throws IllegalAccessException アルゴリズムがマニュアルの場合に呼ばれた場合、エラーを返す
+     * @param board リバーシ盤の情報
+     * @return 決定した石を置く座標を返す。例外などにより決定できなかった場合は{@code NULL} を返す。
+     * @throws UnexpectedException 手動アルゴリズムでの実行は想定されていない
      */
-    public Dimension run(Board board, Boolean playerIsBlack) throws IllegalAccessException {
-        if (type != AlgorithmType.Manual) {
-            return algorithm.run(board, playerIsBlack);
+    public Dimension run(Board board) throws UnexpectedException {
+        if (algorithmType != AlgorithmType.Manual) {
+            return algorithm.run(board, isDiscBlack());
         } else {
-            throw new IllegalAccessException("Unexpected Algorithm Type; Manual");
+            throw new UnexpectedException("手動アルゴリズムでの動作は想定されていません: " + algorithmType);
         }
     }
 }

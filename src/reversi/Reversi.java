@@ -1,5 +1,7 @@
 package reversi;
 
+import java.rmi.UnexpectedException;
+
 import algorithm.AlgorithmType;
 import common.Convert;
 import common.Global;
@@ -19,8 +21,8 @@ public class Reversi {
     /** 白側のプレイヤー */
     private Player playerWhite;
 
-    /** 現在のプレイヤーが黒かどうかを表す */
-    private Boolean playerIsBlack;
+    /** 現在プレイしているプレイヤー */
+    private Player currentPlayer;
 
     /** 経過したターン数 */
     private int turnCount;
@@ -62,8 +64,8 @@ public class Reversi {
         board = new Board(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
         playerBlack = new Player(true, typeBlack);
         playerWhite = new Player(false, typeWhite);
+        currentPlayer = playerBlack;
         turnCount = 1;
-        playerIsBlack = true;
         recordList = new RecordList();
     }
 
@@ -88,7 +90,7 @@ public class Reversi {
      * @return 現在の経過ターン数
      */
     public Boolean getPlayerIsBlack() {
-        return playerIsBlack;
+        return currentPlayer.isDiscBlack();
     }
 
     /**
@@ -104,8 +106,8 @@ public class Reversi {
      * @return 手動操作のプレイヤーである場合は真 {@code true}、自動処理のプレイヤーの場合は偽 {@code false} を返す。
      */
     public Boolean isCurrentPlayerManual() {
-        if ((playerIsBlack && playerBlack.isManual()) ||
-                (playerIsBlack == false && playerWhite.isManual())) {
+        if ((currentPlayer.isDiscBlack() && playerBlack.isManual()) ||
+                (currentPlayer.isDiscBlack() == false && playerWhite.isManual())) {
             return true;
         } else {
             return false;
@@ -118,17 +120,10 @@ public class Reversi {
      */
     public Dimension run() {
         Dimension target = null;
-        Player currentPlayer;
-
-        if (playerIsBlack) {
-            currentPlayer = playerBlack;
-        } else {
-            currentPlayer = playerWhite;
-        }
 
         try {
-            target = currentPlayer.run(board, playerIsBlack);
-        } catch (IllegalAccessException e) {
+            target = currentPlayer.run(board);
+        } catch (UnexpectedException e) {
             e.printStackTrace();
             target = null;
         }
@@ -141,10 +136,11 @@ public class Reversi {
      * @return スキップの場合は真 {@code true}、石を置ける場所がありスキップでない場合は偽 {@code false} を返す。
      */
     public Boolean isSkip() {
-        if (board.canPutAll(playerIsBlack)) {
+        if (board.canPutAll(currentPlayer.isDiscBlack())) {
             return false;
         } else {
-            recordList.addSkip(turnCount, playerIsBlack, board.getBlackDiscNum(), board.getWhiteDiscNum());
+            recordList.addSkip(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(),
+                    board.getWhiteDiscNum());
             return true;
         }
     }
@@ -164,7 +160,7 @@ public class Reversi {
         // ボードに石を置く処理
         Boolean isPut = false;
         try {
-            isPut = board.put(target, playerIsBlack);
+            isPut = board.put(target, currentPlayer.isDiscBlack());
         } catch (IllegalArgumentException e) {
             // 石を置く処理で例外が発生した場合、異常終了する
             int exitCode = Global.EXIT_FAILURE;
@@ -175,7 +171,7 @@ public class Reversi {
 
         // 棋譜を記録する
         if (isPut) {
-            recordList.add(turnCount, playerIsBlack, board.getBlackDiscNum(), board.getWhiteDiscNum(),
+            recordList.add(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(), board.getWhiteDiscNum(),
                     target.getString());
         }
 
@@ -215,10 +211,10 @@ public class Reversi {
         turnCount++;
 
         // 次に打つプレイヤーを入れ替える
-        if (playerIsBlack) {
-            playerIsBlack = false;
+        if (currentPlayer.isDiscBlack()) {
+            currentPlayer = playerWhite;
         } else {
-            playerIsBlack = true;
+            currentPlayer = playerBlack;
         }
     }
 
@@ -228,6 +224,6 @@ public class Reversi {
     public void showBoardCui() {
         System.out.printf("(%d手目)\n", turnCount);
         board.showCui();
-        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(playerIsBlack));
+        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(currentPlayer.isDiscBlack()));
     }
 }
