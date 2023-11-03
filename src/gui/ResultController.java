@@ -1,6 +1,5 @@
 package gui;
 
-import algorithm.AlgorithmType;
 import common.Global;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

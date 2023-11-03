@@ -48,9 +48,6 @@ public class Global {
     /** 1秒間に画面描画する回数(FPS) */
     public static final int FPS = 30;
 
-    /** プレイヤーの入力待ち状態の時に設定する値（値の変更不可） */
-    public static final int WAIT_FRAME_INFINITE = -1;
-
     /** 最初に画面描写してからゲーム開始するまでに処理を待つ時間（ミリ秒） */
     public static final int WAIT_MILLISEC_START = 800;
 
