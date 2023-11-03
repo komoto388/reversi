@@ -2,6 +2,13 @@ package common;
 
 public class Global {
 
+    /* システムに関する定数 */
+    /** 正常終了時の終了コード */
+    public static final int EXIT_SUCCESS = 0;
+
+    /** 何らかの理由による異常終了時の終了コード */
+    public static final int EXIT_FAILURE = 1;
+    
     /* リバーシに関する定数 */
     /** リバーシ盤の幅（マス） */
     public static final int BOARD_WIDTH = 8;

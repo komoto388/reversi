@@ -10,6 +10,7 @@ import reversi.Dimension;
  * @author komoto
  */
 public abstract class Algorithm {
+    
     /** 評価関数のデフォルト値を表す定数 */
     private final int DEFAULT_POINT = 0;
     
@@ -24,9 +25,10 @@ public abstract class Algorithm {
 
     /**
      * ランダムシード値を設定する
+     * @param seed 乱数生成のseed値
      */
-    public Algorithm() {
-        random = new Random(System.currentTimeMillis());
+    public Algorithm(long seed) {
+        random = new Random(seed);
     }
 
     /**
@@ -71,11 +73,15 @@ public abstract class Algorithm {
          * @return 評価値が最大の座標
          */
         public Dimension getMaxPointDimension() {
-            if (maxPointDim != null) {
-                return maxPointDim;
-            } else {
-                throw new NullPointerException("値が存在しません。評価が未実施の可能性があります。");
+            try {
+                if (maxPointDim == null) {
+                    throw new NullPointerException("評価値が最大の座標がありません。評価が1度も実行されていない可能性があります。");
+                } 
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            
+            return maxPointDim;
         }
 
         /**

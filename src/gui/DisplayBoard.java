@@ -1,6 +1,7 @@
 package gui;
 
 import common.Convert;
+import common.Global;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -36,6 +37,24 @@ public class DisplayBoard {
      * @param gridSize マス１つのサイズ（縦・横同じ） 
      */
     public DisplayBoard(GridPane gridPane, Dimension boardSize, double gridSize) {
+        // 引数の正常性確認
+        try {
+            if (gridPane == null) {
+                throw new IllegalArgumentException("引数 \"gridPane\" の値が NULL です");
+            }
+            if (boardSize == null) {
+                throw new IllegalArgumentException("引数 \"boardSize\" の値が NULL です");
+            }
+            if (gridSize <= 0) {
+                throw new IllegalArgumentException("引数 \"gridSize\" の値が0以下です: " + gridSize);
+            }
+        } catch (IllegalArgumentException e) {
+            int exitCode = Global.EXIT_FAILURE;
+            e.printStackTrace();
+            System.err.println("引数が想定されていない値のため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
+        }
+
         this.gridSize = gridSize;
         this.discRadius = (gridSize / 2.0 - 10);
         this.boardWidth = boardSize.getColumn();
