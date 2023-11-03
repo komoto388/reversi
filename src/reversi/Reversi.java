@@ -61,9 +61,11 @@ public class Reversi {
         }
 
         // リバーシの初期化を行う
+        // Playerクラスに与える乱数のseed値について、Playerでseed値が異なるように差をつける
+        long seed = System.currentTimeMillis();
         board = new Board(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
-        playerBlack = new Player(true, typeBlack);
-        playerWhite = new Player(false, typeWhite);
+        playerBlack = new Player(seed, true, typeBlack);
+        playerWhite = new Player(seed + 100, false, typeWhite);
         currentPlayer = playerBlack;
         turnCount = 1;
         recordList = new RecordList();
@@ -183,25 +185,49 @@ public class Reversi {
      * @return 結果を返す。勝敗がつかない場合は {@code Result.None} を返す。
      */
     public ResultType judge() {
-        if (board.getEmptyNum() > 0) {
-            // 盤上に空きがあっても片方の石が全てなくなった場合は勝敗をつける。
-            if (board.getWhiteDiscNum() <= 0 && board.getBlackDiscNum() > 0) {
-                return ResultType.Black;
-            }
-            if (board.getBlackDiscNum() <= 0 && board.getWhiteDiscNum() > 0) {
-                return ResultType.White;
+        ResultType result;
+        if (isGameFinish()) {
+            if (board.getBlackDiscNum() == board.getWhiteDiscNum()) {
+                result = ResultType.Drow;
+            } else if (board.getBlackDiscNum() > board.getWhiteDiscNum()) {
+                result = ResultType.Black;
+            } else {
+                result = ResultType.White;
             }
         } else {
-            // 盤上に空きがない場合は石の多さで勝敗をつける。
-            if (board.getBlackDiscNum() == board.getWhiteDiscNum()) {
-                return ResultType.Drow;
-            } else if (board.getBlackDiscNum() > board.getWhiteDiscNum()) {
-                return ResultType.Black;
-            } else {
-                return ResultType.White;
-            }
+            result = ResultType.None;
         }
-        return ResultType.None;
+        return result;
+    }
+
+    /**
+     * ゲーム終了を判定する
+     * @return ゲーム終了の場合は真 {@code true}, 続行の場合は偽 {@code false} を返す。
+     */
+    private Boolean isGameFinish() {
+        // 盤上に空きがない場合
+        if (board.getEmptyNum() <= 0) {
+            return true;
+        }
+
+        // 片方のプレイヤーの石が0個になった場合
+        if (board.getBlackDiscNum() <= 0 || board.getWhiteDiscNum() <= 0) {
+            return true;
+        }
+
+        // 両プレイヤーともに石を置く位置がなく、ともにスキップする場合
+        if (board.canPutAll(true) == false && board.canPutAll(false) == false) {
+            // 両者スキップする棋譜を追加する
+            Boolean isPlayerBlack = currentPlayer.isDiscBlack();
+            int blackDiscNum = board.getBlackDiscNum();
+            int whiteDiscNum = board.getWhiteDiscNum();
+            recordList.addSkip(++turnCount, isPlayerBlack, blackDiscNum, whiteDiscNum);
+            recordList.addSkip(++turnCount, !isPlayerBlack, blackDiscNum, whiteDiscNum);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

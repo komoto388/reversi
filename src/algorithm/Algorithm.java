@@ -2,7 +2,6 @@ package algorithm;
 
 import java.util.Random;
 
-import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 
@@ -11,6 +10,7 @@ import reversi.Dimension;
  * @author komoto
  */
 public abstract class Algorithm {
+    
     /** 評価関数のデフォルト値を表す定数 */
     private final int DEFAULT_POINT = 0;
     
@@ -25,9 +25,10 @@ public abstract class Algorithm {
 
     /**
      * ランダムシード値を設定する
+     * @param seed 乱数生成のseed値
      */
-    public Algorithm() {
-        random = new Random(System.currentTimeMillis());
+    public Algorithm(long seed) {
+        random = new Random(seed);
     }
 
     /**

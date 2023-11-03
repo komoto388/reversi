@@ -33,10 +33,11 @@ class Player {
     /**
      * プレイヤーの初期設定を行う。
      * 使用するアルゴリズムを決定する。
+     * @param seed プレイヤーがアルゴリズムを使用する際に使用する乱数のseed値
      * @param isBlack プレイヤーの石の色が黒かどうか
      * @param type 使用するアルゴリズムの種類
      */
-    public Player(Boolean isBlack, AlgorithmType type) {
+    public Player(long seed, Boolean isBlack, AlgorithmType type) {
         // 引数の正常性確認
         try {
             if (isBlack == null) {
@@ -65,11 +66,11 @@ class Player {
             break;
         }
         case Random: {
-            algorithm = new RandomAlgorithm();
+            algorithm = new RandomAlgorithm(seed);
             break;
         }
         case Original_01: {
-            algorithm = new Original01();
+            algorithm = new Original01(seed);
             break;
         }
         default:
