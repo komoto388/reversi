@@ -27,12 +27,28 @@ public class Board {
     /** 現在の白石の数 */
     private int whiteDiscNum;
 
-    public Board(int boardWidth, int boardHeight) {
+    /**
+     * リバーシ盤の初期化を行う
+     * @param boardWidth リバーシ盤の幅（マス）
+     * @param boardHeight リバーシ盤の高さ（マス）
+     * @throws IllegalArgumentException いずれかの引数が {@code 0} 以下の場合、エラーとする。
+     */
+    public Board(int boardWidth, int boardHeight) throws IllegalArgumentException {
+        // 引数の正常性確認
+        if (boardWidth <= 0) {
+            throw new IllegalArgumentException("リバーシ盤の幅の値は0より大きい値を指定してください: " + boardWidth);
+        }
+        if (boardHeight <= 0) {
+            throw new IllegalArgumentException("リバーシ盤の高さの値は0より大きい値を指定してください: " + boardHeight);
+        }
+
+        // フィールドの初期化
         this.board = new DiscStatus[boardHeight][boardWidth];
         this.boardSize = new Dimension(boardHeight, boardWidth);
         this.blackDiscNum = 0;
         this.whiteDiscNum = 0;
 
+        // リバーシ盤の生成・初期化
         for (int i = 0; i < boardHeight; i++) {
             for (int j = 0; j < boardWidth; j++) {
                 // 盤の中心に初期の石を設置する
@@ -87,13 +103,8 @@ public class Board {
      * 石が黒かどうかを返す
      * @param target 調べる石の座標
      * @return 黒であれば真 {@code true}、それ以外（白、空）であれば偽 {@code false} を返す。
-     * @throws NullPointerException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean isBlack(Dimension target) throws NullPointerException {
-        if (target == null) {
-            throw new NullPointerException("変数がNullです。 \"target\"\n");
-        }
-
+    public Boolean isBlack(Dimension target) {
         if (board[target.getRow()][target.getColumn()] == DiscStatus.BLACK) {
             return true;
         } else {
@@ -105,13 +116,8 @@ public class Board {
      * 石が白かどうかを返す
      * @param target 調べる石の座標
      * @return 白であれば真 {@code true}、それ以外（黒、空）であれば偽 {@code false} を返す。
-     * @throws NullPointerException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean isWhite(Dimension target) throws NullPointerException {
-        if (target == null) {
-            throw new NullPointerException("変数がNullです。 \"target\"\n");
-        }
-
+    public Boolean isWhite(Dimension target) {
         if (board[target.getRow()][target.getColumn()] == DiscStatus.WHITE) {
             return true;
         } else {
@@ -123,13 +129,8 @@ public class Board {
      * 石が置かれていないかどうかを返す
      * @param target 調べる石の座標
      * @return 未設置であれば真 {@code true}、設置済みであれば偽 {@code false} を返す。
-     * @throws NullPointerException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean isEmpty(Dimension target) throws NullPointerException {
-        if (target == null) {
-            throw new NullPointerException("変数がNullです。 \"target\"\n");
-        }
-
+    public Boolean isEmpty(Dimension target) {
         if (board[target.getRow()][target.getColumn()] == DiscStatus.EMPTY) {
             return true;
         } else {
@@ -142,18 +143,10 @@ public class Board {
      * @param target 石を置く座標
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
      * @return 設置できる場合は真 {@code true}、石を設置できない場合は偽 {@code false} を返す。
-     * @throws NullPointerException 引数 {@code target, isBlack} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean canPut(Dimension target, Boolean isBlack) throws NullPointerException {
-        if (target == null) {
-            throw new NullPointerException("変数がNullです。 \"target\"\n");
-        }
-        if (isBlack == null) {
-            throw new NullPointerException("変数がNullです。 \"isBlack\"\n");
-        }
-
+    public Boolean canPut(Dimension target, Boolean isBlack) {
         // マスに石が既に置かれていない確認する
-        if (board[target.getRow()][target.getColumn()] != DiscStatus.EMPTY) {
+        if (isEmpty(target) == false) {
             return false;
         }
 
@@ -206,16 +199,8 @@ public class Board {
      * @param target 対象の石の座標
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
      * @return 石の色が異なる場合は真 {@true}, 同じ場合は偽 {@code false} を返す。
-     * @throws NullPointerException 引数 {@code target, isBlack} が {@code NULL} の場合、エラーを返す。
      */
-    private Boolean isDifferentDisc(Dimension target, Boolean isBlack) throws NullPointerException {
-        if (target == null) {
-            throw new NullPointerException("変数がNullです。 \"target\"\n");
-        }
-        if (isBlack == null) {
-            throw new NullPointerException("変数がNullです。 \"isBlack\"\n");
-        }
-
+    private Boolean isDifferentDisc(Dimension target, Boolean isBlack) {
         int row = target.getRow();
         int column = target.getColumn();
 
@@ -232,18 +217,10 @@ public class Board {
      * @param target 石を置く座標
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
      * @return 反転可能な石の数を返す
-     * @throws NullPointerException 引数 {@code target, isBlack} が {@code NULL} の場合、エラーを返す。
      */
-    public int countReversibleDisc(Dimension target, Boolean isBlack) throws NullPointerException {
-        if (target == null) {
-            throw new NullPointerException("変数がNullです。 \"target\"\n");
-        }
-        if (isBlack == null) {
-            throw new NullPointerException("変数がNullです。 \"isBlack\"\n");
-        }
-
+    public int countReversibleDisc(Dimension target, Boolean isBlack) {
         // マスに石が既に置かれていない確認する
-        if (board[target.getRow()][target.getColumn()] != DiscStatus.EMPTY) {
+        if (isEmpty(target) == false) {
             return 0;
         }
 
@@ -447,14 +424,15 @@ public class Board {
      * @param target 石を置く座標
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
      * @return 石を設置できる場合は真 {@code true}、設置できない場合は偽 {@code false} を返す。
-     * @throws NullPointerException 引数 {@code target, isBlack} が {@code NULL} の場合、エラーを返す。
+     * @throws IllegalArgumentException 引数 {@code target, isBlack} のいずれかが {@code NULL} の場合、エラーを返す。
      */
-    public Boolean put(Dimension target, Boolean isBlack) throws NullPointerException {
+    public Boolean put(Dimension target, Boolean isBlack) throws IllegalArgumentException {
+        // 引数の正常性確認
         if (target == null) {
-            throw new NullPointerException("変数がNullです。 \"target\"\n");
+            throw new IllegalArgumentException("引数 \"target\" が NULL です。");
         }
         if (isBlack == null) {
-            throw new NullPointerException("変数がNullです。 \"isBlack\"\n");
+            throw new IllegalArgumentException("引数 \"isBlack\" が NULL です。");
         }
 
         // 対象の位置に石を置けるか判定する

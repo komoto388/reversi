@@ -25,6 +25,18 @@ public class DetailResultController {
      * @param board リバーシ盤の盤面情報を持つインスタンス
      */
     public void init(Board board) {
+        // 引数の正常性確認
+        try {
+            if (board == null) {
+                throw new IllegalArgumentException("引数 \"board\" が NULL です。");
+            }
+        } catch (IllegalArgumentException e) {
+            int exitCode = Global.EXIT_FAILURE;
+            e.printStackTrace();
+            System.err.println("引数が想定されていない値のため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
+        }
+
         DisplayBoard displayBoard = new DisplayBoard(gridPane, board.getSize(), Global.GRID_SIZE_RESULT);
         displayBoard.drawStone(board);
     }

@@ -43,7 +43,6 @@ public class Output {
 
     /**
      * エラーを表示する
-     * @param str エラーとして表示する、書式付きの説明文
      * @param args 説明文の引数
      */
     public static void printfAsError(String str, Object... args) {

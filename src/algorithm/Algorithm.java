@@ -2,6 +2,7 @@ package algorithm;
 
 import java.util.Random;
 
+import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 
@@ -71,11 +72,15 @@ public abstract class Algorithm {
          * @return 評価値が最大の座標
          */
         public Dimension getMaxPointDimension() {
-            if (maxPointDim != null) {
-                return maxPointDim;
-            } else {
-                throw new NullPointerException("値が存在しません。評価が未実施の可能性があります。");
+            try {
+                if (maxPointDim == null) {
+                    throw new NullPointerException("評価値が最大の座標がありません。評価が1度も実行されていない可能性があります。");
+                } 
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            
+            return maxPointDim;
         }
 
         /**

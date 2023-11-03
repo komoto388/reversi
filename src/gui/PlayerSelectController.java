@@ -26,15 +26,15 @@ import reversi.Reversi;
  * @author komoto
  */
 public class PlayerSelectController {
-    
+
     /** フレーム情報 */
     private Stage primaryStage;
 
     /** 先手・黒側の使用アルゴリズム */
-    AlgorithmType algorithmTypeBlack;
+    private AlgorithmType algorithmTypeBlack;
 
     /** 後手・白側の使用アルゴリズム */
-    AlgorithmType algorithmTypeWhite;
+    private AlgorithmType algorithmTypeWhite;
 
     /** 先手・黒側のラベル */
     @FXML
@@ -61,6 +61,18 @@ public class PlayerSelectController {
      * @param primaryStage フレーム情報
      */
     public void init(Stage primaryStage) {
+        // 引数の正常性確認
+        try {
+            if (primaryStage == null) {
+                throw new IllegalArgumentException("引数 \"primaryStage\" の値が NULL です");
+            }
+        } catch (IllegalArgumentException e) {
+            int exitCode = Global.EXIT_FAILURE;
+            e.printStackTrace();
+            System.err.println("引数が想定されていない値のため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
+        }
+
         this.primaryStage = primaryStage;
 
         setGridPane(blackPane, true);
@@ -100,7 +112,7 @@ public class PlayerSelectController {
      */
     private class ToggleButtonEvent implements ChangeListener<Toggle> {
         /** 制御しているのは先手・黒のラジオボタンか */
-        Boolean isBlack;
+        private Boolean isBlack;
 
         /**
          * ラジオボタンの情報の反映先を設定する
@@ -137,18 +149,19 @@ public class PlayerSelectController {
     void onStartButtonAction(ActionEvent event) {
         FXMLLoader fxmlloader = null;
         BorderPane reversiPane = null;
-
-        // 現在描画されているペインを取得する
-        Pane previousPane = (Pane) primaryStage.getScene().getRoot();
+        String fxmlFile = "../fxml/Reversi.fxml";
 
         // リバーシのゲーム画面の呼び出し
         Reversi reversi = new Reversi(algorithmTypeBlack, algorithmTypeWhite);
-        
+
         try {
-            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Reversi.fxml"));
+            fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
             reversiPane = (BorderPane) fxmlloader.load();
         } catch (Exception e) {
+            int exitCode = Global.EXIT_FAILURE;
             e.printStackTrace();
+            System.err.println(fxmlFile + "の読み込みで例外が発生したため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
         }
 
         ReversiController controller = (ReversiController) fxmlloader.getController();

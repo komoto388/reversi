@@ -4,6 +4,7 @@ import algorithm.Algorithm;
 import algorithm.AlgorithmType;
 import algorithm.Original01;
 import algorithm.RandomAlgorithm;
+import common.Global;
 
 /**
  * プレイヤーを定義・処理するクラス
@@ -26,6 +27,21 @@ class Player {
      * @param type 使用するアルゴリズムの種類
      */
     public Player(Boolean isBlack, AlgorithmType type) {
+        // 引数の正常性確認
+        try {
+            if (isBlack == null) {
+                throw new IllegalArgumentException("引数 \"isBlack\" の値が NULL です");
+            }
+            if (type == null) {
+                throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
+            }
+        } catch (IllegalArgumentException e) {
+            int exitCode = Global.EXIT_FAILURE;
+            e.printStackTrace();
+            System.err.println("引数が想定されていない値のため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
+        }
+
         this.isBlack = isBlack;
         this.type = type;
 

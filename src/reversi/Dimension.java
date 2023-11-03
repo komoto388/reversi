@@ -7,7 +7,7 @@ import common.Convert;
  * @author komoto
  */
 public class Dimension {
-    
+
     /** 行 */
     private int row;
 
@@ -20,6 +20,22 @@ public class Dimension {
      * @param column 列の値
      */
     public Dimension(int row, int column) {
+        // 引数の正常性確認
+        try {
+            if (row < 0) {
+                throw new IllegalArgumentException("引数 \"row\" の値が0未満です: " + row);
+            }
+
+            if (row < 0) {
+                throw new IllegalArgumentException("引数 \"column\" の値が0未満です: " + column);
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            System.err.println("row, columの値を0に設定します");
+            row = 0;
+            column = 0;
+        }
+
         this.row = row;
         this.column = column;
     }

@@ -14,10 +14,10 @@ public class Reversi {
     private Board board;
 
     /** 黒側のプレイヤー */
-    Player playerBlack = null;
+    private Player playerBlack;
 
     /** 白側のプレイヤー */
-    Player playerWhite = null;
+    private Player playerWhite;
 
     /** 現在のプレイヤーが黒かどうかを表す */
     private Boolean playerIsBlack;
@@ -26,7 +26,7 @@ public class Reversi {
     private int turnCount;
 
     /** 棋譜の記録を行うインスタンス */
-    RecordList recordList;
+    private RecordList recordList;
 
     /**
      * リバーシ盤の初期化を行う
@@ -34,6 +34,31 @@ public class Reversi {
      * @param typeWhite 後手・白が使用するアルゴリズム
      */
     public Reversi(AlgorithmType typeBlack, AlgorithmType typeWhite) {
+        // 引数の正常性確認
+        // アルゴリズムの指定が空の場合は、エラーを出力してデフォルトのアルゴリズムを設定する。
+        try {
+            if (typeBlack == null) {
+                throw new IllegalArgumentException("先手・黒のアルゴリズム \"typeBlack\" が NULL です。");
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            AlgorithmType[] types = AlgorithmType.values();
+            typeBlack = types[Global.DEFAULT_ALGORITHM];
+            System.err.printf("先手・黒のアルゴリズムをデフォルトの %s に設定します。", typeBlack);
+        }
+
+        try {
+            if (typeWhite == null) {
+                throw new IllegalArgumentException("後手・白のアルゴリズム \"typeWhite\" が NULL です。");
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            AlgorithmType[] types = AlgorithmType.values();
+            typeWhite = types[Global.DEFAULT_ALGORITHM];
+            System.err.printf("後手・白のアルゴリズムをデフォルトの %s に設定します。", typeWhite);
+        }
+
+        // リバーシの初期化を行う
         board = new Board(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
         playerBlack = new Player(true, typeBlack);
         playerWhite = new Player(false, typeWhite);
@@ -89,7 +114,7 @@ public class Reversi {
 
     /**
      * プレイヤー毎のアルゴリズムに基づき、石を打つ座標を決定する
-     * @return 石を打つ座業
+     * @return 石を打つ座標。算出できない場合は{@code NULL}を返す。
      */
     public Dimension run() {
         Dimension target = null;
@@ -105,7 +130,9 @@ public class Reversi {
             target = currentPlayer.run(board, playerIsBlack);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            target = null;
         }
+
         return target;
     }
 
@@ -123,15 +150,35 @@ public class Reversi {
     }
 
     /**
-     * 石を置く
+     * 現在のプレイヤーの石をリバーシ盤に置く
      * @param target 石を置く座標
      * @return 対象の座標に石を置いた場合は真 {@code true}、ルールにより石を置けない場合は偽 {@code false} を返す。
+     * @throws IllegalArgumentException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean put(Dimension target) {
-        Boolean isPut = board.put(target, playerIsBlack);
-        if (isPut) {
-            recordList.add(turnCount, playerIsBlack, target, board.getBlackDiscNum(), board.getWhiteDiscNum());
+    public Boolean put(Dimension target) throws IllegalArgumentException {
+        // 引数の正常性確認
+        if (target == null) {
+            throw new IllegalArgumentException("変数 \"target\" が NULL です。");
         }
+
+        // ボードに石を置く処理
+        Boolean isPut = false;
+        try {
+            isPut = board.put(target, playerIsBlack);
+        } catch (IllegalArgumentException e) {
+            // 石を置く処理で例外が発生した場合、異常終了する
+            int exitCode = Global.EXIT_FAILURE;
+            e.printStackTrace();
+            System.err.println("プログラムを異常終了します。 code: " + exitCode);
+            System.exit(exitCode);
+        }
+
+        // 棋譜を記録する
+        if (isPut) {
+            recordList.add(turnCount, playerIsBlack, board.getBlackDiscNum(), board.getWhiteDiscNum(),
+                    target.getString());
+        }
+
         return isPut;
     }
 
