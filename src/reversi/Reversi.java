@@ -1,5 +1,7 @@
 package reversi;
 
+import java.rmi.UnexpectedException;
+
 import algorithm.AlgorithmType;
 import common.Convert;
 import common.Global;
@@ -14,19 +16,19 @@ public class Reversi {
     private Board board;
 
     /** 黒側のプレイヤー */
-    Player playerBlack = null;
+    private Player playerBlack;
 
     /** 白側のプレイヤー */
-    Player playerWhite = null;
+    private Player playerWhite;
 
-    /** 現在のプレイヤーが黒かどうかを表す */
-    private Boolean playerIsBlack;
+    /** 現在プレイしているプレイヤー */
+    private Player currentPlayer;
 
     /** 経過したターン数 */
     private int turnCount;
 
     /** 棋譜の記録を行うインスタンス */
-    RecordList recordList;
+    private RecordList recordList;
 
     /**
      * リバーシ盤の初期化を行う
@@ -34,11 +36,38 @@ public class Reversi {
      * @param typeWhite 後手・白が使用するアルゴリズム
      */
     public Reversi(AlgorithmType typeBlack, AlgorithmType typeWhite) {
+        // 引数の正常性確認
+        // アルゴリズムの指定が空の場合は、エラーを出力してデフォルトのアルゴリズムを設定する。
+        try {
+            if (typeBlack == null) {
+                throw new IllegalArgumentException("先手・黒のアルゴリズム \"typeBlack\" が NULL です。");
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            AlgorithmType[] types = AlgorithmType.values();
+            typeBlack = types[Global.DEFAULT_ALGORITHM];
+            System.err.printf("先手・黒のアルゴリズムをデフォルトの %s に設定します。", typeBlack);
+        }
+
+        try {
+            if (typeWhite == null) {
+                throw new IllegalArgumentException("後手・白のアルゴリズム \"typeWhite\" が NULL です。");
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            AlgorithmType[] types = AlgorithmType.values();
+            typeWhite = types[Global.DEFAULT_ALGORITHM];
+            System.err.printf("後手・白のアルゴリズムをデフォルトの %s に設定します。", typeWhite);
+        }
+
+        // リバーシの初期化を行う
+        // Playerクラスに与える乱数のseed値について、Playerでseed値が異なるように差をつける
+        long seed = System.currentTimeMillis();
         board = new Board(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
-        playerBlack = new Player(true, typeBlack);
-        playerWhite = new Player(false, typeWhite);
+        playerBlack = new Player(seed, true, typeBlack);
+        playerWhite = new Player(seed + 100, false, typeWhite);
+        currentPlayer = playerBlack;
         turnCount = 1;
-        playerIsBlack = true;
         recordList = new RecordList();
     }
 
@@ -63,7 +92,7 @@ public class Reversi {
      * @return 現在の経過ターン数
      */
     public Boolean getPlayerIsBlack() {
-        return playerIsBlack;
+        return currentPlayer.isDiscBlack();
     }
 
     /**
@@ -79,8 +108,8 @@ public class Reversi {
      * @return 手動操作のプレイヤーである場合は真 {@code true}、自動処理のプレイヤーの場合は偽 {@code false} を返す。
      */
     public Boolean isCurrentPlayerManual() {
-        if ((playerIsBlack && playerBlack.isManual()) ||
-                (playerIsBlack == false && playerWhite.isManual())) {
+        if ((currentPlayer.isDiscBlack() && playerBlack.isManual()) ||
+                (currentPlayer.isDiscBlack() == false && playerWhite.isManual())) {
             return true;
         } else {
             return false;
@@ -89,23 +118,18 @@ public class Reversi {
 
     /**
      * プレイヤー毎のアルゴリズムに基づき、石を打つ座標を決定する
-     * @return 石を打つ座業
+     * @return 石を打つ座標。算出できない場合は{@code NULL}を返す。
      */
     public Dimension run() {
         Dimension target = null;
-        Player currentPlayer;
-
-        if (playerIsBlack) {
-            currentPlayer = playerBlack;
-        } else {
-            currentPlayer = playerWhite;
-        }
 
         try {
-            target = currentPlayer.run(board, playerIsBlack);
-        } catch (IllegalAccessException e) {
+            target = currentPlayer.run(board);
+        } catch (UnexpectedException e) {
             e.printStackTrace();
+            target = null;
         }
+
         return target;
     }
 
@@ -114,24 +138,45 @@ public class Reversi {
      * @return スキップの場合は真 {@code true}、石を置ける場所がありスキップでない場合は偽 {@code false} を返す。
      */
     public Boolean isSkip() {
-        if (board.canPutAll(playerIsBlack)) {
+        if (board.canPutAll(currentPlayer.isDiscBlack())) {
             return false;
         } else {
-            recordList.addSkip(turnCount, playerIsBlack, board.getBlackDiscNum(), board.getWhiteDiscNum());
+            recordList.addSkip(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(),
+                    board.getWhiteDiscNum());
             return true;
         }
     }
 
     /**
-     * 石を置く
+     * 現在のプレイヤーの石をリバーシ盤に置く
      * @param target 石を置く座標
      * @return 対象の座標に石を置いた場合は真 {@code true}、ルールにより石を置けない場合は偽 {@code false} を返す。
+     * @throws IllegalArgumentException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
      */
-    public Boolean put(Dimension target) {
-        Boolean isPut = board.put(target, playerIsBlack);
-        if (isPut) {
-            recordList.add(turnCount, playerIsBlack, target, board.getBlackDiscNum(), board.getWhiteDiscNum());
+    public Boolean put(Dimension target) throws IllegalArgumentException {
+        // 引数の正常性確認
+        if (target == null) {
+            throw new IllegalArgumentException("変数 \"target\" が NULL です。");
         }
+
+        // ボードに石を置く処理
+        Boolean isPut = false;
+        try {
+            isPut = board.put(target, currentPlayer.isDiscBlack());
+        } catch (IllegalArgumentException e) {
+            // 石を置く処理で例外が発生した場合、異常終了する
+            int exitCode = Global.EXIT_FAILURE;
+            e.printStackTrace();
+            System.err.println("プログラムを異常終了します。 code: " + exitCode);
+            System.exit(exitCode);
+        }
+
+        // 棋譜を記録する
+        if (isPut) {
+            recordList.add(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(), board.getWhiteDiscNum(),
+                    target.getString());
+        }
+
         return isPut;
     }
 
@@ -140,25 +185,49 @@ public class Reversi {
      * @return 結果を返す。勝敗がつかない場合は {@code Result.None} を返す。
      */
     public ResultType judge() {
-        if (board.getEmptyNum() > 0) {
-            // 盤上に空きがあっても片方の石が全てなくなった場合は勝敗をつける。
-            if (board.getWhiteDiscNum() <= 0 && board.getBlackDiscNum() > 0) {
-                return ResultType.Black;
-            }
-            if (board.getBlackDiscNum() <= 0 && board.getWhiteDiscNum() > 0) {
-                return ResultType.White;
+        ResultType result;
+        if (isGameFinish()) {
+            if (board.getBlackDiscNum() == board.getWhiteDiscNum()) {
+                result = ResultType.Drow;
+            } else if (board.getBlackDiscNum() > board.getWhiteDiscNum()) {
+                result = ResultType.Black;
+            } else {
+                result = ResultType.White;
             }
         } else {
-            // 盤上に空きがない場合は石の多さで勝敗をつける。
-            if (board.getBlackDiscNum() == board.getWhiteDiscNum()) {
-                return ResultType.Drow;
-            } else if (board.getBlackDiscNum() > board.getWhiteDiscNum()) {
-                return ResultType.Black;
-            } else {
-                return ResultType.White;
-            }
+            result = ResultType.None;
         }
-        return ResultType.None;
+        return result;
+    }
+
+    /**
+     * ゲーム終了を判定する
+     * @return ゲーム終了の場合は真 {@code true}, 続行の場合は偽 {@code false} を返す。
+     */
+    private Boolean isGameFinish() {
+        // 盤上に空きがない場合
+        if (board.getEmptyNum() <= 0) {
+            return true;
+        }
+
+        // 片方のプレイヤーの石が0個になった場合
+        if (board.getBlackDiscNum() <= 0 || board.getWhiteDiscNum() <= 0) {
+            return true;
+        }
+
+        // 両プレイヤーともに石を置く位置がなく、ともにスキップする場合
+        if (board.canPutAll(true) == false && board.canPutAll(false) == false) {
+            // 両者スキップする棋譜を追加する
+            Boolean isPlayerBlack = currentPlayer.isDiscBlack();
+            int blackDiscNum = board.getBlackDiscNum();
+            int whiteDiscNum = board.getWhiteDiscNum();
+            recordList.addSkip(++turnCount, isPlayerBlack, blackDiscNum, whiteDiscNum);
+            recordList.addSkip(++turnCount, !isPlayerBlack, blackDiscNum, whiteDiscNum);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -168,10 +237,10 @@ public class Reversi {
         turnCount++;
 
         // 次に打つプレイヤーを入れ替える
-        if (playerIsBlack) {
-            playerIsBlack = false;
+        if (currentPlayer.isDiscBlack()) {
+            currentPlayer = playerWhite;
         } else {
-            playerIsBlack = true;
+            currentPlayer = playerBlack;
         }
     }
 
@@ -181,6 +250,6 @@ public class Reversi {
     public void showBoardCui() {
         System.out.printf("(%d手目)\n", turnCount);
         board.showCui();
-        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(playerIsBlack));
+        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(currentPlayer.isDiscBlack()));
     }
 }

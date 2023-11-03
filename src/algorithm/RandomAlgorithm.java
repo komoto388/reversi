@@ -9,6 +9,14 @@ import reversi.Dimension;
 public class RandomAlgorithm extends Algorithm {
     
     /**
+     * ランダムアルゴリズムの初期化を行う
+     * @param seed 乱数生成のseed値
+     */
+    public RandomAlgorithm(long seed) {
+        super(seed);
+    }
+
+    /**
      * 設置可能なマスに対して、ランダムに石を置くアルゴリズム
      */
     @Override

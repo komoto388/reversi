@@ -3,6 +3,8 @@ package reversi;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+import common.Global;
+
 /**
  * 棋譜を記録・操作するクラス
  * @author komoto
@@ -31,18 +33,22 @@ public class RecordList {
      * 棋譜をリストに追加する
      * @param turn ターン数（手番）
      * @param playerIsBlack プレイヤーの石の色を表す。
-     * @param dim プレイヤーが置いた石の座標
      * @param blackDiscNum 黒石の数
      * @param whiteDiscNum 白石の数
+     * @param dim プレイヤーが置いた石の座標の文字列、またはスキップを表す文字列
      */
-    public void add(int turn, Boolean playerIsBlack, Dimension target, int blackDiscNum, int whiteDiscNum) {
+    public void add(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum, String dim) {
         int increaseBlackNum = blackDiscNum - previousBlackNum;
         int increaseWhiteNum = whiteDiscNum - previousWhiteNum;
         previousBlackNum = blackDiscNum;
         previousWhiteNum = whiteDiscNum;
 
-        recordList.add(new Record(turn, playerIsBlack, target, blackDiscNum, whiteDiscNum, increaseBlackNum,
-                increaseWhiteNum));
+        try {
+            recordList.add(new Record(turn, playerIsBlack, blackDiscNum, whiteDiscNum, increaseBlackNum,
+                    increaseWhiteNum, dim));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -53,7 +59,7 @@ public class RecordList {
      * @param whiteDiscNum 白石の数
      */
     public void addSkip(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum) {
-        this.add(turn, playerIsBlack, new Dimension(-1, -1), blackDiscNum, whiteDiscNum);
+        this.add(turn, playerIsBlack, blackDiscNum, whiteDiscNum, "SKIP");
     }
 
     /**

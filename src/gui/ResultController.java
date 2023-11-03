@@ -1,5 +1,6 @@
 package gui;
 
+import algorithm.AlgorithmType;
 import common.Global;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -58,6 +59,24 @@ public class ResultController {
      * @param result 勝敗の結果
      */
     public void init(Stage stage, Reversi reversi, ResultType result) {
+        // 引数の正常性確認
+        try {
+            if (stage == null) {
+                throw new IllegalArgumentException("引数 \"stage\" の値が NULL です");
+            }
+            if (reversi == null) {
+                throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("引数 \"result\" の値が NULL です");
+            }
+        } catch (IllegalArgumentException e) {
+            int exitCode = Global.EXIT_FAILURE;
+            e.printStackTrace();
+            System.err.println("引数が想定されていない値のため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
+        }
+
         this.stage = stage;
 
         // 対戦結果を表示する
@@ -95,12 +114,16 @@ public class ResultController {
     private VBox generateDetailResultPane(Reversi reversi) {
         FXMLLoader fxmlloader = null;
         VBox pane = null;
+        String fxmlFile = "../fxml/DetailResult.fxml";
 
         try {
-            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/DetailResult.fxml"));
+            fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
             pane = (VBox) fxmlloader.load();
         } catch (Exception e) {
+            int exitCode = Global.EXIT_FAILURE;
             e.printStackTrace();
+            System.err.println(fxmlFile + "の読み込みで例外が発生したため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
         }
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
@@ -117,12 +140,16 @@ public class ResultController {
     private ScrollPane generateRecordPane(Reversi reversi) {
         FXMLLoader fxmlloader = null;
         ScrollPane pane = null;
+        String fxmlFile = "../fxml/Record.fxml";
 
         try {
-            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Record.fxml"));
+            fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
             pane = (ScrollPane) fxmlloader.load();
         } catch (Exception e) {
+            int exitCode = Global.EXIT_FAILURE;
             e.printStackTrace();
+            System.err.println(fxmlFile + "の読み込みで例外が発生したため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
         }
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 

@@ -89,6 +89,21 @@ public class ReversiController {
      * @param reversi リバーシの処理を行うインスタンス
      */
     public void init(Stage stage, Reversi reversi) {
+        // 引数の正常性確認
+        try {
+            if (stage == null) {
+                throw new IllegalArgumentException("引数 \"stage\" の値が NULL です");
+            }
+            if (reversi == null) {
+                throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
+            }
+        } catch (IllegalArgumentException e) {
+            int exitCode = Global.EXIT_FAILURE;
+            e.printStackTrace();
+            System.err.println("引数が想定されていない値のため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
+        }
+
         this.stage = stage;
         this.reversi = reversi;
 
@@ -236,28 +251,44 @@ public class ReversiController {
      * @return 石の設置ができた場合は真 {@code true}, 既に石が存在している等で設置できなかった場合は偽 {@code false} を返す。
      */
     private Boolean play(Dimension target) {
-        if (reversi.put(target)) {
+        // 座標に対して、石を置けるか判定する
+        Boolean isPut = false;
+        try {
+            isPut = reversi.put(target);
+        } catch (IllegalArgumentException e) {
+            // 例外が発生した場合、石を置けないと判断して処理を続ける。
+            e.printStackTrace();
+            isPut = false;
+        }
+
+        // 石を置ける座標の場合、リバーシ盤に石を置く処理を行う
+        if (isPut) {
             statusLabel.setText(
                     Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " は " + target.getString() + " に石を置きました。");
 
             // 勝敗判定を行う
-            ResultType result = reversi.judge();
-            switch (result) {
-            case None: {
-                reversi.next();
-                setWaitMode(Global.WAIT_MILLISEC_INTERVAL, false);
-                break;
+            try {
+                ResultType result = reversi.judge();
+                switch (result) {
+                case None: {
+                    reversi.next();
+                    setWaitMode(Global.WAIT_MILLISEC_INTERVAL, false);
+                    break;
+                }
+                case Drow:
+                case Black:
+                case White: {
+                    timer.stop();
+                    showResult(result);
+                    break;
+                }
+                default:
+                    throw new IllegalArgumentException("Unexpected value: " + reversi.judge());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            case Drow:
-            case Black:
-            case White: {
-                timer.stop();
-                showResult(result);
-                break;
-            }
-            default:
-                throw new IllegalArgumentException("Unexpected value: " + reversi.judge());
-            }
+
             return true;
         } else {
             System.out.printf("%s のマスには石を置けません。\n", target.getString());
@@ -273,12 +304,25 @@ public class ReversiController {
     private void setWaitMode(int waitMilliSec, Boolean isInputEnable) {
         Dimension boardSize = reversi.getBoard().getSize();
 
-        if (waitMilliSec >= 0) {
-            waitFrame = Convert.convertFrame(waitMilliSec, Global.FPS);
-        } else {
-            waitFrame = Global.WAIT_FRAME_INFINITE;
+        // 処理待ち中に描画されるフレーム数を設定する
+        try {
+            if (waitMilliSec <= 0 && waitMilliSec != Global.WAIT_FRAME_INFINITE) {
+                throw new IllegalArgumentException("待ち時間の値が0以下です: " + waitMilliSec);
+            }
+
+            if (waitMilliSec > 0) {
+                waitFrame = Convert.convertFrame(waitMilliSec, Global.FPS);
+            } else {
+                waitFrame = Global.WAIT_FRAME_INFINITE;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("処理待ち時間をなし、画面操作を可能な状態として設定します。");
+            waitFrame = 0;
+            isInputEnable = true;
         }
 
+        // リバーシ盤の操作可否を設定する
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 Pane pane = displayBoard.getBoardPane(i, j);
@@ -294,12 +338,16 @@ public class ReversiController {
     private void showResult(ResultType result) {
         FXMLLoader fxmlloader = null;
         BorderPane resultPane = null;
+        String fxmlFile = "../fxml/Result.fxml";
 
         try {
-            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/Result.fxml"));
+            fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
             resultPane = (BorderPane) fxmlloader.load();
         } catch (Exception e) {
+            int exitCode = Global.EXIT_FAILURE;
             e.printStackTrace();
+            System.err.println(fxmlFile + "の読み込みで例外が発生したため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
         }
 
         ResultController controller = (ResultController) fxmlloader.getController();

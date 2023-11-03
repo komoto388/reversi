@@ -92,6 +92,7 @@ public class CuiMain {
         // 石を置く位置を決定する
         do {
             Dimension target;
+            Boolean isPut = false;
 
             if (reversi.isCurrentPlayerManual()) {
                 target = runManual();
@@ -100,7 +101,15 @@ public class CuiMain {
                 target = reversi.run();
             }
 
-            if (reversi.put(target)) {
+            try {
+                isPut = reversi.put(target);
+            } catch (IllegalArgumentException e) {
+                // 石を置く処理で例外が発生した場合、再入力させる
+                e.printStackTrace();
+                isPut = false;
+            }
+
+            if (isPut) {
                 // 指定した座標に石を置ける場合、次の処理に進める
                 System.out.printf("%s は %s に石を置きました。\n",
                         Convert.getPlayerColor(reversi.getPlayerIsBlack()), target.getString());
@@ -109,6 +118,7 @@ public class CuiMain {
                 // 指定した座標に石を置けない場合、座標を指定し直す。
                 System.out.printf("%sのマスには石を置けません。座標を再指定してください。\n", target.getString());
             }
+
         } while (true);
 
         // 勝敗判定を行う

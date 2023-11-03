@@ -24,6 +24,14 @@ public class Original01 extends Algorithm {
             return point;
         }
     };
+    
+    /**
+     * ランダムアルゴリズムの初期化を行う
+     * @param seed 乱数生成のseed値
+     */
+    public Original01(long seed) {
+        super(seed);
+    }
 
     /**
      * 全てのマスに対して評価を行い、評価値が最大となる座標を算出する。
