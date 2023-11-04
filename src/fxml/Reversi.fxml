@@ -11,34 +11,44 @@
 
 <BorderPane fx:id="reversiRootPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ReversiController">
    <top>
-      <HBox alignment="CENTER" minHeight="60.0" minWidth="400.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" minWidth="400.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="blackDiscNumLabel" alignment="CENTER" minHeight="40.0" minWidth="160.0" text="黒">
+            <VBox>
                <HBox.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </HBox.margin>
-            </Label>
+               <children>
+                  <Label fx:id="blackNameLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="30.0" minWidth="160.0" text="先手・黒の名前" />
+                  <Label fx:id="blackAlgorithmLabel" alignment="CENTER" minHeight="30.0" minWidth="160.0" text="使用アルゴリズム" />
+                  <Label fx:id="blackDiscNumLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="30.0" minWidth="160.0" text="黒の個数" />
+               </children>
+            </VBox>
             <VBox alignment="CENTER" minWidth="100.0">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </HBox.margin>
                <children>
                   <Circle fx:id="currentDiscCircle" fill="WHITE" radius="15.0" stroke="BLACK" strokeType="INSIDE">
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin></Circle>
-                  <Label fx:id="turnLabel" alignment="CENTER" minHeight="20.0" minWidth="60.0" text="1手目">
+                  <Label fx:id="turnLabel" alignment="CENTER" minHeight="20.0" minWidth="60.0" text="ターン数">
                      <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </VBox.margin>
                   </Label>
                </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
             </VBox>
-            <Label fx:id="whiteDiscNumLabel" alignment="CENTER" layoutX="30.0" layoutY="30.0" minHeight="40.0" minWidth="160.0" text="白">
+            <VBox>
                <HBox.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </HBox.margin>
-            </Label>
+               <children>
+                  <Label fx:id="whiteNameLabel" alignment="CENTER" minHeight="30.0" minWidth="160.0" text="後手・白の名前" />
+                  <Label fx:id="whiteAlgorithmLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="30.0" minWidth="160.0" text="使用アルゴリズム" />
+                  <Label fx:id="whiteDiscNumLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" minHeight="30.0" minWidth="160.0" text="白の個数" />
+               </children>
+            </VBox>
          </children>
       </HBox>
    </top>

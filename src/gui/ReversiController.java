@@ -17,6 +17,7 @@ import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -67,6 +68,22 @@ public class ReversiController {
     @FXML
     private Label turnLabel;
 
+    /** 先手・黒のプレイヤー名を表示するラベル */
+    @FXML
+    private Label blackNameLabel;
+
+    /** 後手・白のプレイヤー名を表示するラベル */
+    @FXML
+    private Label whiteNameLabel;
+
+    /** 先手・黒のアルゴリズムを表示するラベル */
+    @FXML
+    private Label blackAlgorithmLabel;
+
+    /** 後手・白のアルゴリズムを表示するラベル */
+    @FXML
+    private Label whiteAlgorithmLabel;
+
     /** 現在の黒石の数を表示するラベル */
     @FXML
     private Label blackDiscNumLabel;
@@ -115,6 +132,14 @@ public class ReversiController {
         this.result = ResultType.None;
         this.reversi = reversi;
         this.fps = new Fps();
+
+        Player player = reversi.getPlayerBlack();
+        blackNameLabel.setText(player.getName());
+        blackAlgorithmLabel.setText("( " + player.getAlgorithmType().getName() + " )");
+
+        player = reversi.getPlayerWhite();
+        whiteNameLabel.setText(player.getName());
+        whiteAlgorithmLabel.setText("( " + player.getAlgorithmType().getName() + " )");
 
         statusLabel.setText(null);
         debugLabel.setText(null);
@@ -222,32 +247,13 @@ public class ReversiController {
                     throw new IllegalArgumentException("Unexpected value: " + eventStatus);
                 }
             }
-
-            /**
-             * 画面描画を行う関数
-             */
-            private void update() {
-                Board board = reversi.getBoard();
-
-                // リバーシ盤に石を描画する
-                boardController.drawStone(board);
-
-                // 現在の手番、石の個数を更新する
-                if (reversi.getPlayerIsBlack()) {
-                    currentDiscCircle.setFill(Paint.valueOf("black"));
-                } else {
-                    currentDiscCircle.setFill(Paint.valueOf("white"));
-                }
-                turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
-                blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
-                whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
-                fpsLabel.setText(String.format("待ちフレーム数:%3d, %.2f fps", waitFrame, fps.getFps()));
-                eventStatusLabel.setText(eventStatus.toString());
-            }
         }));
 
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
+        
+        // 初期設定後に画面描画を行う
+        update();
     }
 
     /**
@@ -301,6 +307,28 @@ public class ReversiController {
         }
 
         return isPut;
+    }
+
+    /**
+     * 画面描画を行う関数
+     */
+    private void update() {
+        Board board = reversi.getBoard();
+
+        // リバーシ盤に石を描画する
+        boardController.drawStone(board);
+
+        // 現在の手番、石の個数を更新する
+        if (reversi.getPlayerIsBlack()) {
+            currentDiscCircle.setFill(Paint.valueOf("black"));
+        } else {
+            currentDiscCircle.setFill(Paint.valueOf("white"));
+        }
+        turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
+        blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
+        whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
+        fpsLabel.setText(String.format("待ちフレーム数:%3d, %.2f fps", waitFrame, fps.getFps()));
+        eventStatusLabel.setText(eventStatus.toString());
     }
 
     /**

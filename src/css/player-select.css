@@ -26,7 +26,8 @@
 }
 
 /*ゲーム開始ボタン*/
-#startButton {
+#startButton,
+#exitButton {
     -fx-pref-width: 180;
     -fx-pref-height: 50;
     -fx-font-size: 20;

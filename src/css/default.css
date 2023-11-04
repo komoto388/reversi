@@ -15,7 +15,9 @@
     -fx-font-size: 14;
 }
 
-/*石の個数・ターン数のラベル*/
+/*プレイヤー名、石の個数・ターン数のラベル*/
+#blackNameLabel,
+#whiteNameLabel,
 #blackDiscNumLabel,
 #whiteDiscNumLabel,
 #turnLabel {

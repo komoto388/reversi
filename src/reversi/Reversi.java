@@ -2,7 +2,6 @@ package reversi;
 
 import java.rmi.UnexpectedException;
 
-import algorithm.AlgorithmType;
 import common.Convert;
 import common.Global;
 
@@ -32,43 +31,30 @@ public class Reversi {
 
     /**
      * リバーシ盤の初期化を行う
-     * @param typeBlack 先手・黒が使用するアルゴリズム
-     * @param typeWhite 後手・白が使用するアルゴリズム
+     * @param playerBlack 先手・黒のプレイヤー情報
+     * @param playerWhite 後手・白のプレイヤー情報
      */
-    public Reversi(AlgorithmType typeBlack, AlgorithmType typeWhite) {
+    public Reversi(Player playerBlack, Player playerWhite) {
         // 引数の正常性確認
-        // アルゴリズムの指定が空の場合は、エラーを出力してデフォルトのアルゴリズムを設定する。
         try {
-            if (typeBlack == null) {
-                throw new IllegalArgumentException("先手・黒のアルゴリズム \"typeBlack\" が NULL です。");
+            if (playerBlack == null) {
+                throw new IllegalArgumentException("先手・黒のプレイヤー \"playerBlack\" が NULL です。");
+            }
+            if (playerWhite == null) {
+                throw new IllegalArgumentException("後手・白のアルゴリズム \"playerWhite\" が NULL です。");
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            AlgorithmType[] types = AlgorithmType.values();
-            typeBlack = types[Global.DEFAULT_ALGORITHM];
-            System.err.printf("先手・黒のアルゴリズムをデフォルトの %s に設定します。", typeBlack);
+            System.err.printf("プレイヤー情報が存在しないないため、異常終了します。");
+            System.exit(Global.EXIT_FAILURE);
         }
 
-        try {
-            if (typeWhite == null) {
-                throw new IllegalArgumentException("後手・白のアルゴリズム \"typeWhite\" が NULL です。");
-            }
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            AlgorithmType[] types = AlgorithmType.values();
-            typeWhite = types[Global.DEFAULT_ALGORITHM];
-            System.err.printf("後手・白のアルゴリズムをデフォルトの %s に設定します。", typeWhite);
-        }
-
-        // リバーシの初期化を行う
-        // Playerクラスに与える乱数のseed値について、Playerでseed値が異なるように差をつける
-        long seed = System.currentTimeMillis();
-        board = new Board(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
-        playerBlack = new Player(seed, true, typeBlack);
-        playerWhite = new Player(seed + 100, false, typeWhite);
-        currentPlayer = playerBlack;
-        turnCount = 1;
-        record = new Record();
+        this.board = new Board(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
+        this.playerBlack = playerBlack;
+        this.playerWhite = playerWhite;
+        this.currentPlayer = playerBlack;
+        this.turnCount = 1;
+        this.record = new Record();
     }
 
     /**
@@ -78,7 +64,23 @@ public class Reversi {
     public Board getBoard() {
         return board;
     }
-
+    
+    /**
+     * 先手・黒のプレイヤー情報を取得する
+     * @return 先手・黒のプレイヤーのインスタンス
+     */
+    public Player getPlayerBlack() {
+        return playerBlack;
+    }
+    
+    /**
+     * 後手・白のプレイヤー情報を取得する
+     * @return 後手・白のプレイヤーのインスタンス
+     */
+    public Player getPlayerWhite() {
+        return playerWhite;
+    }
+    
     /**
      * 現在の経過ターン数を返す
      * @return 現在の経過ターン数

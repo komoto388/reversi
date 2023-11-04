@@ -94,11 +94,13 @@ public class ResultController {
         String turnString = String.format("%d手をもって、", reversi.getTurnCount());
         switch (result) {
         case Black: {
-            resultLabel.setText(turnString + "先手・黒の勝ちです！");
+            String playerName = reversi.getPlayerBlack().getName();
+            resultLabel.setText(turnString + "先手・黒「" + playerName + "」の勝ちです！");
             break;
         }
         case White: {
-            resultLabel.setText(turnString + "後手・白の勝ちです！");
+            String playerName = reversi.getPlayerWhite().getName();
+            resultLabel.setText(turnString + "後手・白「" + playerName + "」の勝ちです！");
             break;
         }
         case Drow: {
