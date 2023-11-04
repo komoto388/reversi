@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -183,11 +182,11 @@ public class ResultController {
      */
     private GraphResultController generateGraphResultPane(Tab tabPane) {
         FXMLLoader fxmlloader = null;
-        AnchorPane pane = null;
+        VBox pane = null;
 
         try {
             fxmlloader = new FXMLLoader(getClass().getResource("../fxml/GraphResult.fxml"));
-            pane = (AnchorPane) fxmlloader.load();
+            pane = (VBox) fxmlloader.load();
         } catch (Exception e) {
             e.printStackTrace();
         }
