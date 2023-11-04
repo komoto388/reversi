@@ -10,7 +10,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import reversi.Record;
 import reversi.RecordRow;
 import reversi.ResultType;
@@ -22,8 +21,8 @@ import reversi.Reversi;
  */
 public class ResultController {
 
-    /** フレーム情報 */
-    private Stage stage;
+    /** シーン切替処理を行うインスタンス */
+    private SceneSwitch sceneSwitch;
 
     /** 結果を表示するペイン（自分自身） */
     @FXML
@@ -59,15 +58,15 @@ public class ResultController {
 
     /**
      * 対戦結果内容を画面に設定する
-     * @param stage フレーム情報
+     * @param sceneSwitch シーン切替処理を行うインスタンス
      * @param reversi リバーシの処理を行うインスタンス
      * @param result 勝敗の結果
      */
-    public void init(Stage stage, Reversi reversi, ResultType result) {
+    public void init(SceneSwitch sceneSwitch, Reversi reversi, ResultType result) {
         // 引数の正常性確認
         try {
-            if (stage == null) {
-                throw new IllegalArgumentException("引数 \"stage\" の値が NULL です");
+            if (sceneSwitch == null) {
+                throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
             if (reversi == null) {
                 throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
@@ -82,7 +81,7 @@ public class ResultController {
             System.exit(exitCode);
         }
 
-        this.stage = stage;
+        this.sceneSwitch = sceneSwitch;
 
         // 対戦結果を表示する
         blackDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getBlackDiscNum()));
@@ -183,12 +182,16 @@ public class ResultController {
     private GraphResultController generateGraphResultPane(Tab tabPane) {
         FXMLLoader fxmlloader = null;
         VBox pane = null;
+        String fxmlFile = "../fxml/GraphResult.fxml";
 
         try {
-            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/GraphResult.fxml"));
+            fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
             pane = (VBox) fxmlloader.load();
         } catch (Exception e) {
+            int exitCode = Global.EXIT_FAILURE;
             e.printStackTrace();
+            System.err.println(fxmlFile + "の読み込みで例外が発生したため、プログラムを異常終了します: 終了コード = " + exitCode);
+            System.exit(exitCode);
         }
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
@@ -203,6 +206,6 @@ public class ResultController {
      */
     @FXML
     void onExitButtonAction(ActionEvent event) {
-        stage.close();
+        sceneSwitch.close();
     }
 }
