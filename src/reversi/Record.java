@@ -1,104 +1,96 @@
 package reversi;
 
-import common.Convert;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 /**
- * １手分の棋譜を記録するクラス
+ * 棋譜を記録・操作するクラス
  * @author komoto
  */
 public class Record {
 
-    /** ターン数 */
-    public final int turn;
+    /** 棋譜情報を格納するキュー */
+    private Queue<RecordRow> recordRowList = new ArrayDeque<RecordRow>();
 
-    /** プレイヤーの文字列 */
-    public final String playerString;
+    /** 1つ前の手番での黒石の数 */
+    private int previousBlackNum = 2;
 
-    /** プレイヤーが打った石の座標の文字列 */
-    public final String dimString;
+    /** 1つ前の手番での白石の数 */
+    private int previousWhiteNum = 2;
 
-    /** 黒石の個数 */
-    public final int blackDiscNum;
-
-    /** 白石の個数 */
-    public final int whiteDiscNum;
-
-    /** 1手前からの黒石の増加量 */
-    public final int increaseBlackNum;
-
-    /** 1手前からの白石の増加量 */
-    public final int increaseWhiteNum;
+    /** 対戦が終了した理由を表す文字列 */
+    private String comment = null;
 
     /**
-     * 棋譜１手分の情報を記録する。
+     * 対戦が終了した理由を設定する
+     * @param result 設定する文字列
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
+     * 対戦が終了した理由の文字列を取得する
+     * @return 結果の文字列
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * 棋譜に記録を１行追加する
      * @param turn ターン数（手番）
      * @param playerIsBlack プレイヤーの石の色を表す。
      * @param blackDiscNum 黒石の数
      * @param whiteDiscNum 白石の数
-     * @param increaseBlackNum 前回からの黒石の増減量
-     * @param increaseWhiteNum 前回からの白石の増減量
-     * @param dim プレイヤーが置いた石の座標を表す文字列、またはスキップなど石を置かなかった場合の操作を表す文字列
+     * @param dim プレイヤーが置いた石の座標の文字列、またはスキップを表す文字列
      */
-    public Record(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum,
-            int increaseBlackNum, int increaseWhiteNum, String dim) {
-        // 引数の正常性確認
-        try {
-            if (turn <= 0) {
-                throw new IllegalArgumentException("引数 \"turn\" の値が0以下です: " + turn);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            turn = 0;
-            System.err.println("\"turn\" の値として " + turn + " を設定します");
-        }
+    public void addRow(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum, String dim) {
+        int increaseBlackNum = blackDiscNum - previousBlackNum;
+        int increaseWhiteNum = whiteDiscNum - previousWhiteNum;
+        previousBlackNum = blackDiscNum;
+        previousWhiteNum = whiteDiscNum;
 
         try {
-            if (playerIsBlack == null) {
-                throw new IllegalArgumentException("引数 \"playerIsBlack\" の値が NULL です");
-            }
+            recordRowList.add(new RecordRow(turn, playerIsBlack, blackDiscNum, whiteDiscNum, increaseBlackNum,
+                    increaseWhiteNum, dim));
         } catch (Exception e) {
             e.printStackTrace();
-            playerIsBlack = true;
-            System.err.println("\"playerIsBlack\" の値として " + playerIsBlack + " を設定します");
         }
+    }
 
-        try {
-            if (blackDiscNum < 0) {
-                throw new IllegalArgumentException("引数 \"blackDiscNum\" の値が0未満です: " + blackDiscNum);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            blackDiscNum = 0;
-            System.err.println("\"blackDiscNum\" の値として " + blackDiscNum + " を設定します");
+    /**
+     * 棋譜にスキップの記録を１行追加する
+     * @param turn ターン数（手番）
+     * @param playerIsBlack プレイヤーの石の色を表す。
+     * @param blackDiscNum 黒石の数
+     * @param whiteDiscNum 白石の数
+     */
+    public void addRowAsSkip(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum) {
+        this.addRow(turn, playerIsBlack, blackDiscNum, whiteDiscNum, "SKIP");
+    }
+
+    /**
+     * 棋譜が空かどうかを返す。
+     * @return 棋譜が空の場合は {@code true}, 空でない場合は {@code false} を返す。
+     */
+    public Boolean isEmpty() {
+        if (recordRowList.isEmpty()) {
+            return true;
+        } else {
+            return false;
         }
+    }
 
-        try {
-            if (whiteDiscNum < 0) {
-                throw new IllegalArgumentException("引数 \"whiteDiscNum\" の値が0未満です: " + whiteDiscNum);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            whiteDiscNum = 0;
-            System.err.println("\"whiteDiscNum\" の値として " + whiteDiscNum + " を設定します");
+    /**
+     * リストから棋譜１行分の記録を取り出す。取り出した記録はリストから削除される。
+     * @return 棋譜１行分の記録を返す。棋譜が空(EOF)の場合は {@code null} を返す。
+     */
+    public RecordRow poll() {
+        if (recordRowList.isEmpty()) {
+            return null;
+        } else {
+            return recordRowList.poll();
         }
-
-        try {
-            if (dim == null) {
-                throw new IllegalArgumentException("引数 \"dim\" の値が NULL です");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            dim = "NULL";
-            System.err.println("\"dim\" の値として \"" + dim + "\" を設定します\n");
-        }
-
-        // 引数の値を設定します
-        this.turn = turn;
-        this.playerString = Convert.getPlayerColor(playerIsBlack);
-        this.blackDiscNum = blackDiscNum;
-        this.whiteDiscNum = whiteDiscNum;
-        this.increaseBlackNum = increaseBlackNum;
-        this.increaseWhiteNum = increaseWhiteNum;
-        this.dimString = dim;
     }
 }

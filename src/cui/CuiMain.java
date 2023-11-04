@@ -8,6 +8,7 @@ import reversi.Dimension;
 import reversi.ResultType;
 import reversi.Reversi;
 import reversi.Record;
+import reversi.RecordRow;
 
 /**
  * CUI版リバーシの処理を行うクラス
@@ -46,9 +47,9 @@ public class CuiMain {
 
         do {
             System.out.printf("%sが使用するアルゴリズムを選択してください。手動で操作したい場合は、「%s」を選択してください。\n",
-                    playerName, AlgorithmType.Manual);
+                    playerName, AlgorithmType.Manual.getName());
             for (int i = 0; i < typeList.length; i++) {
-                System.out.printf("%2d. %s\n", i + 1, typeList[i]);
+                System.out.printf("%2d. %s\n", i + 1, typeList[i].getName());
             }
             System.out.printf("\n選択肢？: ");
 
@@ -195,13 +196,15 @@ public class CuiMain {
         reversi.getBoard().showCui();
 
         // 譜面記録を表示する。
+        Record record = reversi.getRecord();
         System.out.printf("\n棋譜\n");
-        while (reversi.getRecordList().isEmpty() == false) {
-            Record record = reversi.getRecordList().poll();
+        while (record.isEmpty() == false) {
+            RecordRow recordRow = record.poll();
             System.out.printf("%2d手目  %s  %-4s  黒 %2d個 (%+3d)  白 %2d個 (%+3d)\n",
-                    record.turn, record.playerString, record.dimString, record.blackDiscNum, record.increaseBlackNum,
-                    record.whiteDiscNum, record.increaseWhiteNum);
+                    recordRow.turn, recordRow.playerString, recordRow.dimString, recordRow.blackDiscNum,
+                    recordRow.increaseBlackNum, recordRow.whiteDiscNum, recordRow.increaseWhiteNum);
         }
+        System.out.println("\n終了理由: " + record.getComment());
 
         // 対戦結果を表示する。
         System.out.printf("\n結果\n%d手、黒%2d個、白%2d個を以って、",

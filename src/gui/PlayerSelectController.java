@@ -16,7 +16,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import reversi.Reversi;
@@ -93,9 +92,10 @@ public class PlayerSelectController {
         ToggleGroup group = new ToggleGroup();
 
         for (int i = 0; i < types.length; i++) {
-            RadioButton radioButton = new RadioButton(String.format("%s", types[i]));
-            radioButton.setId("select-radio-button");
+            RadioButton radioButton = new RadioButton(String.format("%s", types[i].getName()));
+            radioButton.setUserData(types[i]);
             radioButton.setToggleGroup(group);
+            radioButton.setId("select-radio-button");
             radioButton.setPrefWidth(Global.RADIO_BUTTON_WIDTH);
             radioButton.setPrefHeight(Global.RADIO_BUTTON_HEIGHT);
 
@@ -134,9 +134,9 @@ public class PlayerSelectController {
 
             ToggleButton selectedButton = (ToggleButton) newValue;
             if (isBlack) {
-                algorithmTypeBlack = AlgorithmType.valueOf(selectedButton.getText());
+                algorithmTypeBlack = (AlgorithmType) selectedButton.getUserData();
             } else {
-                algorithmTypeWhite = AlgorithmType.valueOf(selectedButton.getText());
+                algorithmTypeWhite = (AlgorithmType) selectedButton.getUserData();
             }
         }
     }

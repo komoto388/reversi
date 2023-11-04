@@ -1,6 +1,5 @@
 package gui;
 
-import algorithm.AlgorithmType;
 import common.Global;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,9 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import reversi.Record;
+import reversi.RecordRow;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -47,6 +49,10 @@ public class ResultController {
     /** 棋譜を表示するタブ */
     @FXML
     private Tab recordTab;
+
+    /** 推移グラフを表示するタブ */
+    @FXML
+    private Tab graphTab;
 
     /** ゲームを終了するボタン */
     @FXML
@@ -103,15 +109,26 @@ public class ResultController {
         }
 
         // 各タブ内の画面を生成する
-        recordTab.setContent(generateRecordPane(reversi));
-        detailResultTab.setContent(generateDetailResultPane(reversi));
+        generateDetailResultPane(detailResultTab, reversi);
+        RecordController recordController = generateRecordPane(recordTab);
+        GraphResultController graphResultController = generateGraphResultPane(graphTab);
+
+        // 棋譜リストを元に、棋譜・グラフを描画する
+        Record record = reversi.getRecord();
+        for (int i = 1; record.isEmpty() == false; i++) {
+            RecordRow recordRow = record.poll();
+            recordController.addRecordRow(i, recordRow);
+            graphResultController.addData(i, recordRow);
+        }
+        recordController.setComment("終了した理由: " + record.getComment());
     }
 
     /**
      * 詳細結果画面（最終盤面）を生成する
+     * @param tabPane 生成したペインの描画先となるペイン
      * @param reversi リバーシの処理を行うインスタンス
      */
-    private VBox generateDetailResultPane(Reversi reversi) {
+    private void generateDetailResultPane(Tab tabPane, Reversi reversi) {
         FXMLLoader fxmlloader = null;
         VBox pane = null;
         String fxmlFile = "../fxml/DetailResult.fxml";
@@ -130,14 +147,15 @@ public class ResultController {
         DetailResultController controller = (DetailResultController) fxmlloader.getController();
         controller.init(reversi.getBoard());
 
-        return pane;
+        tabPane.setContent(pane);
     }
 
     /**
      * 棋譜画面を生成する
-     * @param reversi リバーシの処理を行うインスタンス
+     * @param tabPane 生成したペインの描画先となるペイン
+     * @param 棋譜画面のコントローラー
      */
-    private ScrollPane generateRecordPane(Reversi reversi) {
+    private RecordController generateRecordPane(Tab tabPane) {
         FXMLLoader fxmlloader = null;
         ScrollPane pane = null;
         String fxmlFile = "../fxml/Record.fxml";
@@ -153,10 +171,31 @@ public class ResultController {
         }
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
-        RecordController controller = (RecordController) fxmlloader.getController();
-        controller.init(reversi);
+        tabPane.setContent(pane);
 
-        return pane;
+        return (RecordController) fxmlloader.getController();
+    }
+
+    /**
+     * グラフ画面を生成する
+     * @param tabPane 生成したペインの描画先となるペイン
+     * @param グラフ画面のコントローラー
+     */
+    private GraphResultController generateGraphResultPane(Tab tabPane) {
+        FXMLLoader fxmlloader = null;
+        AnchorPane pane = null;
+
+        try {
+            fxmlloader = new FXMLLoader(getClass().getResource("../fxml/GraphResult.fxml"));
+            pane = (AnchorPane) fxmlloader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
+
+        tabPane.setContent(pane);
+
+        return (GraphResultController) fxmlloader.getController();
     }
 
     /**
