@@ -47,9 +47,9 @@ public class CuiMain {
 
         do {
             System.out.printf("%sが使用するアルゴリズムを選択してください。手動で操作したい場合は、「%s」を選択してください。\n",
-                    playerName, AlgorithmType.Manual);
+                    playerName, AlgorithmType.Manual.getName());
             for (int i = 0; i < typeList.length; i++) {
-                System.out.printf("%2d. %s\n", i + 1, typeList[i]);
+                System.out.printf("%2d. %s\n", i + 1, typeList[i].getName());
             }
             System.out.printf("\n選択肢？: ");
 

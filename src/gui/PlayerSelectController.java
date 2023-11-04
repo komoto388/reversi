@@ -92,11 +92,12 @@ public class PlayerSelectController {
         ToggleGroup group = new ToggleGroup();
 
         for (int i = 0; i < types.length; i++) {
-            RadioButton radioButton = new RadioButton(String.format("%s", types[i]));
+            RadioButton radioButton = new RadioButton(String.format("%s", types[i].getName()));
             radioButton.setId("select-radio-button");
             radioButton.setToggleGroup(group);
             radioButton.setPrefWidth(Global.RADIO_BUTTON_WIDTH);
             radioButton.setPrefHeight(Global.RADIO_BUTTON_HEIGHT);
+            radioButton.setUserData(types[i]);
 
             if (i == Global.DEFAULT_ALGORITHM) {
                 radioButton.setSelected(true);
@@ -133,9 +134,9 @@ public class PlayerSelectController {
 
             ToggleButton selectedButton = (ToggleButton) newValue;
             if (isBlack) {
-                algorithmTypeBlack = AlgorithmType.valueOf(selectedButton.getText());
+                algorithmTypeBlack = (AlgorithmType) selectedButton.getUserData();
             } else {
-                algorithmTypeWhite = AlgorithmType.valueOf(selectedButton.getText());
+                algorithmTypeWhite = (AlgorithmType) selectedButton.getUserData();
             }
         }
     }
