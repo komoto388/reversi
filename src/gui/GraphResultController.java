@@ -9,7 +9,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import reversi.RecordRow;
 
 /**
@@ -19,7 +19,7 @@ public class GraphResultController implements Initializable {
 
     /** グラフ描画画面のルートペイン */
     @FXML
-    private AnchorPane graphRootPane;
+    private VBox graphRootPane;
 
     /** 描画先のグラフペイン */
     private LineChart<Number, Number> lineChart;
@@ -39,24 +39,32 @@ public class GraphResultController implements Initializable {
     @SuppressWarnings("unchecked")
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // X軸を生成する
         xAxis = new NumberAxis();
+        xAxis.setLabel("経過ターン数");
+        xAxis.setAutoRanging(false);
         xAxis.setLowerBound(0);
+        xAxis.setUpperBound(0);
 
+        // Y軸を生成する
         yAxis = new NumberAxis();
-        yAxis.setLowerBound(-40);
-        yAxis.setUpperBound(40);
+        yAxis.setLabel("黒石と白石の個数差（黒石 - 白石）");
+        yAxis.setLowerBound(0);
+        yAxis.setUpperBound(0);
+        yAxis.setAutoRanging(false);
 
-        lineChart = new LineChart<Number, Number>(xAxis, yAxis);
-
-        // 表示するデータを設定
+        // 折れ線グラフを生成する
         series = new XYChart.Series<>();
         series.setName("石の個数差");
         series.getData().add(new Data<Number, Number>(0, 0));
 
-        // グラフのデータを設定
+        // 描画するグラフを生成する
+        lineChart = new LineChart<Number, Number>(xAxis, yAxis);
         lineChart.getData().addAll(series);
+//        lineChart.setPadding(new Insets(30));
 
-        graphRootPane.getChildren().setAll(lineChart);
+        // グラフをルートペインに追加する
+        graphRootPane.getChildren().add(lineChart);
     }
 
     /**
@@ -65,7 +73,21 @@ public class GraphResultController implements Initializable {
      * @param recordRow {@code turnNum} 手目の棋譜
      */
     public void addData(int turnNum, RecordRow recordRow) {
+        // グラフのデータを描画する
         int diff = recordRow.blackDiscNum - recordRow.whiteDiscNum;
         series.getData().add(new Data<Number, Number>(turnNum, diff));
+
+        // X軸の最大値を設定する
+        int xAxisLimit = (turnNum / 10 + 1) * 10;
+        if (xAxisLimit > xAxis.getUpperBound()) {
+            xAxis.setUpperBound(xAxisLimit);
+        }
+
+        // Y軸の最大・最小値を設定する
+        int yAxisLimit = (Math.abs(diff) / 10 + 1) * 10;
+        if (yAxisLimit > yAxis.getUpperBound()) {
+            yAxis.setLowerBound(-yAxisLimit);
+            yAxis.setUpperBound(yAxisLimit);
+        }
     }
 }
