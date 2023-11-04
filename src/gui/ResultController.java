@@ -52,6 +52,10 @@ public class ResultController {
     @FXML
     private Tab graphTab;
 
+    /** 最初の画面に戻るボタン */
+    @FXML
+    private Button returnButton;
+    
     /** ゲームを終了するボタン */
     @FXML
     private Button exitButton;
@@ -200,6 +204,15 @@ public class ResultController {
         return (GraphResultController) fxmlloader.getController();
     }
 
+    /**
+     * 最初に戻るボタンが押された時に、プレイヤーの選択画面を表示させる
+     * @param event イベントのインスタンス
+     */
+    @FXML
+    void onReturnButtonAction(ActionEvent event) {
+        sceneSwitch.generateScenePlayerSelect();
+    }
+    
     /**
      * 終了ボタンが押された時のウィンドウを閉じる
      * @param event イベントのインスタンス
