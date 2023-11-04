@@ -49,7 +49,7 @@ public class ResultController {
     /** 棋譜を表示するタブ */
     @FXML
     private Tab recordTab;
-    
+
     /** 推移グラフを表示するタブ */
     @FXML
     private Tab graphTab;
@@ -112,7 +112,7 @@ public class ResultController {
         generateDetailResultPane(detailResultTab, reversi);
         RecordController recordController = generateRecordPane(recordTab);
         GraphResultController graphResultController = generateGraphResultPane(graphTab);
-        
+
         // 棋譜リストを元に、棋譜・グラフを描画する
         RecordList recordList = reversi.getRecordList();
         for (int i = 1; recordList.isEmpty() == false; i++) {
@@ -120,6 +120,7 @@ public class ResultController {
             recordController.addRecord(i, record);
             graphResultController.addData(i, record);
         }
+        recordController.setComment("終了した理由: " + recordList.getComment());
     }
 
     /**
@@ -145,7 +146,7 @@ public class ResultController {
 
         DetailResultController controller = (DetailResultController) fxmlloader.getController();
         controller.init(reversi.getBoard());
-        
+
         tabPane.setContent(pane);
     }
 
@@ -171,7 +172,7 @@ public class ResultController {
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
         tabPane.setContent(pane);
-        
+
         return (RecordController) fxmlloader.getController();
     }
 
@@ -193,10 +194,10 @@ public class ResultController {
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
         tabPane.setContent(pane);
-        
+
         return (GraphResultController) fxmlloader.getController();
     }
-    
+
     /**
      * 終了ボタンが押された時のウィンドウを閉じる
      * @param event イベントのインスタンス

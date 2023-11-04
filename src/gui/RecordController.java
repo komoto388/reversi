@@ -19,6 +19,10 @@ public class RecordController {
     @FXML
     private Label recordHeaderLabel;
 
+    /** 対戦が終了した理由を表すラベル */
+    @FXML
+    private Label commentLabel;
+
     /**
      * 棋譜を追加して描画する
      * @param index 棋譜を描画する GridPane の行番号(0,1,...)
@@ -42,5 +46,13 @@ public class RecordController {
         recordPane.add(dimLabel, 2, index);
         recordPane.add(blackNumLabel, 3, index);
         recordPane.add(whiteNumLabel, 4, index);
+    }
+    
+    /**
+     * 対戦が終了した理由として表示する文字列を設定する
+     * @param comment 対戦が終了した理由として表示する文字列
+     */
+    public void setComment(String comment) {
+        commentLabel.setText(comment);
     }
 }

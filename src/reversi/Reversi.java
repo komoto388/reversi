@@ -207,11 +207,17 @@ public class Reversi {
     private Boolean isGameFinish() {
         // 盤上に空きがない場合
         if (board.getEmptyNum() <= 0) {
+            recordList.setComment("全てのマスが埋まりました");
             return true;
         }
 
         // 片方のプレイヤーの石が0個になった場合
-        if (board.getBlackDiscNum() <= 0 || board.getWhiteDiscNum() <= 0) {
+        if (board.getBlackDiscNum() <= 0) {
+            recordList.setComment("先手・黒の石がなくなりました");
+            return true;
+        }
+        if (board.getWhiteDiscNum() <= 0) {
+            recordList.setComment("後手・白の石がなくなりました");
             return true;
         }
 
@@ -223,7 +229,7 @@ public class Reversi {
             int whiteDiscNum = board.getWhiteDiscNum();
             recordList.addSkip(++turnCount, isPlayerBlack, blackDiscNum, whiteDiscNum);
             recordList.addSkip(++turnCount, !isPlayerBlack, blackDiscNum, whiteDiscNum);
-
+            recordList.setComment("両プレイヤーともにスキップが選択されました");
             return true;
         }
 

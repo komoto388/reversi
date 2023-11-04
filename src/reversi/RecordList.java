@@ -15,18 +15,28 @@ public class RecordList {
     private Queue<Record> recordList = new ArrayDeque<Record>();
 
     /** 1つ前の手番での黒石の数 */
-    private int previousBlackNum;
+    private int previousBlackNum = 2;
 
     /** 1つ前の手番での白石の数 */
-    private int previousWhiteNum;
+    private int previousWhiteNum = 2;
+
+    /** 対戦が終了した理由を表す文字列 */
+    private String comment = null;
 
     /**
-     * 棋譜リストを初期化する
+     * 対戦が終了した理由を設定する
+     * @param result 設定する文字列
      */
-    public RecordList() {
-        recordList = new ArrayDeque<Record>();
-        previousBlackNum = 2;
-        previousWhiteNum = 2;
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
+     * 対戦が終了した理由の文字列を取得する
+     * @return 結果の文字列
+     */
+    public String getComment() {
+        return comment;
     }
 
     /**
