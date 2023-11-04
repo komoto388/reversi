@@ -41,8 +41,8 @@ public class ReversiController {
     /** リバーシ盤の手動入力を無効する時間（フレーム数） */
     private int waitFrame;
 
-    /** 現在のFPS */
-    private double currnetFps;
+    /** 実際のFPSの計測・算出するインスタンス */
+    private Fps fps;
 
     /** リバーシを制御するインスタンス */
     private Reversi reversi;
@@ -113,11 +113,11 @@ public class ReversiController {
 
         this.stage = stage;
         this.reversi = reversi;
+        this.fps = new Fps();
 
         statusLabel.setText(null);
         debugLabel.setText(null);
         eventStatusLabel.setText(null);
-        currnetFps = -1;
 
         // リバーシ盤の描画を行う
         Dimension boardSize = reversi.getBoard().getSize();
@@ -136,7 +136,7 @@ public class ReversiController {
         timerHandler = new TimerHandler();
         timerHandler.setEventStatusWait();
         setWaitTime(Global.WAIT_MILLISEC_START);
-        
+
         timer = new Timeline(new KeyFrame(new Duration(1000 / Global.FPS), timerHandler));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
@@ -156,21 +156,6 @@ public class ReversiController {
         /** ゲームの勝敗を表す */
         private ResultType result;
 
-        /** FPS計測時間の開始時刻(1秒ごとに更新) */
-        private long startTime;
-
-        /** FPS計測時間に描画したフレーム数(1秒ごとにリセット) */
-        private int countFrame;
-
-        /**
-         * タイムイベントの初期化を行う。
-         */
-        public TimerHandler() {
-            startTime = System.currentTimeMillis();
-            countFrame = 0;
-            currnetFps = 0;
-        }
-
         /**
          * 周期的に実行する処理を行う。
          * @param event イベントのインスタンス
@@ -183,7 +168,7 @@ public class ReversiController {
                     setEventStatusSkip();
                 }
             }
-            
+
             // イベントステータスに応じて処理を行う
             try {
                 switch (eventStatus) {
@@ -241,16 +226,8 @@ public class ReversiController {
                 e.printStackTrace();
 
             } finally {
-                // 現在のFPSを計算する
-                countFrame++;
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - startTime > 1000) {
-                    currnetFps = countFrame * 1000 / (double) (currentTime - startTime);
-                    startTime = currentTime;
-                    countFrame = 0;
-                }
-                
                 // 画面描画を行う
+                fps.update();
                 update();
 
                 if (waitFrame > 0) {
@@ -277,10 +254,10 @@ public class ReversiController {
             turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
             blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
             whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
-            fpsLabel.setText(String.format("%.2f fps, 待ちフレーム数:%3d", currnetFps, waitFrame));
+            fpsLabel.setText(String.format("待ちフレーム数:%3d, %.2f fps", waitFrame, fps.getFps()));
             eventStatusLabel.setText(eventStatus.toString());
         }
-        
+
         /**
          * アルゴリズムまたは人間のプレイヤーが操作・処理できる状態にする。
          * @param isManual 人間のプレイヤーが操作する場合は真 {@code true}, アルゴリズムの場合は偽 {@code false}
@@ -397,7 +374,7 @@ public class ReversiController {
         if (isPut) {
             String playerString = Convert.getPlayerColor(reversi.getPlayerIsBlack());
             statusLabel.setText(playerString + " は " + target.getString() + " に石を置きました。");
-            
+
             timerHandler.setEventStatusJudge();
             setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
         } else {
