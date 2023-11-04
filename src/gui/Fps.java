@@ -19,12 +19,12 @@ class Fps {
     private double currnetFps;
 
     /**
-     * 初期化を行う。最初のFPSは算出できないため {@code -1} とします。
+     * 初期化を行う。
      */
     public Fps() {
         startTime = System.currentTimeMillis();
         countFrame = 0;
-        currnetFps = -1;
+        currnetFps = 0;
     }
 
     /**

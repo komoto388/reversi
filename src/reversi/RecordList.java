@@ -3,8 +3,6 @@ package reversi;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import common.Global;
-
 /**
  * 棋譜を記録・操作するクラス
  * @author komoto

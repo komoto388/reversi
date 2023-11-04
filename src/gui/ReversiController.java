@@ -145,7 +145,7 @@ public class ReversiController {
         setEventStatus(EventStatus.WAIT);
         setWaitTime(Global.WAIT_MILLISEC_START);
 
-        timer = new Timeline(new KeyFrame(new Duration(1000 / Global.FPS), new EventHandler<ActionEvent>() {
+        timer = new Timeline(new KeyFrame(Duration.millis(1000 / Global.FPS), new EventHandler<ActionEvent>() {
             /**
              * 周期的に実行する処理を行う。
              * @param event イベントのインスタンス
