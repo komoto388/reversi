@@ -2,6 +2,7 @@ package gui;
 
 import common.Convert;
 import common.Global;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -13,7 +14,7 @@ import reversi.Dimension;
  * GUIでリバーシ盤の描画を行うクラス
  * @author komoto
  */
-public class DisplayBoard {
+public class BoardController {
 
     /** マスの大きさ */
     private final double gridSize;
@@ -36,7 +37,7 @@ public class DisplayBoard {
      * @param boardSize リバーシ盤の大きさ（マス）
      * @param gridSize マス１つのサイズ（縦・横同じ） 
      */
-    public DisplayBoard(GridPane gridPane, Dimension boardSize, double gridSize) {
+    public BoardController(GridPane gridPane, Dimension boardSize, double gridSize) {
         // 引数の正常性確認
         try {
             if (gridPane == null) {
@@ -59,6 +60,8 @@ public class DisplayBoard {
         this.discRadius = (gridSize / 2.0 - 10);
         this.boardWidth = boardSize.getColumn();
         this.boardHeight = boardSize.getRow();
+
+        gridPane.setPadding(new Insets(-gridSize, 0, 0, -gridSize));
 
         boardPane = new Pane[boardHeight][boardWidth];
 

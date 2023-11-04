@@ -37,7 +37,7 @@ public class DetailResultController {
             System.exit(exitCode);
         }
 
-        DisplayBoard displayBoard = new DisplayBoard(gridPane, board.getSize(), Global.GRID_SIZE_RESULT);
-        displayBoard.drawStone(board);
+        BoardController boardController = new BoardController(gridPane, board.getSize(), Global.GRID_SIZE_RESULT);
+        boardController.drawStone(board);
     }
 }

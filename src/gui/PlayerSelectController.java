@@ -93,11 +93,11 @@ public class PlayerSelectController {
 
         for (int i = 0; i < types.length; i++) {
             RadioButton radioButton = new RadioButton(String.format("%s", types[i].getName()));
-            radioButton.setId("select-radio-button");
+            radioButton.setUserData(types[i]);
             radioButton.setToggleGroup(group);
+            radioButton.setId("select-radio-button");
             radioButton.setPrefWidth(Global.RADIO_BUTTON_WIDTH);
             radioButton.setPrefHeight(Global.RADIO_BUTTON_HEIGHT);
-            radioButton.setUserData(types[i]);
 
             if (i == Global.DEFAULT_ALGORITHM) {
                 radioButton.setSelected(true);

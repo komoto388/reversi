@@ -56,7 +56,7 @@ public class ReversiController {
     private Reversi reversi;
 
     /** リバーシ盤を描画するインスタンス */
-    private DisplayBoard displayBoard;
+    private BoardController boardController;
 
     /** リバーシ画面のルートペイン */
     @FXML
@@ -130,12 +130,12 @@ public class ReversiController {
 
         // リバーシ盤の描画を行う
         Dimension boardSize = reversi.getBoard().getSize();
-        displayBoard = new DisplayBoard(gridPane, boardSize, Global.GRID_SIZE);
+        boardController = new BoardController(gridPane, boardSize, Global.GRID_SIZE);
 
         // マスをクリックした時のイベントを設定する
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
-                Pane pane = displayBoard.getBoardPane(i, j);
+                Pane pane = boardController.getBoardPane(i, j);
                 pane.setOnMouseClicked(new GridHandler(new Dimension(i, j)));
                 pane.setDisable(true);
             }
@@ -238,7 +238,7 @@ public class ReversiController {
                 Board board = reversi.getBoard();
 
                 // リバーシ盤に石を描画する
-                displayBoard.drawStone(board);
+                boardController.drawStone(board);
 
                 // 現在の手番、石の個数を更新する
                 if (reversi.getPlayerIsBlack()) {
@@ -417,7 +417,7 @@ public class ReversiController {
 
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
-                Pane pane = displayBoard.getBoardPane(i, j);
+                Pane pane = boardController.getBoardPane(i, j);
                 pane.setDisable(!isEnable);
             }
         }
