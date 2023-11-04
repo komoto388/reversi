@@ -6,18 +6,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import reversi.Reversi;
 
 /**
@@ -26,8 +21,8 @@ import reversi.Reversi;
  */
 public class PlayerSelectController {
 
-    /** フレーム情報 */
-    private Stage primaryStage;
+    /** シーン切替処理を行うインスタンス */
+    private SceneSwitch sceneSwitch;
 
     /** 先手・黒側の使用アルゴリズム */
     private AlgorithmType algorithmTypeBlack;
@@ -57,13 +52,13 @@ public class PlayerSelectController {
 
     /**
      * 先手・後手両方のアルゴリズムを選択するラジオボタンを生成する
-     * @param primaryStage フレーム情報
+     * @param sceneSwitch シーン切替処理を行うインスタンス
      */
-    public void init(Stage primaryStage) {
+    public void init(SceneSwitch sceneSwitch) {
         // 引数の正常性確認
         try {
-            if (primaryStage == null) {
-                throw new IllegalArgumentException("引数 \"primaryStage\" の値が NULL です");
+            if (sceneSwitch == null) {
+                throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
         } catch (IllegalArgumentException e) {
             int exitCode = Global.EXIT_FAILURE;
@@ -72,7 +67,7 @@ public class PlayerSelectController {
             System.exit(exitCode);
         }
 
-        this.primaryStage = primaryStage;
+        this.sceneSwitch = sceneSwitch;
 
         setGridPane(blackPane, true);
         setGridPane(whitePane, false);
@@ -147,40 +142,7 @@ public class PlayerSelectController {
      */
     @FXML
     void onStartButtonAction(ActionEvent event) {
-        FXMLLoader fxmlloader = null;
-        BorderPane reversiPane = null;
-        String fxmlFile = "../fxml/Reversi.fxml";
-
-        // リバーシのゲーム画面の呼び出し
         Reversi reversi = new Reversi(algorithmTypeBlack, algorithmTypeWhite);
-
-        try {
-            fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
-            reversiPane = (BorderPane) fxmlloader.load();
-        } catch (Exception e) {
-            int exitCode = Global.EXIT_FAILURE;
-            e.printStackTrace();
-            System.err.println(fxmlFile + "の読み込みで例外が発生したため、プログラムを異常終了します: 終了コード = " + exitCode);
-            System.exit(exitCode);
-        }
-
-        ReversiController controller = (ReversiController) fxmlloader.getController();
-        controller.init(primaryStage, reversi);
-
-        // 画面内に複数ペインを描画するために、StackPaneでルートペインを作成する
-        AnchorPane rootPane = new AnchorPane();
-        rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
-        rootPane.getChildren().add(reversiPane);
-        AnchorPane.setTopAnchor(reversiPane, 0d);
-        AnchorPane.setBottomAnchor(reversiPane, 0d);
-        AnchorPane.setLeftAnchor(reversiPane, 0d);
-        AnchorPane.setRightAnchor(reversiPane, 0d);
-
-        // 描画する画面をフレームに設定する
-        Scene scene = new Scene(rootPane);
-        scene.getStylesheets().add(getClass().getResource("../css/default.css").toExternalForm());
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        sceneSwitch.generateSceneReversi(reversi);
     }
 }

@@ -7,17 +7,13 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import reversi.Board;
 import reversi.Dimension;
@@ -39,9 +35,6 @@ public class ReversiController {
 
     /** ゲームの勝敗結果を表す */
     private ResultType result;
-
-    /** フレーム情報 */
-    private Stage stage;
 
     /** タイマーイベントを制御するインスタンス */
     private Timeline timer;
@@ -100,14 +93,14 @@ public class ReversiController {
 
     /**
      * リバーシ盤を初期化する
-     * @param stage フレーム情報
+     * @param sceneSwitch シーン切替処理を行うインスタンス
      * @param reversi リバーシの処理を行うインスタンス
      */
-    public void init(Stage stage, Reversi reversi) {
+    public void init(SceneSwitch sceneSwitch, Reversi reversi) {
         // 引数の正常性確認
         try {
-            if (stage == null) {
-                throw new IllegalArgumentException("引数 \"stage\" の値が NULL です");
+            if (sceneSwitch == null) {
+                throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
             if (reversi == null) {
                 throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
@@ -120,7 +113,6 @@ public class ReversiController {
         }
 
         this.result = ResultType.None;
-        this.stage = stage;
         this.reversi = reversi;
         this.fps = new Fps();
 
@@ -223,7 +215,7 @@ public class ReversiController {
                 case FINISH: {
                     // 完了処理を行い、結果画面を表示する
                     timer.stop();
-                    showResult(result);
+                    sceneSwitch.generateSceneResult(reversi, result);
                     break;
                 }
                 default:
@@ -336,43 +328,6 @@ public class ReversiController {
             e.printStackTrace();
             result = ResultType.None;
         }
-    }
-
-    /**
-     * 結果画面を生成し、表示する
-     * @param result 勝敗結果を表す
-     */
-    private void showResult(ResultType result) {
-        FXMLLoader fxmlloader = null;
-        BorderPane resultPane = null;
-        String fxmlFile = "../fxml/Result.fxml";
-
-        try {
-            fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
-            resultPane = (BorderPane) fxmlloader.load();
-        } catch (Exception e) {
-            int exitCode = Global.EXIT_FAILURE;
-            e.printStackTrace();
-            System.err.println(fxmlFile + "の読み込みで例外が発生したため、プログラムを異常終了します: 終了コード = " + exitCode);
-            System.exit(exitCode);
-        }
-
-        ResultController controller = (ResultController) fxmlloader.getController();
-        controller.init(stage, reversi, result);
-
-        // 現在の画面のシーンとルートペインを取得する
-        Scene scene = stage.getScene();
-        AnchorPane rootPane = (AnchorPane) scene.getRoot();
-        rootPane.getChildren().add(resultPane);
-
-        // 結果画面のサイズを調整し、表示位置を中央にする
-        resultPane.setPrefSize(rootPane.getWidth() * 0.8, rootPane.getHeight() * 0.9);
-        double dWidth = rootPane.getWidth() - resultPane.getPrefWidth();
-        double dHeight = rootPane.getHeight() - resultPane.getPrefHeight();
-        AnchorPane.setTopAnchor(resultPane, dHeight / 2);
-        AnchorPane.setBottomAnchor(resultPane, dHeight / 2);
-        AnchorPane.setLeftAnchor(resultPane, dWidth / 2);
-        AnchorPane.setRightAnchor(resultPane, dWidth / 2);
     }
 
     /**
