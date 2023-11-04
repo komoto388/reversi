@@ -28,7 +28,7 @@ public class Reversi {
     private int turnCount;
 
     /** 棋譜の記録を行うインスタンス */
-    private RecordList recordList;
+    private Record record;
 
     /**
      * リバーシ盤の初期化を行う
@@ -68,7 +68,7 @@ public class Reversi {
         playerWhite = new Player(seed + 100, false, typeWhite);
         currentPlayer = playerBlack;
         turnCount = 1;
-        recordList = new RecordList();
+        record = new Record();
     }
 
     /**
@@ -99,8 +99,8 @@ public class Reversi {
      * 記録された棋譜のインスタンスを返す
      * @return 記録された棋譜のインスタンス
      */
-    public RecordList getRecordList() {
-        return recordList;
+    public Record getRecord() {
+        return record;
     }
 
     /**
@@ -141,7 +141,7 @@ public class Reversi {
         if (board.canPutAll(currentPlayer.isDiscBlack())) {
             return false;
         } else {
-            recordList.addSkip(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(),
+            record.addRowAsSkip(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(),
                     board.getWhiteDiscNum());
             return true;
         }
@@ -173,7 +173,7 @@ public class Reversi {
 
         // 棋譜を記録する
         if (isPut) {
-            recordList.add(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(), board.getWhiteDiscNum(),
+            record.addRow(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(), board.getWhiteDiscNum(),
                     target.getString());
         }
 
@@ -207,17 +207,17 @@ public class Reversi {
     private Boolean isGameFinish() {
         // 盤上に空きがない場合
         if (board.getEmptyNum() <= 0) {
-            recordList.setComment("全てのマスが埋まりました");
+            record.setComment("全てのマスが埋まりました");
             return true;
         }
 
         // 片方のプレイヤーの石が0個になった場合
         if (board.getBlackDiscNum() <= 0) {
-            recordList.setComment("先手・黒の石がなくなりました");
+            record.setComment("先手・黒の石がなくなりました");
             return true;
         }
         if (board.getWhiteDiscNum() <= 0) {
-            recordList.setComment("後手・白の石がなくなりました");
+            record.setComment("後手・白の石がなくなりました");
             return true;
         }
 
@@ -227,9 +227,9 @@ public class Reversi {
             Boolean isPlayerBlack = currentPlayer.isDiscBlack();
             int blackDiscNum = board.getBlackDiscNum();
             int whiteDiscNum = board.getWhiteDiscNum();
-            recordList.addSkip(++turnCount, isPlayerBlack, blackDiscNum, whiteDiscNum);
-            recordList.addSkip(++turnCount, !isPlayerBlack, blackDiscNum, whiteDiscNum);
-            recordList.setComment("両プレイヤーともにスキップが選択されました");
+            record.addRowAsSkip(++turnCount, isPlayerBlack, blackDiscNum, whiteDiscNum);
+            record.addRowAsSkip(++turnCount, !isPlayerBlack, blackDiscNum, whiteDiscNum);
+            record.setComment("両プレイヤーともにスキップが選択されました");
             return true;
         }
 

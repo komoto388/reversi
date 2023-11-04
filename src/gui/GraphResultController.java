@@ -10,7 +10,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.layout.AnchorPane;
-import reversi.Record;
+import reversi.RecordRow;
 
 /**
  * 黒・白の石の獲得推移をグラフに描画するクラス
@@ -62,10 +62,10 @@ public class GraphResultController implements Initializable {
     /**
      * グラフにデータを追加する
      * @param turnNum ターン数
-     * @param record {@code turnNum} 手目の棋譜
+     * @param recordRow {@code turnNum} 手目の棋譜
      */
-    public void addData(int turnNum, Record record) {
-        int diff = record.blackDiscNum - record.whiteDiscNum;
+    public void addData(int turnNum, RecordRow recordRow) {
+        int diff = recordRow.blackDiscNum - recordRow.whiteDiscNum;
         series.getData().add(new Data<Number, Number>(turnNum, diff));
     }
 }

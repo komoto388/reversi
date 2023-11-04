@@ -8,7 +8,7 @@ import reversi.Dimension;
 import reversi.ResultType;
 import reversi.Reversi;
 import reversi.Record;
-import reversi.RecordList;
+import reversi.RecordRow;
 
 /**
  * CUI版リバーシの処理を行うクラス
@@ -196,15 +196,15 @@ public class CuiMain {
         reversi.getBoard().showCui();
 
         // 譜面記録を表示する。
-        RecordList recordList = reversi.getRecordList();
+        Record record = reversi.getRecord();
         System.out.printf("\n棋譜\n");
-        while (recordList.isEmpty() == false) {
-            Record record = recordList.poll();
+        while (record.isEmpty() == false) {
+            RecordRow recordRow = record.poll();
             System.out.printf("%2d手目  %s  %-4s  黒 %2d個 (%+3d)  白 %2d個 (%+3d)\n",
-                    record.turn, record.playerString, record.dimString, record.blackDiscNum, record.increaseBlackNum,
-                    record.whiteDiscNum, record.increaseWhiteNum);
+                    recordRow.turn, recordRow.playerString, recordRow.dimString, recordRow.blackDiscNum,
+                    recordRow.increaseBlackNum, recordRow.whiteDiscNum, recordRow.increaseWhiteNum);
         }
-        System.out.println("\n終了理由: " + recordList.getComment());
+        System.out.println("\n終了理由: " + record.getComment());
 
         // 対戦結果を表示する。
         System.out.printf("\n結果\n%d手、黒%2d個、白%2d個を以って、",

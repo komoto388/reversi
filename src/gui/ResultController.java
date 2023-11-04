@@ -13,7 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import reversi.Record;
-import reversi.RecordList;
+import reversi.RecordRow;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -114,13 +114,13 @@ public class ResultController {
         GraphResultController graphResultController = generateGraphResultPane(graphTab);
 
         // 棋譜リストを元に、棋譜・グラフを描画する
-        RecordList recordList = reversi.getRecordList();
-        for (int i = 1; recordList.isEmpty() == false; i++) {
-            Record record = recordList.poll();
-            recordController.addRecord(i, record);
-            graphResultController.addData(i, record);
+        Record record = reversi.getRecord();
+        for (int i = 1; record.isEmpty() == false; i++) {
+            RecordRow recordRow = record.poll();
+            recordController.addRecordRow(i, recordRow);
+            graphResultController.addData(i, recordRow);
         }
-        recordController.setComment("終了した理由: " + recordList.getComment());
+        recordController.setComment("終了した理由: " + record.getComment());
     }
 
     /**
