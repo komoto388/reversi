@@ -2,6 +2,7 @@
 
 .root {
     -fx-font-family: "Meiryo UI";
+    -fx-background-color: linear-gradient(to bottom right, derive(#FFFEFF, 100%), #D7FFFE);
 }
 
 #resultRootPane {
