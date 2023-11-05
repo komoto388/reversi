@@ -1,0 +1,44 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+/*画面上部の結果を表示するラベル*/
+#vsLabel,
+#blackHeaderLabel,
+#whiteHeaderLabel {
+    -fx-font-size: 14;
+}
+
+/*プレイヤー名を表すラベル*/
+#blackNameLabel,
+#whiteNameLabel {
+    -fx-font-size: 24;
+}
+
+/*石の個数を表すラベル*/
+#blackDiscNumLabel,
+#whiteDiscNumLabel {
+    -fx-font-size: 18;
+}
+
+/*結果表示のラベル*/
+#resultLabel {
+    -fx-font-size: 20;
+    -fx-text-fill: red;
+}
+
+/*タブのペイン*/
+.tab-pane {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+/*詳細結果、棋譜、グラフのルートペイン*/
+.vbox,
+.viewport {
+    -fx-background-color: white;
+}
+
+/*棋譜ヘッダーのラベル*/
+#recordHeaderLabel {
+    -fx-font-weight: bold;
+}

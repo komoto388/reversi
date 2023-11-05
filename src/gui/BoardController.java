@@ -90,9 +90,9 @@ public class BoardController {
                     pane.setPrefHeight(gridSize);
 
                     if ((i + j) % 2 == 0) {
-                        pane.setId("grid1");
+                        pane.setId(Global.FXID_GRID_1);
                     } else {
-                        pane.setId("grid2");
+                        pane.setId(Global.FXID_GRID_2);
                     }
 
                     // コンストラクタで生成した、リバーシ盤のマスを描画する

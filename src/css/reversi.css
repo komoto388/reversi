@@ -1,0 +1,10 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+/*プレイヤー名、石の個数・ターン数のラベル*/
+#blackNameLabel,
+#whiteNameLabel,
+#blackDiscNumLabel,
+#whiteDiscNumLabel,
+#turnLabel {
+    -fx-font-size: 20;
+}

@@ -3,7 +3,6 @@ package gui;
 import common.Global;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import reversi.Board;
 
 /**
@@ -11,10 +10,6 @@ import reversi.Board;
  * @author komoto
  */
 public class DetailResultController {
-
-    /** 詳細結果を表示する画面のルートペイン */
-    @FXML
-    private VBox detailResultRootPane;
 
     /** リバーシ盤を描画するグリッドペイン */
     @FXML

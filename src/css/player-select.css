@@ -1,16 +1,11 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
-.root {
-    -fx-font-family: "Meiryo UI";
-    -fx-background-color: linear-gradient(to bottom right, derive(#FFFEFF, 100%), #D7FFFE);
-}
-
 /*先手・黒側のタイトルラベル*/
 #blackLabel {
     -fx-font-size: 20;
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-background-color: black; 
+    -fx-background-color: black;
 }
 
 /*後手・白側のタイトルラベル*/
@@ -18,7 +13,7 @@
     -fx-font-size: 20;
     -fx-font-weight: bold;
     -fx-text-fill: black;
-    -fx-background-color: white;    
+    -fx-background-color: white;
 }
 
 /*アルゴリズム選択のラジオボタン*/

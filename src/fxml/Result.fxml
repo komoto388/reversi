@@ -12,11 +12,11 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="resultRootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ResultController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ResultController">
     <top>
         <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <GridPane maxWidth="480.0">
+            <GridPane hgap="10.0" maxWidth="480.0" vgap="10.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" prefWidth="120.0" />
                 <ColumnConstraints hgrow="SOMETIMES" prefWidth="40.0" />
@@ -24,14 +24,17 @@
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="先手 黒" />
-                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="vs." GridPane.columnIndex="1" />
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="5.0" maxWidth="1.7976931348623157E308" text="後手 白" GridPane.columnIndex="2" />
-                  <Label fx:id="blackDiscNumLabel" alignment="CENTER" layoutX="10.0" layoutY="5.0" maxWidth="1.7976931348623157E308" text="個" GridPane.rowIndex="1" />
-                  <Label fx:id="whiteDiscNumLabel" alignment="CENTER" layoutX="10.0" layoutY="5.0" maxWidth="1.7976931348623157E308" text="結果" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Label fx:id="vsLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="vs." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label fx:id="blackHeaderLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="先手・黒" />
+                  <Label fx:id="whiteHeaderLabel" alignment="CENTER" layoutX="10.0" layoutY="5.0" maxWidth="1.7976931348623157E308" text="後手・白" GridPane.columnIndex="2" />
+                  <Label fx:id="blackDiscNumLabel" alignment="CENTER" layoutX="10.0" layoutY="5.0" maxWidth="1.7976931348623157E308" text="個" GridPane.rowIndex="2" />
+                  <Label fx:id="whiteDiscNumLabel" alignment="CENTER" layoutX="10.0" layoutY="5.0" maxWidth="1.7976931348623157E308" text="個" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Label fx:id="blackNameLabel" alignment="CENTER" layoutX="10.0" layoutY="18.0" maxWidth="1.7976931348623157E308" text="プレイヤー" GridPane.rowIndex="1" />
+                  <Label fx:id="whiteNameLabel" alignment="CENTER" layoutX="10.0" layoutY="18.0" maxWidth="1.7976931348623157E308" text="プレイヤー" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -51,6 +54,9 @@
             <Tab fx:id="recordTab" text="棋譜" />
             <Tab fx:id="graphTab" text="推移" />
             </tabs>
+         <BorderPane.margin>
+            <Insets left="40.0" right="40.0" />
+         </BorderPane.margin>
         </TabPane>
     </center>
     <bottom>
