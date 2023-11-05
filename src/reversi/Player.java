@@ -5,6 +5,7 @@ import java.rmi.UnexpectedException;
 import algorithm.Algorithm;
 import algorithm.AlgorithmType;
 import algorithm.Original01;
+import algorithm.Original02;
 import algorithm.RandomAlgorithm;
 import common.Global;
 
@@ -33,11 +34,12 @@ class Player {
     /**
      * プレイヤーの初期設定を行う。
      * 使用するアルゴリズムを決定する。
+     * @param board リバーシ盤の状態
      * @param seed プレイヤーがアルゴリズムを使用する際に使用する乱数のseed値
      * @param isBlack プレイヤーの石の色が黒かどうか
      * @param type 使用するアルゴリズムの種類
      */
-    public Player(long seed, Boolean isBlack, AlgorithmType type) {
+    public Player(Board board, long seed, Boolean isBlack, AlgorithmType type) {
         // 引数の正常性確認
         try {
             if (isBlack == null) {
@@ -66,11 +68,15 @@ class Player {
             break;
         }
         case Random: {
-            algorithm = new RandomAlgorithm(seed);
+            algorithm = new RandomAlgorithm(board, isBlack, seed);
             break;
         }
         case Original_01: {
-            algorithm = new Original01(seed);
+            algorithm = new Original01(board, isBlack, seed);
+            break;
+        }
+        case Original_02: {
+            algorithm = new Original02(board, isBlack, seed);
             break;
         }
         default:
@@ -104,13 +110,12 @@ class Player {
 
     /**
      * 石を置く座標を決定する
-     * @param board リバーシ盤の情報
      * @return 決定した石を置く座標を返す。例外などにより決定できなかった場合は{@code NULL} を返す。
      * @throws UnexpectedException 手動アルゴリズムでの実行は想定されていない
      */
-    public Dimension run(Board board) throws UnexpectedException {
+    public Dimension run() throws UnexpectedException {
         if (algorithmType != AlgorithmType.Manual) {
-            return algorithm.run(board, isDiscBlack());
+            return algorithm.run();
         } else {
             throw new UnexpectedException("手動アルゴリズムでの動作は想定されていません: " + algorithmType);
         }

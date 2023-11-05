@@ -6,7 +6,7 @@ import common.Convert;
  * 行・列の値を定義するクラス
  * @author komoto
  */
-public class Dimension {
+public class Dimension implements Cloneable {
 
     /** 行 */
     private int row;
@@ -38,6 +38,14 @@ public class Dimension {
 
         this.row = row;
         this.column = column;
+    }
+
+    /**
+     * インスタンスを複製する
+     */
+    @Override
+    protected Dimension clone() throws CloneNotSupportedException {
+        return (Dimension) super.clone();
     }
 
     /**

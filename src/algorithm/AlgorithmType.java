@@ -6,8 +6,9 @@ package algorithm;
  */
 public enum AlgorithmType {
     Manual ("プレイヤー"), 
-    Random ("COM - ランダム"),
-    Original_01 ("COM - オリジナル1")
+    Random ("COM: ランダム"),
+    Original_01 ("COM: オリジナル1"),
+    Original_02 ("COM: 深さ探索"),
     ;
     
     /** アルゴリズムの名前 */

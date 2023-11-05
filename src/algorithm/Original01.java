@@ -24,39 +24,32 @@ public class Original01 extends Algorithm {
             return point;
         }
     };
-    
+
     /**
      * ランダムアルゴリズムの初期化を行う
+     * @param board リバーシ盤の状態
+     * @param isPlayerBlack 使用するプレイヤーの石の色
      * @param seed 乱数生成のseed値
      */
-    public Original01(long seed) {
-        super(seed);
+    public Original01(Board board, Boolean isPlayerBlack, long seed) {
+        super(board, isPlayerBlack, seed);
     }
 
     /**
      * 全てのマスに対して評価を行い、評価値が最大となる座標を算出する。
      */
     @Override
-    public Dimension run(Board board, Boolean playerIsBlack) {
+    public Dimension run() {
         final Dimension boardSize = board.getSize();
         Evaluate evaluate = new Evaluate(boardSize);
 
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 Dimension target = new Dimension(i, j);
-                int point = calcEvaluatePoint(board, playerIsBlack, target);
+                int point = calcEvaluatePoint(board, target);
                 evaluate.add(target, point);
-                
-//                // 動作確認での表示用
-//                if(point > MIN_POINT) {
-//                    System.out.printf("座標: %s, 評価値: %d\n", target.getString(), point);
-//                }
-//                if(i == boardSize.getRow() - 1 && j == boardSize.getColumn() - 1) {
-//                    System.out.printf("\n");
-//                }
             }
         }
-
         return evaluate.getMaxPointDimension();
     }
 
@@ -67,23 +60,23 @@ public class Original01 extends Algorithm {
      * @param target 対象の座標
      * @return 算出した評価点
      */
-    private int calcEvaluatePoint(Board board, Boolean playerIsBlack, Dimension target) {
+    private int calcEvaluatePoint(Board board, Dimension target) {
         int point = 0;
 
         // 対称座標に置いた時、反転できる相手の石の個数
-        int countReversibleDisc = board.countReversibleDisc(target, playerIsBlack);
+        int countReversibleDisc = board.countReversibleDisc(target, isPlayerBlack);
 
         // 石を置けないマスは評価値を最小にする
         if (countReversibleDisc == 0) {
             return MIN_POINT;
         }
-        
+
         // 石を反転できる個数を元に評価する。返せる個数が多いほど評価を高くする。
         point += countReversibleDisc * 100;
-        
+
         // 四隅・端の評価値を加算する
         point += getEdgePoint(target, board.getSize());
-        
+
         // 1～99のランダム値を加算する
         point += random.nextInt(100);
 
@@ -105,12 +98,12 @@ public class Original01 extends Algorithm {
         if ((row == 0 || row == maxRow) && (column == 0 || column == maxColumn)) {
             return EvaluatePoint.CORNER.getPoint();
         }
-        
+
         // 四隅以外の端の場合
         if (row == 0 || row == maxRow || column == 0 || column == maxColumn) {
             return EvaluatePoint.EDGE.getPoint();
         }
-        
+
         return 0;
     }
 

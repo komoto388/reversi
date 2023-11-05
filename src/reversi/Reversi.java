@@ -64,8 +64,8 @@ public class Reversi {
         // Playerクラスに与える乱数のseed値について、Playerでseed値が異なるように差をつける
         long seed = System.currentTimeMillis();
         board = new Board(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
-        playerBlack = new Player(seed, true, typeBlack);
-        playerWhite = new Player(seed + 100, false, typeWhite);
+        playerBlack = new Player(board, seed, true, typeBlack);
+        playerWhite = new Player(board, seed + 100, false, typeWhite);
         currentPlayer = playerBlack;
         turnCount = 1;
         record = new Record();
@@ -124,7 +124,7 @@ public class Reversi {
         Dimension target = null;
 
         try {
-            target = currentPlayer.run(board);
+            target = currentPlayer.run();
         } catch (UnexpectedException e) {
             e.printStackTrace();
             target = null;
