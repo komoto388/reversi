@@ -18,6 +18,12 @@ public class Global {
 
     /** デフォルトで使用するアルゴリズムの要素番号 */
     public static final int DEFAULT_ALGORITHM = 0;
+    
+    /** 先手・黒の名前のデフォルト値 */
+    public static final String DEFAULT_PLAYER_NAME_BLACK = "プレイヤー1";
+
+    /** 後手・白の名前のデフォルト値 */
+    public static final String DEFAULT_PLAYER_NAME_WHITE= "プレイヤー2";
 
     /* 画面描画のデザインに関する定数 */
     /** ルートペインの横幅 */
@@ -43,6 +49,15 @@ public class Global {
 
     /** 結果画面に表示する、リバーシ盤のマスの大きさ（縦・横同じ） */
     public static final double GRID_SIZE_RESULT = 50.0;
+
+    /** 行・列番号の合計値が偶数になる、リバーシ盤のマスに割り当てるfxid */
+    public static final String FXID_GRID_1 = "grid-1";
+
+    /** 行・列番号の合計値が奇数になる、リバーシ盤のマスに割り当てるfxid */
+    public static final String FXID_GRID_2 = "grid-2";
+
+    /** プレイヤーが石を置いた、リバーシ盤のマスに割り当てるfxid */
+    public static final String FXID_GRID_PUT = "grid-put";
 
     /* 画面描画のタイマーイベントに関する定数 */
     /** 1秒間に画面描画する回数(FPS) */

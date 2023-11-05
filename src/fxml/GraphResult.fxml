@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-
 <VBox fx:id="graphRootPane" alignment="TOP_CENTER" minHeight="320.0" minWidth="320.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GraphResultController">
    <children>
       <Label text="対戦中の推移" />

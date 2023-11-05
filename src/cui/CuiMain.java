@@ -4,7 +4,9 @@ import java.util.Scanner;
 
 import algorithm.AlgorithmType;
 import common.Convert;
+import common.Global;
 import reversi.Dimension;
+import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
 import reversi.Record;
@@ -21,9 +23,16 @@ public class CuiMain {
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
 
-        AlgorithmType typeBlack = selectAlgorithm("先手・黒");
-        AlgorithmType typeWhite = selectAlgorithm("後手・白");
-        reversi = new Reversi(typeBlack, typeWhite);
+        AlgorithmType algorithmTypeBlack = selectAlgorithm("先手・黒");
+        AlgorithmType algorithmTypeWhite = selectAlgorithm("後手・白");
+
+        // プレイヤーのインスタンスを作成する
+        // Playerクラスに与える乱数のseed値は、Playerでseed値が異なるようにする
+        long seed = System.currentTimeMillis();
+        Player playerBlack = new Player(Global.DEFAULT_PLAYER_NAME_BLACK, true, algorithmTypeBlack, seed);
+        Player playerWhite = new Player(Global.DEFAULT_PLAYER_NAME_WHITE, false, algorithmTypeWhite, seed + 100);
+
+        reversi = new Reversi(playerBlack, playerWhite);
 
         ResultType result;
         do {

@@ -5,9 +5,9 @@ package algorithm;
  * @author komoto
  */
 public enum AlgorithmType {
-    Manual ("プレイヤー"), 
-    Random ("COM - ランダム"),
-    Original_01 ("COM - オリジナル1")
+    Manual ("マニュアル"), 
+    Random ("COM: ランダム"),
+    Original_01 ("COM: オリジナル1")
     ;
     
     /** アルゴリズムの名前 */
