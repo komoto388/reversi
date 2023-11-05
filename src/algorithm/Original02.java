@@ -3,6 +3,9 @@ package algorithm;
 import reversi.Board;
 import reversi.Dimension;
 
+/**
+ * 数手先まで盤面を読み、最も石の個数が多くなるマスに石を置く
+ */
 public class Original02 extends Algorithm {
     /** 探索する深さ */
     private final int DEPTH = 4;
@@ -45,15 +48,15 @@ public class Original02 extends Algorithm {
     /**
      * 盤面にある自分と相手の石の個数に応じて、評価する
      * @param depth 手を読む深さ。0の場合は現在の盤面のみで評価する
-     * @param board 現在のリバーシ盤の状態
+     * @param currnetBoard 現在のリバーシ盤の状態
      * @param isMe 評価を行う対象が自分の場合は {@code ture}, 相手の場合は {@code false}
      * @param target 石を置く予定の座標。この座標に石をおいた場合について評価する。
      * @return この盤面での評価値を返す
      * @throws CloneNotSupportedException 評価用にリバーシ盤を複製するのに失敗した
      */
-    private int evaluate(int depth, Board board, Boolean isMe, Dimension target)
+    private int evaluate(int depth, Board currnetBoard, Boolean isMe, Dimension target)
             throws CloneNotSupportedException {
-        final Dimension boardSize = board.getSize();
+        final Dimension boardSize = currnetBoard.getSize();
         int point = 0;
 
         // 評価をするにあたり、この盤面でプレイしているプレイヤーを調べる
@@ -65,7 +68,7 @@ public class Original02 extends Algorithm {
         }
 
         // 次の手の状態を表すリバーシ盤を作成する
-        Board nextBoard = board.clone();
+        Board nextBoard = currnetBoard.clone();
         if (nextBoard.put(target, currentPlayer) == false) {
             // 探索の深さに関わらず、石を置けない座標の場合は下限値(MIN_POINT)を返す
             return MIN_POINT;
@@ -95,20 +98,20 @@ public class Original02 extends Algorithm {
 
     /**
      * 自分と相手の石の個数から、評価値を算出する
-     * @param board 現在のリバーシ盤の状態
+     * @param currnetBoard 現在のリバーシ盤の状態
      * @param currentPlayer 評価する盤面をプレイしているプレイヤー
      * @return 盤面の評価値
      */
-    private int calcPoint(Board board, Boolean currentPlayer) {
+    private int calcPoint(Board currnetBoard, Boolean currentPlayer) {
         // 現在の盤面での、自分の石と相手の石の個数で評価する
         int playerDiscNum, enemyDiscNum;
 
         if (currentPlayer) {
-            playerDiscNum = board.getBlackDiscNum();
-            enemyDiscNum = board.getWhiteDiscNum();
+            playerDiscNum = currnetBoard.getBlackDiscNum();
+            enemyDiscNum = currnetBoard.getWhiteDiscNum();
         } else {
-            playerDiscNum = board.getWhiteDiscNum();
-            enemyDiscNum = board.getBlackDiscNum();
+            playerDiscNum = currnetBoard.getWhiteDiscNum();
+            enemyDiscNum = currnetBoard.getBlackDiscNum();
         }
 
         return ((playerDiscNum - enemyDiscNum) * 100);

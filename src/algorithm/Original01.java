@@ -5,6 +5,7 @@ import reversi.Dimension;
 
 /**
  * 四隅・端および反転できる石の個数に基づく評価を行うクラス
+ * @author komoto
  */
 public class Original01 extends Algorithm {
 

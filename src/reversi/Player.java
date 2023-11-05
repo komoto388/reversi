@@ -4,6 +4,7 @@ import java.rmi.UnexpectedException;
 
 import algorithm.Algorithm;
 import algorithm.AlgorithmType;
+import algorithm.MiniMax01;
 import algorithm.Original01;
 import algorithm.Original02;
 import algorithm.RandomAlgorithm;
@@ -135,6 +136,10 @@ public class Player {
         }
         case Original_02: {
             algorithm = new Original02(board, isPlayerBlack);
+            break;
+        }
+        case MiniMax_01:{
+            algorithm = new MiniMax01(board, isPlayerBlack);
             break;
         }
         case Manual: {
