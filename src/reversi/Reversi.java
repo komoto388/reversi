@@ -1,7 +1,5 @@
 package reversi;
 
-import java.rmi.UnexpectedException;
-
 import common.Convert;
 import common.Global;
 
@@ -64,7 +62,7 @@ public class Reversi {
     public Board getBoard() {
         return board;
     }
-    
+
     /**
      * 先手・黒のプレイヤー情報を取得する
      * @return 先手・黒のプレイヤーのインスタンス
@@ -72,7 +70,7 @@ public class Reversi {
     public Player getPlayerBlack() {
         return playerBlack;
     }
-    
+
     /**
      * 後手・白のプレイヤー情報を取得する
      * @return 後手・白のプレイヤーのインスタンス
@@ -80,7 +78,7 @@ public class Reversi {
     public Player getPlayerWhite() {
         return playerWhite;
     }
-    
+
     /**
      * 現在の経過ターン数を返す
      * @return 現在の経過ターン数
@@ -123,16 +121,7 @@ public class Reversi {
      * @return 石を打つ座標。算出できない場合は{@code NULL}を返す。
      */
     public Dimension run() {
-        Dimension target = null;
-
-        try {
-            target = currentPlayer.run(board);
-        } catch (UnexpectedException e) {
-            e.printStackTrace();
-            target = null;
-        }
-
-        return target;
+        return currentPlayer.run(board);
     }
 
     /**

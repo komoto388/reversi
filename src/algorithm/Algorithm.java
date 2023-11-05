@@ -20,28 +20,33 @@ public abstract class Algorithm {
     /** 評価関数の最大値を表す定数 */
     protected final int MAX_POINT = Integer.MAX_VALUE;
 
+    /** リバーシ盤の状態 */
+    protected Board board;
+
     /** 使用するプレイヤーの石の色を表す */
     protected Boolean isPlayerBlack;
 
-    /** ランダム値を扱うインスタンス */
-    protected Random random;
+    /**
+     * ランダム値を扱う静的変数
+     * アルゴリズムが都度呼び出し、かつPlayer毎に異なるため、乱数がばらつくように静的変数としている
+     */
+    protected static final Random random = new Random(System.currentTimeMillis());
 
     /**
      * アルゴリズム動作に必要な初期設定を行う
+     * @param board リバーシ盤の状態
      * @param isPlayerBlack 使用するプレイヤーの石の色
-     * @param seed 乱数生成のseed値
      */
-    public Algorithm(Boolean isPlayerBlack, long seed) {
+    public Algorithm(Board board, Boolean isPlayerBlack) {
+        this.board = board;
         this.isPlayerBlack = isPlayerBlack;
-        this.random = new Random(seed);
     }
 
     /**
      * 石を置く座標を決定する
-     * @param board リバーシ盤の状態
      * @return 決定した石を置く座標
      */
-    public abstract Dimension run(Board board);
+    public abstract Dimension run();
 
     /**
      * 評価関数を定義・処理するクラス

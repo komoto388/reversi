@@ -5,23 +5,22 @@ import reversi.Dimension;
 
 public class Original02 extends Algorithm {
     /** 探索する深さ */
-    private final int DEPTH = 5;
+    private final int DEPTH = 4;
 
     /**
      * 初期化を行う
+     * @param board 現在のリバーシ盤の状態
      * @param isPlayerBlack 使用するプレイヤーの石の色
-     * @param seed 乱数生成のseed値
      */
-    public Original02(Boolean isPlayerBlack, long seed) {
-        super(isPlayerBlack, seed);
+    public Original02(Board board, Boolean isPlayerBlack) {
+        super(board, isPlayerBlack);
     }
 
     /**
      * 全てのマスに対して評価を行い、評価値が最大となる座標を算出する。
-     * @param board リバーシ盤の状態
      */
     @Override
-    public Dimension run(Board board) {
+    public Dimension run() {
         final Dimension boardSize = board.getSize();
         Evaluate evaluate = new Evaluate(boardSize);
 

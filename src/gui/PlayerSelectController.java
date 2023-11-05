@@ -177,13 +177,11 @@ public class PlayerSelectController {
             nameWhite = whiteNameFeild.getText();
         }
 
-        // プレイヤーのインスタンスを作成する
-        // Playerクラスに与える乱数のseed値は、Playerでseed値が異なるようにする
-        long seed = System.currentTimeMillis();
-        Player playerBlack = new Player(nameBlack, true, algorithmTypeBlack, seed);
-        Player playerWhite = new Player(nameWhite, false, algorithmTypeWhite, seed + 100);
-
+        // プレイヤーとリバーシのインスタンスを作成する
+        Player playerBlack = new Player(nameBlack, true, algorithmTypeBlack);
+        Player playerWhite = new Player(nameWhite, false, algorithmTypeWhite);
         Reversi reversi = new Reversi(playerBlack, playerWhite);
+        
         sceneSwitch.generateSceneReversi(reversi, debugModeChekBox.isSelected());
     }
 

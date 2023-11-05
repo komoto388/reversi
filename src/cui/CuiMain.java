@@ -26,14 +26,12 @@ public class CuiMain {
         AlgorithmType algorithmTypeBlack = selectAlgorithm("先手・黒");
         AlgorithmType algorithmTypeWhite = selectAlgorithm("後手・白");
 
-        // プレイヤーのインスタンスを作成する
-        // Playerクラスに与える乱数のseed値は、Playerでseed値が異なるようにする
-        long seed = System.currentTimeMillis();
-        Player playerBlack = new Player(Global.DEFAULT_PLAYER_NAME_BLACK, true, algorithmTypeBlack, seed);
-        Player playerWhite = new Player(Global.DEFAULT_PLAYER_NAME_WHITE, false, algorithmTypeWhite, seed + 100);
-
+        // プレイヤーとリバーシのインスタンスを作成する
+        Player playerBlack = new Player(Global.DEFAULT_PLAYER_NAME_BLACK, true, algorithmTypeBlack);
+        Player playerWhite = new Player(Global.DEFAULT_PLAYER_NAME_WHITE, false, algorithmTypeWhite);
         reversi = new Reversi(playerBlack, playerWhite);
 
+        // リバーシのゲームを実行する
         ResultType result;
         do {
             reversi.showBoardCui();
