@@ -1,6 +1,7 @@
 package gui;
 
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -27,6 +28,10 @@ public class GuiMain extends Application {
         primaryStage.setTitle("リバーシ");
         primaryStage.setResizable(false);
 
+        Image icon = new Image(getClass().getResourceAsStream("../resource/icon.png"));
+        primaryStage.getIcons().add(icon);
+
+        // 画面呼び出し
         SceneSwitch sceneSwitch = new SceneSwitch(primaryStage);
         sceneSwitch.generateScenePlayerSelect();
     }

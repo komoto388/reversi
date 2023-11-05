@@ -13,7 +13,7 @@ import common.Global;
  * プレイヤーを定義・処理するクラス
  * @author komoto
  */
-class Player {
+public class Player {
 
     /**
      * 使用する石の色を表す
@@ -21,6 +21,9 @@ class Player {
     private enum DiscColor {
         BLACK, WHITE
     }
+
+    /** プレイヤーの名前 */
+    private String name;
 
     /** プレイヤーが使用する石の色を表す */
     private DiscColor discColor;
@@ -34,12 +37,13 @@ class Player {
     /**
      * プレイヤーの初期設定を行う。
      * 使用するアルゴリズムを決定する。
-     * @param board リバーシ盤の状態
-     * @param seed プレイヤーがアルゴリズムを使用する際に使用する乱数のseed値
+     * @param name プレイヤーの名前
      * @param isBlack プレイヤーの石の色が黒かどうか
      * @param type 使用するアルゴリズムの種類
+     * @param seed プレイヤーがアルゴリズムを使用する際に使用する乱数のseed値
      */
-    public Player(Board board, long seed, Boolean isBlack, AlgorithmType type) {
+
+    public Player(String name, Boolean isBlack, AlgorithmType type, long seed) {
         // 引数の正常性確認
         try {
             if (isBlack == null) {
@@ -60,6 +64,7 @@ class Player {
         } else {
             this.discColor = DiscColor.WHITE;
         }
+        this.name = name;
         this.algorithmType = type;
 
         switch (type) {
@@ -68,20 +73,36 @@ class Player {
             break;
         }
         case Random: {
-            algorithm = new RandomAlgorithm(board, isBlack, seed);
+            algorithm = new RandomAlgorithm(isBlack, seed);
             break;
         }
         case Original_01: {
-            algorithm = new Original01(board, isBlack, seed);
+            algorithm = new Original01(isBlack, seed);
             break;
         }
         case Original_02: {
-            algorithm = new Original02(board, isBlack, seed);
+            algorithm = new Original02(isBlack, seed);
             break;
         }
         default:
             throw new IllegalArgumentException("Unexpected value: " + type);
         }
+    }
+
+    /**
+     * プレイヤーの名前を取得する
+     * @return プレイヤーの名前の文字列
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * プレイヤーの使用するアルゴリズムタイプを取得する
+     * @return プレイヤーの使用するアルゴリズムタイプ
+     */
+    public AlgorithmType getAlgorithmType() {
+        return algorithmType;
     }
 
     /**
@@ -110,12 +131,13 @@ class Player {
 
     /**
      * 石を置く座標を決定する
+     * @param board リバーシ盤の状態
      * @return 決定した石を置く座標を返す。例外などにより決定できなかった場合は{@code NULL} を返す。
      * @throws UnexpectedException 手動アルゴリズムでの実行は想定されていない
      */
-    public Dimension run() throws UnexpectedException {
+    public Dimension run(Board board) throws UnexpectedException {
         if (algorithmType != AlgorithmType.Manual) {
-            return algorithm.run();
+            return algorithm.run(board);
         } else {
             throw new UnexpectedException("手動アルゴリズムでの動作は想定されていません: " + algorithmType);
         }

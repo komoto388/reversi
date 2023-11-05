@@ -50,7 +50,7 @@ class Original02Test {
     @BeforeEach
     void setUp() throws Exception {
         board = new Board(8, 8);
-        original02 = new Original02(board, true, System.currentTimeMillis());
+        original02 = new Original02(true, System.currentTimeMillis());
     }
 
     @Test
@@ -88,6 +88,6 @@ class Original02Test {
 
     @Test
     void testRun() {
-        assertNotNull(original02.run());
+        assertNotNull(original02.run(board));
     }
 }

@@ -13,15 +13,16 @@ public class RandomAlgorithm extends Algorithm {
      * @param isPlayerBlack 使用するプレイヤーの石の色
      * @param seed 乱数生成のseed値
      */
-    public RandomAlgorithm(Board board, Boolean isPlayerBlack, long seed) {
-        super(board, isPlayerBlack, seed);
+    public RandomAlgorithm(Boolean isPlayerBlack, long seed) {
+        super(isPlayerBlack, seed);
     }
 
     /**
      * 設置可能なマスに対して、ランダムに石を置くアルゴリズム
+     * @param board 現在のリバーシ盤の状態
      */
     @Override
-    public Dimension run() {
+    public Dimension run(Board board) {
         final Dimension boardSize = board.getSize();
         Evaluate evaluate = new Evaluate(boardSize);
 

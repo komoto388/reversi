@@ -8,8 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import reversi.Player;
 import reversi.Record;
 import reversi.RecordRow;
 import reversi.ResultType;
@@ -24,13 +24,25 @@ public class ResultController {
     /** シーン切替処理を行うインスタンス */
     private SceneSwitch sceneSwitch;
 
-    /** 結果を表示するペイン（自分自身） */
+    /** vs.と表示されたラベル */
     @FXML
-    private BorderPane resultRootPane;
+    private Label vsLabel;
 
-    /** 対戦結果を表すラベル */
+    /** 先手・黒側の情報を表すヘッダーのラベル */
     @FXML
-    private Label resultLabel;
+    private Label blackHeaderLabel;
+
+    /** 後手・白側の情報を表すヘッダーのラベル */
+    @FXML
+    private Label whiteHeaderLabel;
+
+    /** 先手・黒側の名前を表すヘッダーのラベル */
+    @FXML
+    private Label blackNameLabel;
+
+    /** 後手・白側の名前を表すヘッダーのラベル */
+    @FXML
+    private Label whiteNameLabel;
 
     /** 黒石の個数を表すラベル */
     @FXML
@@ -39,6 +51,10 @@ public class ResultController {
     /** 白石の個数を表すラベル */
     @FXML
     private Label whiteDiscNumLabel;
+
+    /** 対戦結果を表すラベル */
+    @FXML
+    private Label resultLabel;
 
     /** 詳細情報として最終盤面を表示するタブ */
     @FXML
@@ -55,7 +71,7 @@ public class ResultController {
     /** 最初の画面に戻るボタン */
     @FXML
     private Button returnButton;
-    
+
     /** ゲームを終了するボタン */
     @FXML
     private Button exitButton;
@@ -88,17 +104,24 @@ public class ResultController {
         this.sceneSwitch = sceneSwitch;
 
         // 対戦結果を表示する
+        Player blackPlayer = reversi.getPlayerBlack();
+        Player whitePlayer = reversi.getPlayerWhite();
+
+        blackHeaderLabel.setText(String.format("先手・黒 ( %s )", blackPlayer.getAlgorithmType().getName()));
+        whiteHeaderLabel.setText(String.format("後手・白 ( %s )", whitePlayer.getAlgorithmType().getName()));
+        blackNameLabel.setText(blackPlayer.getName());
+        whiteNameLabel.setText(whitePlayer.getName());
         blackDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getBlackDiscNum()));
         whiteDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getWhiteDiscNum()));
 
         String turnString = String.format("%d手をもって、", reversi.getTurnCount());
         switch (result) {
         case Black: {
-            resultLabel.setText(turnString + "先手・黒の勝ちです！");
+            resultLabel.setText(turnString + "先手・黒「" + blackPlayer.getName() + "」の勝ちです！");
             break;
         }
         case White: {
-            resultLabel.setText(turnString + "後手・白の勝ちです！");
+            resultLabel.setText(turnString + "後手・白「" + whitePlayer.getName() + "」の勝ちです！");
             break;
         }
         case Drow: {
@@ -212,7 +235,7 @@ public class ResultController {
     void onReturnButtonAction(ActionEvent event) {
         sceneSwitch.generateScenePlayerSelect();
     }
-    
+
     /**
      * 終了ボタンが押された時のウィンドウを閉じる
      * @param event イベントのインスタンス

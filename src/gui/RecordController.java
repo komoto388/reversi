@@ -32,8 +32,10 @@ public class RecordController {
         Label turnLabel = new Label(Integer.toString(recordRow.turn));
         Label playerLabel = new Label(recordRow.playerString);
         Label dimLabel = new Label(recordRow.dimString);
-        Label blackNumLabel = new Label(String.format("%2d個 (%+3d)", recordRow.blackDiscNum, recordRow.increaseBlackNum));
-        Label whiteNumLabel = new Label(String.format("%2d個 (%+3d)", recordRow.whiteDiscNum, recordRow.increaseWhiteNum));
+        Label blackNumLabel = new Label(
+                String.format("%2d個 (%+3d)", recordRow.blackDiscNum, recordRow.increaseBlackNum));
+        Label whiteNumLabel = new Label(
+                String.format("%2d個 (%+3d)", recordRow.whiteDiscNum, recordRow.increaseWhiteNum));
 
         turnLabel.setMaxWidth(Double.MAX_VALUE);
         playerLabel.setMaxWidth(Double.MAX_VALUE);
@@ -47,7 +49,7 @@ public class RecordController {
         recordPane.add(blackNumLabel, 3, index);
         recordPane.add(whiteNumLabel, 4, index);
     }
-    
+
     /**
      * 対戦が終了した理由として表示する文字列を設定する
      * @param comment 対戦が終了した理由として表示する文字列

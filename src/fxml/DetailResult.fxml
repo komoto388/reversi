@@ -3,8 +3,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox fx:id="detailResultRootPane" alignment="CENTER" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.DetailResultController">
+<VBox alignment="CENTER" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.DetailResultController">
    <children>
       <GridPane fx:id="gridPane" alignment="TOP_CENTER" minHeight="400.0" minWidth="400.0" style="-fx-alignment: CENTER" />
    </children>

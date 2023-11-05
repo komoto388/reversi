@@ -48,7 +48,7 @@ public class GraphResultController implements Initializable {
 
         // Y軸を生成する
         yAxis = new NumberAxis();
-        yAxis.setLabel("黒石と白石の個数差（黒石 - 白石）");
+        yAxis.setLabel("黒石と白石の個数差（黒 - 白）");
         yAxis.setLowerBound(0);
         yAxis.setUpperBound(0);
         yAxis.setAutoRanging(false);

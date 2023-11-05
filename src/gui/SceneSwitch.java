@@ -3,7 +3,6 @@ package gui;
 import common.Global;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -55,6 +54,7 @@ class SceneSwitch {
 
         // 描画する画面をフレームに設定する
         Scene scene = new Scene(rootPane);
+        scene.getStylesheets().add(getClass().getResource("../css/default.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("../css/player-select.css").toExternalForm());
 
         primaryStage.setScene(scene);
@@ -64,34 +64,29 @@ class SceneSwitch {
     /**
      * リバーシのゲーム画面を生成し、表示する
      * @param reversi リバーシのゲーム処理を行うインスタンス
+     * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false} を返す。
      */
-    public void generateSceneReversi(Reversi reversi) {
+    public void generateSceneReversi(Reversi reversi, Boolean isDebug) {
         FXMLLoader fxmlloader = null;
-        BorderPane reversiPane = null;
+        BorderPane rootPane = null;
         String fxmlFile = "../fxml/Reversi.fxml";
 
         try {
             fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
-            reversiPane = (BorderPane) fxmlloader.load();
+            rootPane = (BorderPane) fxmlloader.load();
         } catch (Exception e) {
             exceptionProcess(e, fxmlFile);
         }
+        rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
 
         ReversiController controller = (ReversiController) fxmlloader.getController();
-        controller.init(this, reversi);
-
-        // 画面内に複数ペインを描画するために、StackPaneでルートペインを作成する
-        AnchorPane rootPane = new AnchorPane();
-        rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
-        rootPane.getChildren().add(reversiPane);
-        AnchorPane.setTopAnchor(reversiPane, 0d);
-        AnchorPane.setBottomAnchor(reversiPane, 0d);
-        AnchorPane.setLeftAnchor(reversiPane, 0d);
-        AnchorPane.setRightAnchor(reversiPane, 0d);
+        controller.init(this, reversi, isDebug);
 
         // 描画する画面をフレームに設定する
         Scene scene = new Scene(rootPane);
         scene.getStylesheets().add(getClass().getResource("../css/default.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("../css/reversi.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("../css/board.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -104,32 +99,28 @@ class SceneSwitch {
      */
     public void generateSceneResult(Reversi reversi, ResultType result) {
         FXMLLoader fxmlloader = null;
-        BorderPane resultPane = null;
+        BorderPane rootPane = null;
         String fxmlFile = "../fxml/Result.fxml";
 
         try {
             fxmlloader = new FXMLLoader(getClass().getResource(fxmlFile));
-            resultPane = (BorderPane) fxmlloader.load();
+            rootPane = (BorderPane) fxmlloader.load();
         } catch (Exception e) {
             exceptionProcess(e, fxmlFile);
         }
+        rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
 
         ResultController controller = (ResultController) fxmlloader.getController();
         controller.init(this, reversi, result);
 
-        // 現在の画面のシーンとルートペインを取得する
-        Scene scene = primaryStage.getScene();
-        AnchorPane rootPane = (AnchorPane) scene.getRoot();
-        rootPane.getChildren().add(resultPane);
+        // 描画する画面をフレームに設定する
+        Scene scene = new Scene(rootPane);
+        scene.getStylesheets().add(getClass().getResource("../css/default.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("../css/result.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("../css/board.css").toExternalForm());
 
-        // 結果画面のサイズを調整し、表示位置を中央にする
-        resultPane.setPrefSize(rootPane.getWidth() * 0.8, rootPane.getHeight() * 0.9);
-        double dWidth = rootPane.getWidth() - resultPane.getPrefWidth();
-        double dHeight = rootPane.getHeight() - resultPane.getPrefHeight();
-        AnchorPane.setTopAnchor(resultPane, dHeight / 2);
-        AnchorPane.setBottomAnchor(resultPane, dHeight / 2);
-        AnchorPane.setLeftAnchor(resultPane, dWidth / 2);
-        AnchorPane.setRightAnchor(resultPane, dWidth / 2);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     /**

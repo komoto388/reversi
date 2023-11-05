@@ -7,12 +7,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import reversi.Player;
 import reversi.Reversi;
 
 /**
@@ -38,6 +41,14 @@ public class PlayerSelectController {
     @FXML
     private Label whiteLabel;
 
+    /** 先手・黒の名前を設定・表示するテキストフィールド */
+    @FXML
+    private TextField blackNameFeild;
+
+    /** 後手・白の名前を設定・表示するテキストフィールド */
+    @FXML
+    private TextField whiteNameFeild;
+
     /** 先手・黒側の選択画面を表示するペイン */
     @FXML
     private VBox blackPane;
@@ -46,9 +57,17 @@ public class PlayerSelectController {
     @FXML
     private VBox whitePane;
 
+    /** デバッグ表示の有効・無効を切り替えるチェックボタン */
+    @FXML
+    private CheckBox debugModeChekBox;
+
     /** ゲーム開始のボタン */
     @FXML
     private Button startButton;
+
+    /** ゲーム終了のボタン */
+    @FXML
+    private Button exitButton;
 
     /**
      * 先手・後手両方のアルゴリズムを選択するラジオボタンを生成する
@@ -68,6 +87,8 @@ public class PlayerSelectController {
         }
 
         this.sceneSwitch = sceneSwitch;
+        blackNameFeild.setText(Global.DEFAULT_PLAYER_NAME_BLACK);
+        whiteNameFeild.setText(Global.DEFAULT_PLAYER_NAME_WHITE);
 
         setGridPane(blackPane, true);
         setGridPane(whitePane, false);
@@ -75,6 +96,7 @@ public class PlayerSelectController {
         AlgorithmType[] algorithmTypes = AlgorithmType.values();
         algorithmTypeBlack = algorithmTypes[Global.DEFAULT_ALGORITHM];
         algorithmTypeWhite = algorithmTypes[Global.DEFAULT_ALGORITHM];
+
     }
 
     /**
@@ -90,7 +112,6 @@ public class PlayerSelectController {
             RadioButton radioButton = new RadioButton(String.format("%s", types[i].getName()));
             radioButton.setUserData(types[i]);
             radioButton.setToggleGroup(group);
-            radioButton.setId("select-radio-button");
             radioButton.setPrefWidth(Global.RADIO_BUTTON_WIDTH);
             radioButton.setPrefHeight(Global.RADIO_BUTTON_HEIGHT);
 
@@ -142,7 +163,36 @@ public class PlayerSelectController {
      */
     @FXML
     void onStartButtonAction(ActionEvent event) {
-        Reversi reversi = new Reversi(algorithmTypeBlack, algorithmTypeWhite);
-        sceneSwitch.generateSceneReversi(reversi);
+        String nameBlack, nameWhite;
+
+        if (blackNameFeild.getText() == null) {
+            nameBlack = Global.DEFAULT_PLAYER_NAME_BLACK;
+        } else {
+            nameBlack = blackNameFeild.getText();
+        }
+
+        if (whiteNameFeild.getText() == null) {
+            nameWhite = Global.DEFAULT_PLAYER_NAME_WHITE;
+        } else {
+            nameWhite = whiteNameFeild.getText();
+        }
+
+        // プレイヤーのインスタンスを作成する
+        // Playerクラスに与える乱数のseed値は、Playerでseed値が異なるようにする
+        long seed = System.currentTimeMillis();
+        Player playerBlack = new Player(nameBlack, true, algorithmTypeBlack, seed);
+        Player playerWhite = new Player(nameWhite, false, algorithmTypeWhite, seed + 100);
+
+        Reversi reversi = new Reversi(playerBlack, playerWhite);
+        sceneSwitch.generateSceneReversi(reversi, debugModeChekBox.isSelected());
+    }
+
+    /**
+     * 画面を終了する
+     * @param event イベントのインスタンス
+     */
+    @FXML
+    void onExitButtonAction(ActionEvent event) {
+        sceneSwitch.close();
     }
 }

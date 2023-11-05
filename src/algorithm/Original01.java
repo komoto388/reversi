@@ -27,19 +27,19 @@ public class Original01 extends Algorithm {
 
     /**
      * ランダムアルゴリズムの初期化を行う
-     * @param board リバーシ盤の状態
      * @param isPlayerBlack 使用するプレイヤーの石の色
      * @param seed 乱数生成のseed値
      */
-    public Original01(Board board, Boolean isPlayerBlack, long seed) {
-        super(board, isPlayerBlack, seed);
+    public Original01(Boolean isPlayerBlack, long seed) {
+        super(isPlayerBlack, seed);
     }
 
     /**
      * 全てのマスに対して評価を行い、評価値が最大となる座標を算出する。
+     * @param board リバーシ盤の状態
      */
     @Override
-    public Dimension run() {
+    public Dimension run(Board board) {
         final Dimension boardSize = board.getSize();
         Evaluate evaluate = new Evaluate(boardSize);
 
