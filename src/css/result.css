@@ -7,10 +7,24 @@
     -fx-font-size: 14;
 }
 
-/*プレイヤー名を表すラベル*/
-#blackNameLabel,
+/*先手・黒側のタイトルラベル*/
+#blackNameLabel {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: black;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+/*後手・白側のタイトルラベル*/
 #whiteNameLabel {
     -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
 }
 
 /*石の個数を表すラベル*/

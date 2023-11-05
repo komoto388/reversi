@@ -56,6 +56,9 @@ public class Global {
     /** 行・列番号の合計値が奇数になる、リバーシ盤のマスに割り当てるfxid */
     public static final String FXID_GRID_2 = "grid-2";
 
+    /** プレイヤーが石を置いた、リバーシ盤のマスに割り当てるfxid */
+    public static final String FXID_GRID_PUT = "grid-put";
+
     /* 画面描画のタイマーイベントに関する定数 */
     /** 1秒間に画面描画する回数(FPS) */
     public static final int FPS = 30;

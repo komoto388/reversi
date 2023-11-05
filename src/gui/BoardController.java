@@ -89,11 +89,7 @@ public class BoardController {
                     pane.setPrefWidth(gridSize);
                     pane.setPrefHeight(gridSize);
 
-                    if ((i + j) % 2 == 0) {
-                        pane.setId(Global.FXID_GRID_1);
-                    } else {
-                        pane.setId(Global.FXID_GRID_2);
-                    }
+                    setFxid(pane, i - 1, j - 1);
 
                     // コンストラクタで生成した、リバーシ盤のマスを描画する
                     // 行番号・列番号を描画する関係で座標が右下に1ズレているため、boardPaneの要素番号に1を減算する。
@@ -167,4 +163,30 @@ public class BoardController {
         }
     }
 
+    /**
+     * 全てのマスのペインに対して、fxid を初期値に戻す
+     */
+    public void resetFxidAll() {
+        for (int i = 0; i < boardHeight; i++) {
+            for (int j = 0; j < boardWidth; j++) {
+                setFxid(boardPane[i][j], i, j);
+            }
+        }
+    }
+    
+    
+    /**
+     * マスのペインに fxid を割り当てる。
+     * 列番号と行番号の和が偶数かどうかで割り当てる fxid を変える 
+     * @param pane fxidを割り当てる対象のペイン
+     * @param row リバーシ盤の行番号
+     * @param column リバーシ盤の列番号
+     */
+    private void setFxid(Pane pane, int row, int column) {
+        if ((row + column) % 2 == 0) {
+            pane.setId(Global.FXID_GRID_1);
+        } else {
+            pane.setId(Global.FXID_GRID_2);
+        }
+    }
 }

@@ -8,6 +8,7 @@
 }
 
 /*リバーシ盤のマス（偶数マス）*/
+/*色は白系で設定*/
 #grid-1 {
     -fx-border-color: black;
     -fx-border-width: 1;
@@ -15,10 +16,18 @@
 }
 
 /*リバーシ盤のマス（奇数マス）*/
+/*色は緑系で設定*/
 #grid-2 {
     -fx-border-color: black;
     -fx-border-width: 1;
     -fx-background-color: #8fbc8f;
+}
+
+/*プレイヤーが石を置いたマス*/
+#grid-put {
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-background-color: yellow;
 }
 
 /*黒石の円描画*/

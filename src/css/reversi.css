@@ -1,10 +1,27 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
-/*プレイヤー名、石の個数・ターン数のラベル*/
-#blackNameLabel,
-#whiteNameLabel,
+/*石の個数・ターン数のラベル*/
 #blackDiscNumLabel,
 #whiteDiscNumLabel,
 #turnLabel {
     -fx-font-size: 20;
+}
+
+/*先手・黒側のタイトルラベル*/
+#blackNameLabel {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: black;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+/*後手・白側のタイトルラベル*/
+#whiteNameLabel {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-background-color: white;
+    -fx-border-color: black;
 }

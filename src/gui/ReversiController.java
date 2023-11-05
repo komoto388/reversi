@@ -297,6 +297,9 @@ public class ReversiController {
         }
 
         if (isPut) {
+            boardController.resetFxidAll();
+            Pane targetPane = boardController.getBoardPane(target);
+            targetPane.setId(Global.FXID_GRID_PUT);
             String playerString = Convert.getPlayerColor(reversi.getPlayerIsBlack());
             statusLabel.setText(playerString + " は " + target.getString() + " に石を置きました。");
 

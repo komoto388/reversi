@@ -6,6 +6,8 @@
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-background-color: black;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
 }
 
 /*後手・白側のタイトルラベル*/
@@ -14,6 +16,8 @@
     -fx-font-weight: bold;
     -fx-text-fill: black;
     -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
 }
 
 /*アルゴリズム選択のラジオボタン*/
