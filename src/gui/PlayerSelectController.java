@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -56,6 +57,10 @@ public class PlayerSelectController {
     @FXML
     private VBox whitePane;
 
+    /** デバッグ表示の有効・無効を切り替えるチェックボタン */
+    @FXML
+    private CheckBox debugModeChekBox;
+
     /** ゲーム開始のボタン */
     @FXML
     private Button startButton;
@@ -91,7 +96,7 @@ public class PlayerSelectController {
         AlgorithmType[] algorithmTypes = AlgorithmType.values();
         algorithmTypeBlack = algorithmTypes[Global.DEFAULT_ALGORITHM];
         algorithmTypeWhite = algorithmTypes[Global.DEFAULT_ALGORITHM];
-        
+
     }
 
     /**
@@ -107,7 +112,6 @@ public class PlayerSelectController {
             RadioButton radioButton = new RadioButton(String.format("%s", types[i].getName()));
             radioButton.setUserData(types[i]);
             radioButton.setToggleGroup(group);
-            radioButton.setId("select-radio-button");
             radioButton.setPrefWidth(Global.RADIO_BUTTON_WIDTH);
             radioButton.setPrefHeight(Global.RADIO_BUTTON_HEIGHT);
 
@@ -160,19 +164,19 @@ public class PlayerSelectController {
     @FXML
     void onStartButtonAction(ActionEvent event) {
         String nameBlack, nameWhite;
-        
-        if(blackNameFeild.getText() == null) {
+
+        if (blackNameFeild.getText() == null) {
             nameBlack = Global.DEFAULT_PLAYER_NAME_BLACK;
         } else {
             nameBlack = blackNameFeild.getText();
         }
-        
-        if(whiteNameFeild.getText() == null) {
+
+        if (whiteNameFeild.getText() == null) {
             nameWhite = Global.DEFAULT_PLAYER_NAME_WHITE;
         } else {
             nameWhite = whiteNameFeild.getText();
         }
-        
+
         // プレイヤーのインスタンスを作成する
         // Playerクラスに与える乱数のseed値は、Playerでseed値が異なるようにする
         long seed = System.currentTimeMillis();
@@ -180,7 +184,7 @@ public class PlayerSelectController {
         Player playerWhite = new Player(nameWhite, false, algorithmTypeWhite, seed + 100);
 
         Reversi reversi = new Reversi(playerBlack, playerWhite);
-        sceneSwitch.generateSceneReversi(reversi);
+        sceneSwitch.generateSceneReversi(reversi, debugModeChekBox.isSelected());
     }
 
     /**

@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -51,6 +52,9 @@ public class ReversiController {
 
     /** リバーシ盤を描画するインスタンス */
     private BoardController boardController;
+
+    /** デバッグ情報を表示・非表示を表す */
+    private Boolean isDebug;
 
     /** リバーシ画面のルートペイン */
     @FXML
@@ -96,24 +100,33 @@ public class ReversiController {
     @FXML
     private Label statusLabel;
 
-    /** デバッグ情報を表示するラベル */
+    /** 各種デバッグ情報を表示するペイン */
     @FXML
-    private Label debugLabel;
+    private VBox debugPane;
 
     /** 現在のFPS情報を表示するラベル */
     @FXML
     private Label fpsLabel;
 
+    /** 現在の待機フレーム数を表示するラベル */
+    @FXML
+    private Label waitFrameLabel;
+
     /** 現在のイベントステータスを表示するラベル */
     @FXML
     private Label eventStatusLabel;
+
+    /** デバッグ情報を表示するラベル */
+    @FXML
+    private Label debugLabel;
 
     /**
      * リバーシ盤を初期化する
      * @param sceneSwitch シーン切替処理を行うインスタンス
      * @param reversi リバーシの処理を行うインスタンス
+     * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false} を返す。
      */
-    public void init(SceneSwitch sceneSwitch, Reversi reversi) {
+    public void init(SceneSwitch sceneSwitch, Reversi reversi, Boolean isDebug) {
         // 引数の正常性確認
         try {
             if (sceneSwitch == null) {
@@ -121,6 +134,9 @@ public class ReversiController {
             }
             if (reversi == null) {
                 throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
+            }
+            if (isDebug == null) {
+                throw new IllegalArgumentException("引数 \"isDebug\" の値が NULL です");
             }
         } catch (IllegalArgumentException e) {
             int exitCode = Global.EXIT_FAILURE;
@@ -131,7 +147,20 @@ public class ReversiController {
 
         this.result = ResultType.None;
         this.reversi = reversi;
-        this.fps = new Fps();
+        this.isDebug = isDebug;
+        statusLabel.setText(null);
+
+        // デバッグ情報の初期化
+        if (isDebug) {
+            this.fps = new Fps();
+            fpsLabel.setText(null);
+            waitFrameLabel.setText(null);
+            eventStatusLabel.setText(null);
+            debugLabel.setText("デバッグ情報は特にありません");
+            debugPane.setVisible(true);
+        } else {
+            debugPane.setVisible(false);
+        }
 
         Player player = reversi.getPlayerBlack();
         blackNameLabel.setText(player.getName());
@@ -140,10 +169,6 @@ public class ReversiController {
         player = reversi.getPlayerWhite();
         whiteNameLabel.setText(player.getName());
         whiteAlgorithmLabel.setText("( " + player.getAlgorithmType().getName() + " )");
-
-        statusLabel.setText(null);
-        debugLabel.setText(null);
-        eventStatusLabel.setText(null);
 
         // リバーシ盤の描画を行う
         Dimension boardSize = reversi.getBoard().getSize();
@@ -182,8 +207,12 @@ public class ReversiController {
                     e.printStackTrace();
                 }
 
+                // デバッグ情報表示が有効の場合、FPSの計測を行う
+                if (isDebug) {
+                    fps.update();
+                }
+
                 // 画面描画を行う
-                fps.update();
                 update();
 
                 if (waitFrame > 0) {
@@ -251,7 +280,7 @@ public class ReversiController {
 
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
-        
+
         // 初期設定後に画面描画を行う
         update();
     }
@@ -330,8 +359,13 @@ public class ReversiController {
         turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
         blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
         whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
-        fpsLabel.setText(String.format("待ちフレーム数:%3d, %.2f fps", waitFrame, fps.getFps()));
-        eventStatusLabel.setText(eventStatus.toString());
+
+        // デバッグ情報の処理
+        if (isDebug) {
+            fpsLabel.setText(String.format("%.2f fps", fps.getFps()));
+            waitFrameLabel.setText(String.format("待ちフレーム数: %3d", waitFrame));
+            eventStatusLabel.setText(eventStatus.toString());
+        }
     }
 
     /**

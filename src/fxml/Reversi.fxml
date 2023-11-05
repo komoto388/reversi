@@ -65,9 +65,14 @@
          </BorderPane.margin>
          <children>
             <Label fx:id="statusLabel" minHeight="20.0" minWidth="300.0" text="ステータス文" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" />
-            <VBox alignment="BOTTOM_RIGHT" layoutX="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0">
+            <VBox fx:id="debugPane" alignment="BOTTOM_RIGHT" layoutX="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0">
                <children>
-                  <Label fx:id="fpsLabel" alignment="CENTER_RIGHT" minHeight="20.0" minWidth="160.0" text="FPS" />
+                  <HBox alignment="CENTER_RIGHT">
+                     <children>
+                        <Label fx:id="waitFrameLabel" minHeight="20.0" minWidth="140.0" text="待機フレーム数" />
+                        <Label fx:id="fpsLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" minHeight="20.0" minWidth="140.0" text="FPS" />
+                     </children>
+                  </HBox>
                   <Label fx:id="eventStatusLabel" alignment="CENTER_RIGHT" layoutX="150.0" layoutY="10.0" minHeight="20.0" minWidth="160.0" text="イベントステータス" />
                   <Label fx:id="debugLabel" alignment="CENTER_RIGHT" minHeight="20.0" minWidth="300.0" text="デバッグ文" />
                </children>

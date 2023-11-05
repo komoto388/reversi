@@ -64,8 +64,9 @@ class SceneSwitch {
     /**
      * リバーシのゲーム画面を生成し、表示する
      * @param reversi リバーシのゲーム処理を行うインスタンス
+     * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false} を返す。
      */
-    public void generateSceneReversi(Reversi reversi) {
+    public void generateSceneReversi(Reversi reversi, Boolean isDebug) {
         FXMLLoader fxmlloader = null;
         BorderPane rootPane = null;
         String fxmlFile = "../fxml/Reversi.fxml";
@@ -79,7 +80,7 @@ class SceneSwitch {
         rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
 
         ReversiController controller = (ReversiController) fxmlloader.getController();
-        controller.init(this, reversi);
+        controller.init(this, reversi, isDebug);
 
         // 描画する画面をフレームに設定する
         Scene scene = new Scene(rootPane);

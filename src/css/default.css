@@ -5,7 +5,22 @@
     -fx-background-color: linear-gradient(to bottom right, derive(#FFFEFF, 100%), #D7FFFE);
 }
 
-/*文字ラベル（デフォルト）*/
+/*ラベル*/
 .label {
     -fx-font-size: 14;
+}
+
+/*テキストフィールド*/
+.text-field {
+    -fx-font-size: 16;
+}
+
+/*チェックボックス*/
+.check-box {
+    -fx-font-size: 16;
+}
+
+/*ラジオボタン*/
+.radio-button {
+    -fx-font-size: 16;
 }
