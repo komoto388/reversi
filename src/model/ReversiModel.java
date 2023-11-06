@@ -55,6 +55,9 @@ public class ReversiModel {
 
     /** ゲームが終了したことを表すフラグ */
     private Boolean isFinish;
+    
+    /** 最近の石が置かれた座標 */
+    private Dimension latestTarget;
 
     /** 画面のステータス欄に表示する文字列 */
     private String statusString;
@@ -72,6 +75,7 @@ public class ReversiModel {
         this.eventStatus = new EventStatus(reversi, EventStatusValue.WAIT);
         this.result = ResultType.None;
         this.isFinish = false;
+        this.latestTarget = null;
         this.statusString = null;
         this.debugString = "デバッグ情報は特にありません";
 
@@ -109,6 +113,10 @@ public class ReversiModel {
     public Boolean getIsFinish() {
         return isFinish;
     }
+    
+    public Dimension getLatestTarget() {
+        return latestTarget;
+    }
 
     public String getEventStatus() {
         return eventStatus.getName();
@@ -125,7 +133,7 @@ public class ReversiModel {
     public int getWaitFrame() {
         return waitFrame;
     }
-
+    
     /**
      * リバーシのゲームイベントを処理する
      * @param プレイヤーが石をおいた座標。処理中に石を置かなかった場合には {@code NULL} を返す。
@@ -217,13 +225,15 @@ public class ReversiModel {
         }
 
         if (isPut) {
+            latestTarget = target;
+            
             String playerString = Convert.getPlayerColor(reversi.getPlayerIsBlack());
             statusString = String.format("%s は %s に石を置きました。", playerString, target.getString());
 
             eventStatus.set(EventStatusValue.JUDGE);
             setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
         } else {
-            statusString = String.format("%s には石を置けません", target.getString());
+            debugString = String.format("%s には石を置けません", target.getString());
         }
 
         return isPut;

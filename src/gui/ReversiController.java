@@ -104,9 +104,6 @@ public class ReversiController {
     @FXML
     private Label debugLabel;
 
-    /** 最後に置かれた石の座標 */
-    private Dimension target = null;
-
     /**
      * リバーシ盤を初期化する
      * @param sceneSwitch シーン切替処理を行うインスタンス
@@ -169,11 +166,7 @@ public class ReversiController {
              */
             @Override
             public void handle(ActionEvent event) {
-                try {
-                    target = model.run();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                model.run();
 
                 // デバッグ情報表示が有効の場合、FPSの計測を行う
                 if (model.getIsDebug()) {
@@ -219,9 +212,7 @@ public class ReversiController {
          */
         @Override
         public void handle(MouseEvent event) {
-            if (model.put(dim)) {
-                target = dim;
-            }
+            model.put(dim);
         }
     }
 
@@ -255,12 +246,11 @@ public class ReversiController {
         }
 
         // 最後に石をおいたマスにハイライトを付ける
+        Dimension target = model.getLatestTarget();
         if (target != null) {
             boardController.resetFxidAll();
             Pane targetPane = boardController.getBoardPane(target);
             targetPane.setId(Global.FXID_GRID_PUT);
-
-            target = null;
         }
     }
 }

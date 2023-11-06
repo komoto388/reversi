@@ -108,8 +108,7 @@ public class Reversi {
      * @return 手動操作のプレイヤーである場合は真 {@code true}、自動処理のプレイヤーの場合は偽 {@code false} を返す。
      */
     public Boolean isCurrentPlayerManual() {
-        if ((currentPlayer.isDiscBlack() && playerBlack.isManual()) ||
-                (currentPlayer.isDiscBlack() == false && playerWhite.isManual())) {
+        if (currentPlayer.isManual()) {
             return true;
         } else {
             return false;

@@ -25,3 +25,8 @@
     -fx-background-color: white;
     -fx-border-color: black;
 }
+
+/*デバッグ情報のラベル*/
+#debugLabel {
+    -fx-text-fill: red;
+}
