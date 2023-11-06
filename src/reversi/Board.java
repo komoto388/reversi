@@ -6,7 +6,7 @@ import common.Convert;
  * リバーシ盤の定義・処理をするクラス
  * @author komoto
  */
-public class Board {
+public class Board implements Cloneable {
 
     /** 石の状態を表す値 */
     private enum DiscStatus {
@@ -19,7 +19,7 @@ public class Board {
     private DiscStatus[][] board;
 
     /** リバーシ盤のサイズ（マス） */
-    private final Dimension boardSize;
+    private Dimension boardSize;
 
     /** 現在の黒石の数 */
     private int blackDiscNum;
@@ -65,6 +65,23 @@ public class Board {
                 }
             }
         }
+    }
+
+    /**
+     * インスタンスを複製する
+     */
+    @Override
+    public Board clone() throws CloneNotSupportedException {
+        Board cloneBoard = (Board) super.clone();
+        cloneBoard.boardSize = boardSize.clone();
+
+        // 二次元配列 board[][] の複製
+        cloneBoard.board = board.clone();
+        for (int i = 0; i < boardSize.getRow(); i++) {
+            cloneBoard.board[i] = board[i].clone();
+        }
+
+        return cloneBoard;
     }
 
     /**

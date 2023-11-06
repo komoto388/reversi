@@ -4,7 +4,9 @@ import java.rmi.UnexpectedException;
 
 import algorithm.Algorithm;
 import algorithm.AlgorithmType;
+import algorithm.MiniMax01;
 import algorithm.Original01;
+import algorithm.Original02;
 import algorithm.RandomAlgorithm;
 import common.Global;
 
@@ -14,38 +16,28 @@ import common.Global;
  */
 public class Player {
 
-    /**
-     * 使用する石の色を表す
-     */
-    private enum DiscColor {
-        BLACK, WHITE
-    }
-
     /** プレイヤーの名前 */
     private String name;
 
-    /** プレイヤーが使用する石の色を表す */
-    private DiscColor discColor;
+    /** プレイヤーの石が黒かどうか */
+    private Boolean isPlayerBlack;
 
     /** プレイヤーが使用するアルゴリズムの種類 */
     private AlgorithmType algorithmType;
-
-    /** プレイヤーが使用するアルゴリズムのインスタンス */
-    private Algorithm algorithm;
 
     /**
      * プレイヤーの初期設定を行う。
      * 使用するアルゴリズムを決定する。
      * @param name プレイヤーの名前
-     * @param isBlack プレイヤーの石の色が黒かどうか
+     * @param isPlayerBlack プレイヤーの石の色が黒かどうか
      * @param type 使用するアルゴリズムの種類
-     * @param seed プレイヤーがアルゴリズムを使用する際に使用する乱数のseed値
      */
-    public Player(String name, Boolean isBlack, AlgorithmType type, long seed) {
+
+    public Player(String name, Boolean isPlayerBlack, AlgorithmType type) {
         // 引数の正常性確認
         try {
-            if (isBlack == null) {
-                throw new IllegalArgumentException("引数 \"isBlack\" の値が NULL です");
+            if (isPlayerBlack == null) {
+                throw new IllegalArgumentException("引数 \"isPlayerBlack\" の値が NULL です");
             }
             if (type == null) {
                 throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
@@ -57,30 +49,10 @@ public class Player {
             System.exit(exitCode);
         }
 
-        if (isBlack) {
-            this.discColor = DiscColor.BLACK;
-        } else {
-            this.discColor = DiscColor.WHITE;
-        }
+        // フィールドの初期化
         this.name = name;
         this.algorithmType = type;
-
-        switch (type) {
-        case Manual: {
-            algorithm = null;
-            break;
-        }
-        case Random: {
-            algorithm = new RandomAlgorithm(seed);
-            break;
-        }
-        case Original_01: {
-            algorithm = new Original01(seed);
-            break;
-        }
-        default:
-            throw new IllegalArgumentException("Unexpected value: " + type);
-        }
+        this.isPlayerBlack = isPlayerBlack;
     }
 
     /**
@@ -104,7 +76,7 @@ public class Player {
      * @return 使用する石の色が黒の場合は真 {@code true}, 白の場合は偽 {@code false} を返す。
      */
     public Boolean isDiscBlack() {
-        if (discColor == DiscColor.BLACK) {
+        if (isPlayerBlack) {
             return true;
         } else {
             return false;
@@ -125,15 +97,58 @@ public class Player {
 
     /**
      * 石を置く座標を決定する
-     * @param board リバーシ盤の情報
+     * @param board リバーシ盤の状態
      * @return 決定した石を置く座標を返す。例外などにより決定できなかった場合は{@code NULL} を返す。
-     * @throws UnexpectedException 手動アルゴリズムでの実行は想定されていない
      */
-    public Dimension run(Board board) throws UnexpectedException {
-        if (algorithmType != AlgorithmType.Manual) {
-            return algorithm.run(board, isDiscBlack());
-        } else {
-            throw new UnexpectedException("手動アルゴリズムでの動作は想定されていません: " + algorithmType);
+    public Dimension run(Board board) {
+        Algorithm algorithm = null;
+
+        // アルゴリズム種別でアルゴリズムを生成する
+        try {
+            algorithm = generateAlgorithm(board);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("例外発生のため、「ランダムアルゴリズム」を使用します");
+            algorithm = new RandomAlgorithm(board, isPlayerBlack);
         }
+
+        // アルゴリズムに基づいて石を置く座標を求める
+        return algorithm.run();
+    }
+
+    /**
+     * アルゴリズムの種類から、アルゴリズムのインスタンスを生成する
+     * @param board リバーシ盤の状態
+     * @return 生成したアルゴリズムのインスタンス
+     * @throws UnexpectedException マニュアルなど、アルゴリズムの種類の値が期待されていない値である
+     */
+    private Algorithm generateAlgorithm(Board board) throws UnexpectedException {
+        Algorithm algorithm;
+
+        switch (algorithmType) {
+        case Random: {
+            algorithm = new RandomAlgorithm(board, isPlayerBlack);
+            break;
+        }
+        case Original_01: {
+            algorithm = new Original01(board, isPlayerBlack);
+            break;
+        }
+        case Original_02: {
+            algorithm = new Original02(board, isPlayerBlack);
+            break;
+        }
+        case MiniMax_01:{
+            algorithm = new MiniMax01(board, isPlayerBlack);
+            break;
+        }
+        case Manual: {
+            throw new UnexpectedException("このメソッドは手動アルゴリズム時の実行は想定されていません: " + algorithmType);
+        }
+        default:
+            throw new UnexpectedException("Unexpected value: " + algorithmType);
+        }
+
+        return algorithm;
     }
 }

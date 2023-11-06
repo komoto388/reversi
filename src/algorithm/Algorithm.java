@@ -10,34 +10,43 @@ import reversi.Dimension;
  * @author komoto
  */
 public abstract class Algorithm {
-    
+
     /** 評価関数のデフォルト値を表す定数 */
     private final int DEFAULT_POINT = 0;
-    
+
     /** 評価関数の最小値を表す定数 */
     protected final int MIN_POINT = Integer.MIN_VALUE;
 
     /** 評価関数の最大値を表す定数 */
     protected final int MAX_POINT = Integer.MAX_VALUE;
 
-    /** ランダム値を扱うインスタンス */
-    protected Random random;
+    /** リバーシ盤の状態 */
+    protected Board board;
+
+    /** 使用するプレイヤーの石の色を表す */
+    protected Boolean isPlayerBlack;
 
     /**
-     * ランダムシード値を設定する
-     * @param seed 乱数生成のseed値
+     * ランダム値を扱う静的変数
+     * アルゴリズムが都度呼び出し、かつPlayer毎に異なるため、乱数がばらつくように静的変数としている
      */
-    public Algorithm(long seed) {
-        random = new Random(seed);
+    protected static final Random random = new Random(System.currentTimeMillis());
+
+    /**
+     * アルゴリズム動作に必要な初期設定を行う
+     * @param board リバーシ盤の状態
+     * @param isPlayerBlack 使用するプレイヤーの石の色
+     */
+    public Algorithm(Board board, Boolean isPlayerBlack) {
+        this.board = board;
+        this.isPlayerBlack = isPlayerBlack;
     }
 
     /**
      * 石を置く座標を決定する
-     * @param board リバーシ盤の状態
-     * @param playerIsBlack プレイヤーの石の色が黒かどうか
      * @return 決定した石を置く座標
      */
-    public abstract Dimension run(Board board, Boolean playerIsBlack);
+    public abstract Dimension run();
 
     /**
      * 評価関数を定義・処理するクラス
@@ -54,6 +63,7 @@ public abstract class Algorithm {
 
         /**
          * 評価関数を初期化する
+         * 各マスに対する評価値はデフォルト値({@code 0})で設定される
          * @param boardSize リバーシ盤の大きさ
          */
         public Evaluate(Dimension boardSize) {
@@ -69,26 +79,34 @@ public abstract class Algorithm {
         }
 
         /**
-         * 評価値が最大の座標を返す
+         * 評価値が最大となる座標を取得する
          * @return 評価値が最大の座標
          */
         public Dimension getMaxPointDimension() {
             try {
                 if (maxPointDim == null) {
                     throw new NullPointerException("評価値が最大の座標がありません。評価が1度も実行されていない可能性があります。");
-                } 
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
             return maxPointDim;
         }
 
         /**
-         * 対象座標の評価値を返す
+         * 現時点での評価値の最大値を取得する
          * @return 対象座標の評価値
          */
-        public int getValue(Dimension target) {
+        public int getMaxPoint() {
+            return maxPoint;
+        }
+
+        /**
+         * 対象座標の評価値を取得する
+         * @return 対象座標の評価値
+         */
+        public int getPoint(Dimension target) {
             return evaluateList[target.getRow()][target.getColumn()];
         }
 
