@@ -82,7 +82,7 @@ public class PlayerSelectModel {
      * @return 設定できた場合は真 {@code true}, 設定できなかった場合は偽 {@code false} を返す。
      */
     public Boolean setPlayerName(Boolean isPlayerBlack, String name) {
-        if (name == null) {
+        if (name == null || name.length() == 0) {
             System.err.println("プレイヤー名が空のため、値は変更されませんでした");
             System.err.printf("現在値: (黒) %s, (白) %s\n", nameBlack, nameWhite);
             return false;
