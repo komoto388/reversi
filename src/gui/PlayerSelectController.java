@@ -19,7 +19,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import model.PlayerSelectData;
+import model.ReversiData;
 import model.PlayerSelectModel;
 
 /**
@@ -171,8 +171,8 @@ public class PlayerSelectController implements Initializable {
         playerSelectModel.setPlayerName(true, blackNameFeild.getText());
         playerSelectModel.setPlayerName(false, whiteNameFeild.getText());
         playerSelectModel.setIsDebug(debugModeChekBox.isSelected());
-        PlayerSelectData data = playerSelectModel.generateData();
 
+        ReversiData data = playerSelectModel.generateData();
         sceneSwitch.generateSceneReversi(data);
     }
 

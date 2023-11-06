@@ -131,12 +131,12 @@ public class PlayerSelectModel {
     /**
      * 設定されたプレイヤー名とアルゴリズム種別から、リバーシとプレイヤーのインスタンスを生成する
      */
-    public PlayerSelectData generateData() {
+    public ReversiData generateData() {
         Player playerBlack = new Player(nameBlack, true, algorithmTypeBlack);
         Player playerWhite = new Player(nameWhite, false, algorithmTypeWhite);
         Reversi reversi = new Reversi(playerBlack, playerWhite);
 
-        PlayerSelectData data = new PlayerSelectData(reversi, playerBlack, playerWhite, isDebug);
+        ReversiData data = new ReversiData(reversi, playerBlack, playerWhite, isDebug);
 
         return data;
     }

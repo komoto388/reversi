@@ -1,11 +1,10 @@
 package model;
 
 import reversi.Player;
-import reversi.ResultType;
 import reversi.Reversi;
 
 /**
- * ゲーム処理から結果画面に渡すデータを定義するクラス
+ * ゲーム処理を実行するために必要なデータを定義するクラス
  * @author komoto
  */
 public class ReversiData {
@@ -19,21 +18,21 @@ public class ReversiData {
     /** 後手・白のプレイヤーのインスタンス */
     private final Player playerWhite;
 
-    /** 対戦結果を表すインスタンス */
-    private final ResultType result;
+    /** デバッグ情報を表示するか */
+    private final Boolean isDebug;
 
     /**
-     * {@code} PlayerSelectModel が生成したデータを設定する
+     * 値を設定する
      * @param reversi リバーシのインスタンス
      * @param playerBlack 先手・黒のプレイヤーのインスタンス
      * @param playerWhite 後手・白のプレイヤーのインスタンス
-     * @param result 対戦結果を表すインスタンス
+     * @param isDebug デバッグ情報を表示するかを表す
      */
-    public ReversiData(Reversi reversi, Player playerBlack, Player playerWhite, ResultType result) {
+    public ReversiData(Reversi reversi, Player playerBlack, Player playerWhite, Boolean isDebug) {
         this.reversi = reversi;
         this.playerBlack = playerBlack;
         this.playerWhite = playerWhite;
-        this.result = result;
+        this.isDebug = isDebug;
     }
 
     /**
@@ -61,10 +60,10 @@ public class ReversiData {
     }
 
     /**
-     * 対戦結果を表すインスタンスを取得する
-     * @return 対戦結果を表すインスタンス
+     * デバッグ情報の表示・非表示を表す値を取得する
+     * @return デバッグ情報を表示するかを表す
      */
-    public ResultType getResult() {
-        return result;
+    public Boolean getIsDebug() {
+        return isDebug;
     }
 }

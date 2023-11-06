@@ -3,7 +3,7 @@ package cui;
 import java.util.Scanner;
 
 import common.Convert;
-import model.PlayerSelectData;
+import model.ReversiData;
 import reversi.Dimension;
 import reversi.ResultType;
 import reversi.Reversi;
@@ -23,10 +23,10 @@ public class CuiMain {
 
         // プレイヤー選択処理
         PlayerSelectController playerSelectController = new PlayerSelectController(scanner);
-        PlayerSelectData playerSelectData = playerSelectController.run();
+        ReversiData reversiData = playerSelectController.run();
 
         // リバーシのゲームを実行する
-        reversi = playerSelectData.getReversi();
+        reversi = reversiData.getReversi();
 
         ResultType result;
         do {

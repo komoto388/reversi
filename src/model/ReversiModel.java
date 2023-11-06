@@ -60,7 +60,7 @@ public class ReversiModel {
     /** 画面のデバッグ欄に表示する文字列 */
     private String debugString;
 
-    public ReversiModel(PlayerSelectData data) {
+    public ReversiModel(ReversiData data) {
         this.reversi = data.getReversi();
         this.playerBlack = data.getPlayerBlack();
         this.playerWhite = data.getPlayerWhite();
@@ -306,8 +306,8 @@ public class ReversiModel {
     /**
      * 結果画面に渡すデータを生成する
      */
-    public ReversiData generateData() {
-        ReversiData data = new ReversiData(reversi, playerBlack, playerWhite, result);
+    public ResultData generateData() {
+        ResultData data = new ResultData(reversi, playerBlack, playerWhite, result);
 
         return data;
     }

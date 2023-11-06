@@ -9,7 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
-import model.ReversiData;
+import model.ResultData;
 import reversi.Player;
 import reversi.Record;
 import reversi.RecordRow;
@@ -80,15 +80,15 @@ public class ResultController {
     /**
      * 対戦結果内容を画面に設定する
      * @param sceneSwitch シーン切替処理を行うインスタンス
-     * @param reversiData ゲーム画面から渡されるデータ
+     * @param resultData 結果出力処理を実行するために必要なデータの集合
      */
-    public void init(SceneSwitch sceneSwitch, ReversiData reversiData) {
+    public void init(SceneSwitch sceneSwitch, ResultData resultData) {
         // 引数の正常性確認
         try {
             if (sceneSwitch == null) {
                 throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
-            if (reversiData == null) {
+            if (resultData == null) {
                 throw new IllegalArgumentException("引数 \"reversiData\" の値が NULL です");
             }
         } catch (IllegalArgumentException e) {
@@ -100,10 +100,10 @@ public class ResultController {
 
         this.sceneSwitch = sceneSwitch;
 
-        Reversi reversi = reversiData.getReversi();
-        Player blackPlayer = reversiData.getPlayerBlack();
-        Player whitePlayer = reversiData.getPlayerWhite();
-        ResultType result = reversiData.getResult();
+        Reversi reversi = resultData.getReversi();
+        Player blackPlayer = resultData.getPlayerBlack();
+        Player whitePlayer = resultData.getPlayerWhite();
+        ResultType result = resultData.getResult();
 
         // 対戦結果を表示する
         blackHeaderLabel.setText(String.format("先手・黒 ( %s )", blackPlayer.getAlgorithmType().getName()));

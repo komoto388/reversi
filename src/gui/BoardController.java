@@ -173,8 +173,7 @@ public class BoardController {
             }
         }
     }
-    
-    
+
     /**
      * マスのペインに fxid を割り当てる。
      * 列番号と行番号の和が偶数かどうかで割り当てる fxid を変える 

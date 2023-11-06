@@ -3,7 +3,7 @@ package cui;
 import java.util.Scanner;
 
 import algorithm.AlgorithmType;
-import model.PlayerSelectData;
+import model.ReversiData;
 import model.PlayerSelectModel;
 
 public class PlayerSelectController {
@@ -27,7 +27,7 @@ public class PlayerSelectController {
      * プレイヤー選択処理を実行する
      * @return 次のゲーム処理に渡すデータ
      */
-    public PlayerSelectData run() {
+    public ReversiData run() {
         // 先手・黒のアルゴリズム種別を決める
         Boolean playerIsBlack = true;
         playerSelectModel.setPlayerAlgorithm(playerIsBlack, selectAlgorithm(playerIsBlack));
@@ -37,9 +37,9 @@ public class PlayerSelectController {
         playerSelectModel.setPlayerAlgorithm(playerIsBlack, selectAlgorithm(playerIsBlack));
 
         // プレイヤーとリバーシのインスタンスを作成する
-        PlayerSelectData model = playerSelectModel.generateData();
+        ReversiData data = playerSelectModel.generateData();
 
-        return model;
+        return data;
     }
 
     /**

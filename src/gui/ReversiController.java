@@ -15,8 +15,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
-import model.PlayerSelectData;
 import model.ReversiData;
+import model.ResultData;
 import model.ReversiModel;
 import reversi.Board;
 import reversi.Dimension;
@@ -110,17 +110,17 @@ public class ReversiController {
     /**
      * リバーシ盤を初期化する
      * @param sceneSwitch シーン切替処理を行うインスタンス
-     * @param playerSelectData プレイヤー選択処理から引き渡されたデータ
+     * @param reversiData ゲーム処理を実行するために必要なデータの集合
      * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false} を返す。
      */
-    public void init(SceneSwitch sceneSwitch, PlayerSelectData playerSelectData) {
+    public void init(SceneSwitch sceneSwitch, ReversiData reversiData) {
         // 引数の正常性確認
         try {
             if (sceneSwitch == null) {
                 throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
-            if (playerSelectData == null) {
-                throw new IllegalArgumentException("引数 \"data\" の値が NULL です");
+            if (reversiData == null) {
+                throw new IllegalArgumentException("引数 \"reversiData\" の値が NULL です");
             }
         } catch (IllegalArgumentException e) {
             int exitCode = Global.EXIT_FAILURE;
@@ -129,7 +129,7 @@ public class ReversiController {
             System.exit(exitCode);
         }
 
-        model = new ReversiModel(playerSelectData);
+        model = new ReversiModel(reversiData);
 
         // 初期画面の描画
         Player player = model.getPlayerBlack();
@@ -186,7 +186,7 @@ public class ReversiController {
 
                 // ゲームが終了した場合、結果画面を表示する
                 if (model.getIsFinish()) {
-                    ReversiData data = model.generateData();
+                    ResultData data = model.generateData();
                     timer.stop();
                     sceneSwitch.generateSceneResult(data);
                 }
