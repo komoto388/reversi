@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.PlayerSelectData;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -63,10 +64,9 @@ class SceneSwitch {
 
     /**
      * リバーシのゲーム画面を生成し、表示する
-     * @param reversi リバーシのゲーム処理を行うインスタンス
-     * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false} を返す。
+     * @param playerSelectData プレイヤー選択・設定のデータ処理を行うインスタンス（モデル）
      */
-    public void generateSceneReversi(Reversi reversi, Boolean isDebug) {
+    public void generateSceneReversi(PlayerSelectData playerSelectData) {
         FXMLLoader fxmlloader = null;
         BorderPane rootPane = null;
         String fxmlFile = "../fxml/Reversi.fxml";
@@ -80,7 +80,7 @@ class SceneSwitch {
         rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
 
         ReversiController controller = (ReversiController) fxmlloader.getController();
-        controller.init(this, reversi, isDebug);
+        controller.init(this, playerSelectData);
 
         // 描画する画面をフレームに設定する
         Scene scene = new Scene(rootPane);

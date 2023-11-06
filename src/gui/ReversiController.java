@@ -16,6 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import model.PlayerSelectData;
 import reversi.Board;
 import reversi.Dimension;
 import reversi.Player;
@@ -123,20 +124,17 @@ public class ReversiController {
     /**
      * リバーシ盤を初期化する
      * @param sceneSwitch シーン切替処理を行うインスタンス
-     * @param reversi リバーシの処理を行うインスタンス
+     * @param playerSelectData プレイヤー選択処理から引き渡されたデータ
      * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false} を返す。
      */
-    public void init(SceneSwitch sceneSwitch, Reversi reversi, Boolean isDebug) {
+    public void init(SceneSwitch sceneSwitch, PlayerSelectData playerSelectData) {
         // 引数の正常性確認
         try {
             if (sceneSwitch == null) {
                 throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
-            if (reversi == null) {
-                throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
-            }
-            if (isDebug == null) {
-                throw new IllegalArgumentException("引数 \"isDebug\" の値が NULL です");
+            if (playerSelectData == null) {
+                throw new IllegalArgumentException("引数 \"playerSelectModel\" の値が NULL です");
             }
         } catch (IllegalArgumentException e) {
             int exitCode = Global.EXIT_FAILURE;
@@ -146,8 +144,8 @@ public class ReversiController {
         }
 
         this.result = ResultType.None;
-        this.reversi = reversi;
-        this.isDebug = isDebug;
+        this.reversi = playerSelectData.getReversi();
+        this.isDebug = playerSelectData.getIsDebug();
         statusLabel.setText(null);
 
         // デバッグ情報の初期化
