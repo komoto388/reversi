@@ -2,12 +2,9 @@ package cui;
 
 import java.util.Scanner;
 
-import algorithm.AlgorithmType;
 import common.Convert;
-import common.Global;
 import model.PlayerSelectData;
 import reversi.Dimension;
-import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
 import reversi.Record;

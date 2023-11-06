@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
+import model.ReversiData;
 import reversi.Player;
 import reversi.Record;
 import reversi.RecordRow;
@@ -79,20 +80,16 @@ public class ResultController {
     /**
      * 対戦結果内容を画面に設定する
      * @param sceneSwitch シーン切替処理を行うインスタンス
-     * @param reversi リバーシの処理を行うインスタンス
-     * @param result 勝敗の結果
+     * @param reversiData ゲーム画面から渡されるデータ
      */
-    public void init(SceneSwitch sceneSwitch, Reversi reversi, ResultType result) {
+    public void init(SceneSwitch sceneSwitch, ReversiData reversiData) {
         // 引数の正常性確認
         try {
             if (sceneSwitch == null) {
                 throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
-            if (reversi == null) {
-                throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
-            }
-            if (result == null) {
-                throw new IllegalArgumentException("引数 \"result\" の値が NULL です");
+            if (reversiData == null) {
+                throw new IllegalArgumentException("引数 \"reversiData\" の値が NULL です");
             }
         } catch (IllegalArgumentException e) {
             int exitCode = Global.EXIT_FAILURE;
@@ -103,10 +100,12 @@ public class ResultController {
 
         this.sceneSwitch = sceneSwitch;
 
-        // 対戦結果を表示する
-        Player blackPlayer = reversi.getPlayerBlack();
-        Player whitePlayer = reversi.getPlayerWhite();
+        Reversi reversi = reversiData.getReversi();
+        Player blackPlayer = reversiData.getPlayerBlack();
+        Player whitePlayer = reversiData.getPlayerWhite();
+        ResultType result = reversiData.getResult();
 
+        // 対戦結果を表示する
         blackHeaderLabel.setText(String.format("先手・黒 ( %s )", blackPlayer.getAlgorithmType().getName()));
         whiteHeaderLabel.setText(String.format("後手・白 ( %s )", whitePlayer.getAlgorithmType().getName()));
         blackNameLabel.setText(blackPlayer.getName());

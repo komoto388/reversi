@@ -1,6 +1,5 @@
 package gui;
 
-import common.Convert;
 import common.Global;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -17,10 +16,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import model.PlayerSelectData;
+import model.ReversiData;
+import model.ReversiModel;
 import reversi.Board;
 import reversi.Dimension;
 import reversi.Player;
-import reversi.ResultType;
 import reversi.Reversi;
 
 /**
@@ -28,34 +28,17 @@ import reversi.Reversi;
  */
 public class ReversiController {
 
-    /** ゲームのイベント状態の値 */
-    private enum EventStatus {
-        PLAY, SKIP, WAIT, JUDGE, WAIT_FINAL, FINISH
-    }
-
-    /** ゲームのイベント状態を表す */
-    private EventStatus eventStatus;
-
-    /** ゲームの勝敗結果を表す */
-    private ResultType result;
+    /** プレイヤー選択・設定のデータ処理を行うインスタンス（モデル） */
+    private ReversiModel model;
 
     /** タイマーイベントを制御するインスタンス */
     private Timeline timer;
 
-    /** リバーシ盤の手動入力を無効する時間（フレーム数） */
-    private int waitFrame;
-
     /** 実際のFPSの計測・算出するインスタンス */
     private Fps fps;
 
-    /** リバーシを制御するインスタンス */
-    private Reversi reversi;
-
     /** リバーシ盤を描画するインスタンス */
     private BoardController boardController;
-
-    /** デバッグ情報を表示・非表示を表す */
-    private Boolean isDebug;
 
     /** リバーシ画面のルートペイン */
     @FXML
@@ -121,6 +104,9 @@ public class ReversiController {
     @FXML
     private Label debugLabel;
 
+    /** 最後に置かれた石の座標 */
+    private Dimension target = null;
+
     /**
      * リバーシ盤を初期化する
      * @param sceneSwitch シーン切替処理を行うインスタンス
@@ -134,7 +120,7 @@ public class ReversiController {
                 throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
             if (playerSelectData == null) {
-                throw new IllegalArgumentException("引数 \"playerSelectModel\" の値が NULL です");
+                throw new IllegalArgumentException("引数 \"data\" の値が NULL です");
             }
         } catch (IllegalArgumentException e) {
             int exitCode = Global.EXIT_FAILURE;
@@ -143,33 +129,19 @@ public class ReversiController {
             System.exit(exitCode);
         }
 
-        this.result = ResultType.None;
-        this.reversi = playerSelectData.getReversi();
-        this.isDebug = playerSelectData.getIsDebug();
-        statusLabel.setText(null);
+        model = new ReversiModel(playerSelectData);
 
-        // デバッグ情報の初期化
-        if (isDebug) {
-            this.fps = new Fps();
-            fpsLabel.setText(null);
-            waitFrameLabel.setText(null);
-            eventStatusLabel.setText(null);
-            debugLabel.setText("デバッグ情報は特にありません");
-            debugPane.setVisible(true);
-        } else {
-            debugPane.setVisible(false);
-        }
-
-        Player player = reversi.getPlayerBlack();
+        // 初期画面の描画
+        Player player = model.getPlayerBlack();
         blackNameLabel.setText(player.getName());
         blackAlgorithmLabel.setText("( " + player.getAlgorithmType().getName() + " )");
 
-        player = reversi.getPlayerWhite();
+        player = model.getPlayerWhite();
         whiteNameLabel.setText(player.getName());
         whiteAlgorithmLabel.setText("( " + player.getAlgorithmType().getName() + " )");
 
         // リバーシ盤の描画を行う
-        Dimension boardSize = reversi.getBoard().getSize();
+        Dimension boardSize = model.getReversi().getBoard().getSize();
         boardController = new BoardController(gridPane, boardSize, Global.GRID_SIZE);
 
         // マスをクリックした時のイベントを設定する
@@ -181,97 +153,42 @@ public class ReversiController {
             }
         }
 
-        // 画面描画イベントを設定する
-        setEventStatus(EventStatus.WAIT);
-        setWaitTime(Global.WAIT_MILLISEC_START);
+        // デバッグ情報の表示切替
+        if (model.getIsDebug()) {
+            this.fps = new Fps();
+            debugPane.setVisible(true);
+        } else {
+            debugPane.setVisible(false);
+        }
 
+        // 画面描画イベントを設定する
         timer = new Timeline(new KeyFrame(Duration.millis(1000 / Global.FPS), new EventHandler<ActionEvent>() {
+
             /**
              * 周期的に実行する処理を行う。
              * @param event イベントのインスタンス
              */
             @Override
             public void handle(ActionEvent event) {
-                // ステータスを設定する
-                if (eventStatus == EventStatus.PLAY) {
-                    if (reversi.isSkip()) {
-                        setEventStatus(EventStatus.SKIP);
-                    }
-                }
-
                 try {
-                    run();
+                    target = model.run();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 // デバッグ情報表示が有効の場合、FPSの計測を行う
-                if (isDebug) {
+                if (model.getIsDebug()) {
                     fps.update();
                 }
 
                 // 画面描画を行う
                 update();
 
-                if (waitFrame > 0) {
-                    waitFrame--;
-                }
-            }
-
-            /**
-             * リバーシのゲームイベントを処理する
-             */
-            private void run() {
-                switch (eventStatus) {
-                case PLAY: {
-                    if (reversi.isCurrentPlayerManual()) {
-                        // プレイヤーが手動入力の時は、何もしない
-                    } else {
-                        // プレイヤーが手動入力の時は、アルゴリズムに従い処理を行う
-                        Dimension target = reversi.run();
-                        put(target);
-                    }
-                    break;
-                }
-                case SKIP: {
-                    // 石がどこにも置けない時のスキップ処理を定義
-                    statusLabel.setText(Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " はスキップします。");
-                    reversi.next();
-                    setEventStatus(EventStatus.WAIT);
-                    setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
-                    break;
-                }
-                case WAIT: {
-                    // 待ち状態の場合は何もせず、画面描画のみ行う
-                    if (waitFrame <= 0) {
-                        setEventStatus(EventStatus.PLAY);
-                    }
-                    break;
-                }
-                case JUDGE: {
-                    judge();
-                    if (result != ResultType.None) {
-                        setEventStatus(EventStatus.WAIT_FINAL);
-                    } else {
-                        setEventStatus(EventStatus.WAIT);
-                    }
-                    setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
-                    break;
-                }
-                case WAIT_FINAL: {
-                    if (waitFrame <= 0) {
-                        setEventStatus(EventStatus.FINISH);
-                    }
-                    break;
-                }
-                case FINISH: {
-                    // 完了処理を行い、結果画面を表示する
+                // ゲームが終了した場合、結果画面を表示する
+                if (model.getIsFinish()) {
+                    ReversiData data = model.generateData();
                     timer.stop();
-                    sceneSwitch.generateSceneResult(reversi, result);
-                    break;
-                }
-                default:
-                    throw new IllegalArgumentException("Unexpected value: " + eventStatus);
+                    sceneSwitch.generateSceneResult(data);
                 }
             }
         }));
@@ -303,50 +220,23 @@ public class ReversiController {
          */
         @Override
         public void handle(MouseEvent event) {
-            put(dim);
+            if (model.put(dim)) {
+                target = dim;
+            }
         }
-    }
-
-    /**
-     * 石の設置を行う
-     * @param target プレイヤーが石を置く座標
-     * @return 石の設置ができた場合は真 {@code true}, 既に石が存在している等で設置できなかった場合は偽 {@code false} を返す。
-     */
-    private Boolean put(Dimension target) {
-        // 座標に対して、石を置けるか判定する
-        Boolean isPut = false;
-        try {
-            isPut = reversi.put(target);
-        } catch (IllegalArgumentException e) {
-            // 例外が発生した場合、石を置けないと判断して処理を続ける。
-            e.printStackTrace();
-            isPut = false;
-        }
-
-        if (isPut) {
-            boardController.resetFxidAll();
-            Pane targetPane = boardController.getBoardPane(target);
-            targetPane.setId(Global.FXID_GRID_PUT);
-            String playerString = Convert.getPlayerColor(reversi.getPlayerIsBlack());
-            statusLabel.setText(playerString + " は " + target.getString() + " に石を置きました。");
-
-            setEventStatus(EventStatus.JUDGE);
-            setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
-        } else {
-            statusLabel.setText(target.getString() + " には石を置けません");
-        }
-
-        return isPut;
     }
 
     /**
      * 画面描画を行う関数
      */
     private void update() {
-        Board board = reversi.getBoard();
+        Reversi reversi = model.getReversi();
+        Board board = model.getBoard();
 
         // リバーシ盤に石を描画する
         boardController.drawStone(board);
+
+        setBoardEnable(model.getIsBoardEnable());
 
         // 現在の手番、石の個数を更新する
         if (reversi.getPlayerIsBlack()) {
@@ -358,71 +248,23 @@ public class ReversiController {
         blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
         whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
 
+        statusLabel.setText(model.getGameStatusString());
+
         // デバッグ情報の処理
-        if (isDebug) {
+        if (model.getIsDebug()) {
             fpsLabel.setText(String.format("%.2f fps", fps.getFps()));
-            waitFrameLabel.setText(String.format("待ちフレーム数: %3d", waitFrame));
-            eventStatusLabel.setText(eventStatus.toString());
+            waitFrameLabel.setText(String.format("待ちフレーム数: %3d", model.getWaitFrame()));
+            eventStatusLabel.setText(model.getEventStatus());
+            debugLabel.setText(model.getDebugString());
         }
-    }
 
-    /**
-     * 勝敗判定を行う
-     */
-    private void judge() {
-        try {
-            result = reversi.judge();
-            switch (result) {
-            case None: {
-                reversi.next();
-                setEventStatus(EventStatus.WAIT);
-                setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
-                break;
-            }
-            case Drow:
-            case Black:
-            case White: {
-                break;
-            }
-            default:
-                throw new IllegalArgumentException("Unexpected value: " + reversi.judge());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = ResultType.None;
-        }
-    }
+        // 最後に石をおいたマスにハイライトを付ける
+        if (target != null) {
+            boardController.resetFxidAll();
+            Pane targetPane = boardController.getBoardPane(target);
+            targetPane.setId(Global.FXID_GRID_PUT);
 
-    /**
-     * イベントステータスの値を設定する
-     * @param eventStatus 設定するイベントステータスの値
-     */
-    private void setEventStatus(EventStatus eventStatus) {
-        this.eventStatus = eventStatus;
-
-        try {
-            switch (eventStatus) {
-            case PLAY: {
-                if (reversi.isCurrentPlayerManual()) {
-                    setBoardEnable(true);
-                } else {
-                    setBoardEnable(false);
-                }
-                break;
-            }
-            case WAIT:
-            case SKIP:
-            case JUDGE:
-            case WAIT_FINAL:
-            case FINISH: {
-                setBoardEnable(false);
-                break;
-            }
-            default:
-                throw new IllegalArgumentException("Unexpected value: " + eventStatus);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            target = null;
         }
     }
 
@@ -431,31 +273,13 @@ public class ReversiController {
      * @param isEnable 画面操作を受け付ける場合は{@code true}, 受け付けない場合は {@code false} にする。
      */
     private void setBoardEnable(Boolean isEnable) {
-        Dimension boardSize = reversi.getBoard().getSize();
+        Dimension boardSize = model.getBoardSize();
 
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 Pane pane = boardController.getBoardPane(i, j);
                 pane.setDisable(!isEnable);
             }
-        }
-    }
-
-    /**
-     * 処理の待ち時間を設定する
-     * @param waitMilliSec 待ち時間。
-     */
-    private void setWaitTime(int waitMilliSec) {
-        try {
-            if (waitMilliSec <= 0) {
-                throw new IllegalArgumentException("待ち時間の値が0以下です: " + waitMilliSec);
-            }
-            waitFrame = Convert.convertFrame(waitMilliSec, Global.FPS);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("処理待ち時間をなし、画面操作を可能な状態として設定します。");
-            waitFrame = 0;
-            setEventStatus(EventStatus.PLAY);
         }
     }
 }
