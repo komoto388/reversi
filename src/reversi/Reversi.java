@@ -239,13 +239,4 @@ public class Reversi {
             currentPlayer = playerBlack;
         }
     }
-
-    /**
-     * 現在の手番とリバーシ盤の状態を表示する
-     */
-    public void showBoardCui() {
-        System.out.printf("(%d手目)\n", turnCount);
-        board.showCui();
-        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(currentPlayer.isDiscBlack()));
-    }
 }

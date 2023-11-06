@@ -23,7 +23,7 @@ class ReversiModelTest {
         player1 = new Player("TEST1", true, AlgorithmType.Manual);
         player2 = new Player("TEST2", false, AlgorithmType.Random);
         reversi = new Reversi(player1, player2);
-        model = new ReversiModel(new ReversiData(reversi, player1, player2, true));
+        model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
     }
 
     @Test
@@ -113,4 +113,8 @@ class ReversiModelTest {
         assertSame(ResultType.None, data.getResult());
     }
 
+    @Test
+    void testGetIsUserWait() {
+        fail("まだ実装されていません");
+    }
 }

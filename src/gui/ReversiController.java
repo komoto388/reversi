@@ -28,7 +28,7 @@ import reversi.Reversi;
  */
 public class ReversiController {
 
-    /** プレイヤー選択・設定のデータ処理を行うインスタンス（モデル） */
+    /** ゲーム実行のデータ処理を行うインスタンス（モデル） */
     private ReversiModel model;
 
     /** タイマーイベントを制御するインスタンス */
@@ -126,7 +126,7 @@ public class ReversiController {
             System.exit(exitCode);
         }
 
-        model = new ReversiModel(reversiData);
+        model = new ReversiModel(reversiData, true);
 
         // 初期画面の描画
         Player player = model.getPlayerBlack();

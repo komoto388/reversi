@@ -51,13 +51,22 @@ public class Convert {
      * @param millisec 指定したミリ秒
      * @param fps 1秒間に描画するフレーム数(FPS)
      * @return 指定したミリ秒から算出したフレーム数。{@code millisec}の値が{@code 0}以下の場合、{@code 0}を返す。
+     * @throws IllegalArgumentException 指定された引数が負の値である
      */
-    public static int convertFrame(int millisec, int fps) {
-        if (millisec > 0) {
-            return (fps * millisec / 1000);
-        } else {
-            return 0;
-        }
-    }
+    public static int convertFrame(int millisec, int fps) throws IllegalArgumentException {
+        int waitFrame = 0;
 
+        if (millisec < 0 || fps < 0) {
+            String exceptionStr = String.format("指定された引数が負の値です: millisec=%d, fps=%d");
+            throw new IllegalArgumentException(exceptionStr);
+        }
+
+        if (millisec > 0) {
+            waitFrame = fps * millisec / 1000;
+        } else {
+            waitFrame = 0;
+        }
+
+        return waitFrame;
+    }
 }

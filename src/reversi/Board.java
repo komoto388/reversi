@@ -702,32 +702,4 @@ public class Board implements Cloneable {
         }
         return reverseDisc;
     }
-
-    /**
-     * リバーシ盤をコマンドプロンプト上に表示する
-     */
-    public void showCui() {
-        System.out.printf(" ");
-        for (int j = 0; j < boardSize.getColumn(); j++) {
-            System.out.printf("  %c", Convert.convertIntToChar(j));
-        }
-        System.out.printf("\n");
-
-        for (int i = 0; i < boardSize.getRow(); i++) {
-            System.out.printf("%2d", i + 1);
-            for (int j = 0; j < boardSize.getColumn(); j++) {
-                if (board[i][j] == DiscStatus.BLACK) {
-                    System.out.printf(" ◯");
-                } else if (board[i][j] == DiscStatus.WHITE) {
-                    System.out.printf(" ●");
-                } else {
-                    System.out.printf(" ―");
-                }
-            }
-            System.out.printf("\n");
-        }
-
-        System.out.printf("黒石◯: %2d\n", blackDiscNum);
-        System.out.printf("白石●: %2d\n", whiteDiscNum);
-    }
 }

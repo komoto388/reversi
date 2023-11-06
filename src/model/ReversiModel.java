@@ -47,6 +47,9 @@ public class ReversiModel {
     /** ゲームの勝敗結果を表す */
     private ResultType result;
 
+    /** 街状態になった時に待機する時間(ミリ秒) */
+    private final int waitInterval;
+
     /** リバーシ盤の手動入力を無効する時間（フレーム数） */
     private int waitFrame;
 
@@ -55,7 +58,7 @@ public class ReversiModel {
 
     /** ゲームが終了したことを表すフラグ */
     private Boolean isFinish;
-    
+
     /** 最近の石が置かれた座標 */
     private Dimension latestTarget;
 
@@ -65,8 +68,12 @@ public class ReversiModel {
     /** 画面のデバッグ欄に表示する文字列 */
     private String debugString;
 
-    public ReversiModel(ReversiData data) {
-
+    /**
+     * リバーシゲーム実行のデータ処理を行うモデル
+     * @param data ゲーム実行に必要なデータ
+     * @param isGui 動作する環境を表す。GUIの場合は真 {@code true}, CUIの場合は {@code false} にする。
+     */
+    public ReversiModel(ReversiData data, Boolean isGui) {
         this.reversi = data.getReversi();
         this.playerBlack = data.getPlayerBlack();
         this.playerWhite = data.getPlayerWhite();
@@ -79,61 +86,120 @@ public class ReversiModel {
         this.statusString = null;
         this.debugString = "デバッグ情報は特にありません";
 
-        setWaitTime(Global.WAIT_MILLISEC_START);
+        if (isGui) {
+            setWaitTime(Global.WAIT_MILLISEC_START);
+            waitInterval = Global.WAIT_MILLISEC_INTERVAL;
+        } else {
+            // CUIではFPSの描画ではないため使用できない。そのため0に設定する。
+            setWaitTime(0);
+            waitInterval = 0;
+        }
     }
 
+    /**
+     * リバーシのゲーム情報を取得する
+     * @return リバーシのゲーム情報
+     */
     public Reversi getReversi() {
         return reversi;
     }
 
+    /**
+     * リバーシ盤の情報を取得する
+     * @return リバーシ盤の情報を返す
+     */
     public Board getBoard() {
         return reversi.getBoard();
     }
 
+    /**
+     * リバーシ盤のサイズを取得する
+     * @return リバーシ盤のサイズを返す
+     */
     public Dimension getBoardSize() {
         return reversi.getBoard().getSize();
     }
 
+    /**
+     * 先手・黒のプレイヤー情報を取得する
+     * @return 先手・黒のプレイヤー情報を返す
+     */
     public Player getPlayerBlack() {
         return playerBlack;
     }
 
+    /**
+     * 後手・白のプレイヤー情報を取得する
+     * @return 後手・白のプレイヤー情報を返す
+     */
     public Player getPlayerWhite() {
         return playerWhite;
     }
 
+    /**
+     * デバッグ情報を表示するかを表す
+     * @return 表示する場合は真 {@code true}, 表示しない場合は偽 {@code false} を返す
+     */
     public Boolean getIsDebug() {
         return isDebug;
     }
 
+    /**
+     * リバーシ盤が操作可能（ユーザの操作待ち状態）かどうかを表す
+     * @return 操作可能の場合は真 {@code true}, 操作不可の場合は偽 {@code false} を返す
+     */
     public Boolean getIsControll() {
         return eventStatus.getIsControll();
     }
 
+    /**
+     * ゲームが終了したかを表すフラグを取得する
+     * @return ゲームが終了しているの場合は真 {@code true}, 終了していない場合は偽 {@code false} を返す
+     */
     public Boolean getIsFinish() {
         return isFinish;
     }
-    
+
+    /**
+     * 最近置いた石の座標を取得する
+     * @return 最近置いた石の座標
+     */
     public Dimension getLatestTarget() {
         return latestTarget;
     }
 
+    /**
+     * イベントステータスの名前を取得する
+     * @return イベントステータスの名前の文字列
+     */
     public String getEventStatus() {
         return eventStatus.getName();
     }
 
+    /**
+     * ゲームステータス情報を取得する
+     * @return ゲームステータスの文字列
+     */
     public String getGameStatusString() {
         return statusString;
     }
 
+    /**
+     * デバッグ情報を取得する
+     * @return デバッグ情報の文字列
+     */
     public String getDebugString() {
         return debugString;
     }
 
+    /**
+     * 現在の待機フレーム数を取得する
+     * @return 現在の待機フレーム数
+     */
     public int getWaitFrame() {
         return waitFrame;
     }
-    
+
     /**
      * リバーシのゲームイベントを処理する
      * @param プレイヤーが石をおいた座標。処理中に石を置かなかった場合には {@code NULL} を返す。
@@ -165,7 +231,7 @@ public class ReversiModel {
             statusString = Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " はスキップします。";
             reversi.next();
             eventStatus.set(EventStatusValue.WAIT);
-            setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
+            setWaitTime(waitInterval);
             break;
         }
         case WAIT: {
@@ -182,7 +248,7 @@ public class ReversiModel {
             } else {
                 eventStatus.set(EventStatusValue.WAIT);
             }
-            setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
+            setWaitTime(waitInterval);
             break;
         }
         case WAIT_FINAL: {
@@ -226,12 +292,12 @@ public class ReversiModel {
 
         if (isPut) {
             latestTarget = target;
-            
+
             String playerString = Convert.getPlayerColor(reversi.getPlayerIsBlack());
             statusString = String.format("%s は %s に石を置きました。", playerString, target.getString());
 
             eventStatus.set(EventStatusValue.JUDGE);
-            setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
+            setWaitTime(waitInterval);
         } else {
             debugString = String.format("%s には石を置けません", target.getString());
         }
@@ -249,7 +315,7 @@ public class ReversiModel {
             case None: {
                 reversi.next();
                 eventStatus.set(EventStatusValue.WAIT);
-                setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
+                setWaitTime(waitInterval);
                 break;
             }
             case Drow:
@@ -272,9 +338,6 @@ public class ReversiModel {
      */
     private void setWaitTime(int waitMilliSec) {
         try {
-            if (waitMilliSec <= 0) {
-                throw new IllegalArgumentException("待ち時間の値が0以下です: " + waitMilliSec);
-            }
             waitFrame = Convert.convertFrame(waitMilliSec, Global.FPS);
         } catch (Exception e) {
             e.printStackTrace();
