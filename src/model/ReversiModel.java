@@ -8,24 +8,29 @@ import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
 
-public class ReversiModel {
+/**
+ * ゲームのイベント状態の値
+ */
+enum EventStatusValue {
+    PLAY("プレイヤー操作中"), PLAY_MANUAL("プレイヤー操作中(マニュアル)"), PLAY_COM("プレイヤー操作中(COM)"), SKIP("スキップ処理"), WAIT(
+            "インターバル中"), JUDGE("判定処理"), WAIT_FINAL("終了待ち"), FINISH("終了");
 
-    /**
-     * ゲームのイベント状態の値
-     */
-    public enum EventStatus {
-        PLAY("ゲーム処理"), SKIP("スキップ処理"), WAIT("インターバル中"), JUDGE("判定処理"), WAIT_FINAL("終了待ち"), FINISH("終了");
+    private final String name;
 
-        private final String name;
-
-        private EventStatus(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
+    private EventStatusValue(String name) {
+        this.name = name;
     }
+
+    public String getName() {
+        return name;
+    }
+}
+
+/**
+ * リバーシのゲーム処理を行うクラス
+ * @author komoto
+ */
+public class ReversiModel {
 
     /** リバーシを制御するインスタンス */
     private final Reversi reversi;
@@ -48,9 +53,6 @@ public class ReversiModel {
     /** デバッグ情報を表示・非表示を表すフラグ */
     private final Boolean isDebug;
 
-    /** リバーシ盤の操作可否フラグ */
-    private Boolean isBoardEnable;
-
     /** ゲームが終了したことを表すフラグ */
     private Boolean isFinish;
 
@@ -61,18 +63,18 @@ public class ReversiModel {
     private String debugString;
 
     public ReversiModel(ReversiData data) {
+
         this.reversi = data.getReversi();
         this.playerBlack = data.getPlayerBlack();
         this.playerWhite = data.getPlayerWhite();
         this.isDebug = data.getIsDebug();
 
+        this.eventStatus = new EventStatus(reversi, EventStatusValue.WAIT);
         this.result = ResultType.None;
-        this.isBoardEnable = false;
         this.isFinish = false;
         this.statusString = null;
         this.debugString = "デバッグ情報は特にありません";
 
-        setEventStatus(EventStatus.WAIT);
         setWaitTime(Global.WAIT_MILLISEC_START);
     }
 
@@ -100,8 +102,8 @@ public class ReversiModel {
         return isDebug;
     }
 
-    public Boolean getIsBoardEnable() {
-        return isBoardEnable;
+    public Boolean getIsControll() {
+        return eventStatus.getIsControll();
     }
 
     public Boolean getIsFinish() {
@@ -125,39 +127,6 @@ public class ReversiModel {
     }
 
     /**
-     * イベントステータスの値を設定する
-     * @param eventStatus 設定するイベントステータスの値
-     */
-    private void setEventStatus(EventStatus eventStatus) {
-        this.eventStatus = eventStatus;
-
-        try {
-            switch (eventStatus) {
-            case PLAY: {
-                if (reversi.isCurrentPlayerManual()) {
-                    isBoardEnable = true;
-                } else {
-                    isBoardEnable = false;
-                }
-                break;
-            }
-            case WAIT:
-            case SKIP:
-            case JUDGE:
-            case WAIT_FINAL:
-            case FINISH: {
-                isBoardEnable = false;
-                break;
-            }
-            default:
-                throw new IllegalArgumentException("Unexpected value: " + eventStatus);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * リバーシのゲームイベントを処理する
      * @param プレイヤーが石をおいた座標。処理中に石を置かなかった場合には {@code NULL} を返す。
      */
@@ -165,51 +134,52 @@ public class ReversiModel {
         Dimension target = null;
 
         // ステータスを設定する
-        if (eventStatus == EventStatus.PLAY) {
+        if (eventStatus.getStatus() == EventStatusValue.PLAY_MANUAL
+                || eventStatus.getStatus() == EventStatusValue.PLAY_COM) {
             if (reversi.isSkip()) {
-                setEventStatus(EventStatus.SKIP);
+                eventStatus.set(EventStatusValue.SKIP);
             }
         }
 
-        switch (eventStatus) {
-        case PLAY: {
-            if (reversi.isCurrentPlayerManual()) {
-                // プレイヤーが手動入力の時は、何もしない
-            } else {
-                // プレイヤーが手動入力の時は、アルゴリズムに従い処理を行う
-                target = reversi.run();
-                put(target);
-            }
+        switch (eventStatus.getStatus()) {
+        case PLAY_MANUAL: {
+            // プレイヤーが手動入力の時は、何もしない
+            break;
+        }
+        case PLAY_COM: {
+            // アルゴリズムに従い処理を行う
+            target = reversi.run();
+            put(target);
             break;
         }
         case SKIP: {
             // 石がどこにも置けない時のスキップ処理を定義
             statusString = Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " はスキップします。";
             reversi.next();
-            setEventStatus(EventStatus.WAIT);
+            eventStatus.set(EventStatusValue.WAIT);
             setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
             break;
         }
         case WAIT: {
             // 待ち状態の場合は何もせず、画面描画のみ行う
             if (waitFrame <= 0) {
-                setEventStatus(EventStatus.PLAY);
+                eventStatus.set(EventStatusValue.PLAY);
             }
             break;
         }
         case JUDGE: {
             judge();
             if (result != ResultType.None) {
-                setEventStatus(EventStatus.WAIT_FINAL);
+                eventStatus.set(EventStatusValue.WAIT_FINAL);
             } else {
-                setEventStatus(EventStatus.WAIT);
+                eventStatus.set(EventStatusValue.WAIT);
             }
             setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
             break;
         }
         case WAIT_FINAL: {
             if (waitFrame <= 0) {
-                setEventStatus(EventStatus.FINISH);
+                eventStatus.set(EventStatusValue.FINISH);
             }
             break;
         }
@@ -217,6 +187,7 @@ public class ReversiModel {
             isFinish = true;
             break;
         }
+        case PLAY:
         default:
             throw new IllegalArgumentException("Unexpected value: " + eventStatus);
         }
@@ -249,7 +220,7 @@ public class ReversiModel {
             String playerString = Convert.getPlayerColor(reversi.getPlayerIsBlack());
             statusString = String.format("%s は %s に石を置きました。", playerString, target.getString());
 
-            setEventStatus(EventStatus.JUDGE);
+            eventStatus.set(EventStatusValue.JUDGE);
             setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
         } else {
             statusString = String.format("%s には石を置けません", target.getString());
@@ -267,7 +238,7 @@ public class ReversiModel {
             switch (result) {
             case None: {
                 reversi.next();
-                setEventStatus(EventStatus.WAIT);
+                eventStatus.set(EventStatusValue.WAIT);
                 setWaitTime(Global.WAIT_MILLISEC_INTERVAL);
                 break;
             }
@@ -299,7 +270,7 @@ public class ReversiModel {
             e.printStackTrace();
             System.err.println("処理待ち時間をなし、画面操作を可能な状態として設定します。");
             waitFrame = 0;
-            setEventStatus(EventStatus.PLAY);
+            eventStatus.set(EventStatusValue.PLAY);
         }
     }
 
@@ -310,5 +281,74 @@ public class ReversiModel {
         ResultData data = new ResultData(reversi, playerBlack, playerWhite, result);
 
         return data;
+    }
+}
+
+/**
+ * イベントステータスを操作するクラス
+ */
+class EventStatus {
+
+    /** リバーシを制御するインスタンス */
+    private final Reversi reversi;
+
+    /** 現在のイベントステータス */
+    private EventStatusValue eventStatus;
+
+    /** リバーシ盤の操作可否フラグ */
+    private Boolean isControll;
+
+    /**
+     * 初期化する
+     * @param reversi リバーシを制御するインスタンス
+     * @param status イベントステータスの初期値
+     */
+    public EventStatus(Reversi reversi, EventStatusValue status) {
+        this.reversi = reversi;
+        set(status);
+    }
+
+    /**
+     * イベントステータスの値を取得する
+     * @return イベントステータスの値
+     */
+    public EventStatusValue getStatus() {
+        return eventStatus;
+    }
+
+    public Boolean getIsControll() {
+        return isControll;
+    }
+
+    /**
+     * イベントステータスの名前を取得する
+     * @return イベントステータスの名前の文字列
+     */
+    public String getName() {
+        return eventStatus.getName();
+    }
+
+    /**
+     * イベントステータスの値を設定する
+     * @param eventStatus 設定するイベントステータスの値
+     */
+    public void set(EventStatusValue eventStatus) {
+        // 値が PLAY の場合、値を PLAY_MANUAL または PLAY_COM に付け替える
+        if (eventStatus == EventStatusValue.PLAY) {
+            if (reversi.isCurrentPlayerManual()) {
+                eventStatus = EventStatusValue.PLAY_MANUAL;
+            } else {
+                eventStatus = EventStatusValue.PLAY_COM;
+            }
+        }
+
+        // ステータス、リバーシ盤操作可否の更新
+        this.eventStatus = eventStatus;
+
+        if (eventStatus == EventStatusValue.PLAY_MANUAL) {
+            isControll = true;
+        } else {
+            isControll = false;
+        }
     }
 }

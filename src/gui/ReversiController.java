@@ -149,7 +149,6 @@ public class ReversiController {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 Pane pane = boardController.getBoardPane(i, j);
                 pane.setOnMouseClicked(new GridHandler(new Dimension(i, j)));
-                pane.setDisable(true);
             }
         }
 
@@ -233,10 +232,7 @@ public class ReversiController {
         Reversi reversi = model.getReversi();
         Board board = model.getBoard();
 
-        // リバーシ盤に石を描画する
-        boardController.drawStone(board);
-
-        setBoardEnable(model.getIsBoardEnable());
+        boardController.update(board, model.getIsControll());
 
         // 現在の手番、石の個数を更新する
         if (reversi.getPlayerIsBlack()) {
@@ -265,21 +261,6 @@ public class ReversiController {
             targetPane.setId(Global.FXID_GRID_PUT);
 
             target = null;
-        }
-    }
-
-    /**
-     * リバーシ盤の操作受付を有効／無効にする。
-     * @param isEnable 画面操作を受け付ける場合は{@code true}, 受け付けない場合は {@code false} にする。
-     */
-    private void setBoardEnable(Boolean isEnable) {
-        Dimension boardSize = model.getBoardSize();
-
-        for (int i = 0; i < boardSize.getRow(); i++) {
-            for (int j = 0; j < boardSize.getColumn(); j++) {
-                Pane pane = boardController.getBoardPane(i, j);
-                pane.setDisable(!isEnable);
-            }
         }
     }
 }

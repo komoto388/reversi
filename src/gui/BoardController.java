@@ -135,10 +135,11 @@ public class BoardController {
     }
 
     /**
-     * リバーシ盤に石を描画する
+     * リバーシ盤を更新し、石の再描画とプレイヤーの操作可否を設定する。
      * @param board リバーシ盤の盤面情報
+     * @param isControll リバーシ盤をプレイヤーが操作できる場合は真 {@code true}、できない場合は偽 {@code false}
      */
-    public void drawStone(Board board) {
+    public void update(Board board, Boolean isControll) {
         for (int i = 0; i < boardHeight; i++) {
             for (int j = 0; j < boardWidth; j++) {
                 Dimension target = new Dimension(i, j);
@@ -159,6 +160,9 @@ public class BoardController {
                     }
                     boardPane[i][j].getChildren().add(circle);
                 }
+
+                // マスの操作可否を設定する
+                boardPane[i][j].setDisable(!isControll);
             }
         }
     }
