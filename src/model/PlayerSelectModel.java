@@ -129,9 +129,10 @@ public class PlayerSelectModel {
     }
 
     /**
-     * 設定されたプレイヤー名とアルゴリズム種別から、リバーシとプレイヤーのインスタンスを生成する
+     * ゲーム画面処理の実行に必要なデータをエクスポートする
+     * @return ゲーム画面処理の実行に必要なデータ
      */
-    public ReversiData generateData() {
+    public ReversiData exportForReversi() {
         Player playerBlack = new Player(nameBlack, true, algorithmTypeBlack);
         Player playerWhite = new Player(nameWhite, false, algorithmTypeWhite);
         Reversi reversi = new Reversi(playerBlack, playerWhite);

@@ -2,6 +2,7 @@ package reversi;
 
 import common.Convert;
 import common.Global;
+import gamerecord.GameRecord;
 
 /**
  * リバーシのゲームを定義・処理するクラス
@@ -25,7 +26,7 @@ public class Reversi {
     private int turnCount;
 
     /** 棋譜の記録を行うインスタンス */
-    private Record record;
+    private GameRecord record;
 
     /**
      * リバーシ盤の初期化を行う
@@ -52,7 +53,7 @@ public class Reversi {
         this.playerWhite = playerWhite;
         this.currentPlayer = playerBlack;
         this.turnCount = 1;
-        this.record = new Record();
+        this.record = new GameRecord();
     }
 
     /**
@@ -99,7 +100,7 @@ public class Reversi {
      * 記録された棋譜のインスタンスを返す
      * @return 記録された棋譜のインスタンス
      */
-    public Record getRecord() {
+    public GameRecord getRecord() {
         return record;
     }
 
@@ -131,7 +132,7 @@ public class Reversi {
         if (board.canPutAll(currentPlayer.isDiscBlack())) {
             return false;
         } else {
-            record.addRowAsSkip(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(),
+            record.addAsSkip(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(),
                     board.getWhiteDiscNum());
             return true;
         }
@@ -163,7 +164,7 @@ public class Reversi {
 
         // 棋譜を記録する
         if (isPut) {
-            record.addRow(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(), board.getWhiteDiscNum(),
+            record.add(turnCount, currentPlayer.isDiscBlack(), board.getBlackDiscNum(), board.getWhiteDiscNum(),
                     target.getString());
         }
 
@@ -217,8 +218,8 @@ public class Reversi {
             Boolean isPlayerBlack = currentPlayer.isDiscBlack();
             int blackDiscNum = board.getBlackDiscNum();
             int whiteDiscNum = board.getWhiteDiscNum();
-            record.addRowAsSkip(++turnCount, isPlayerBlack, blackDiscNum, whiteDiscNum);
-            record.addRowAsSkip(++turnCount, !isPlayerBlack, blackDiscNum, whiteDiscNum);
+            record.addAsSkip(++turnCount, isPlayerBlack, blackDiscNum, whiteDiscNum);
+            record.addAsSkip(++turnCount, !isPlayerBlack, blackDiscNum, whiteDiscNum);
             record.setComment("両プレイヤーともにスキップが選択されました");
             return true;
         }

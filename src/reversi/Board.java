@@ -1,7 +1,5 @@
 package reversi;
 
-import common.Convert;
-
 /**
  * リバーシ盤の定義・処理をするクラス
  * @author komoto

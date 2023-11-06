@@ -6,90 +6,71 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import algorithm.AlgorithmType;
-import common.Global;
 import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
 
 class ReversiModelTest {
 
-    Player player1, player2;
-    Reversi reversi;
-    ReversiModel model;
-    EventStatus eventStatus;
+    Player playerCom1, playerCom2, playerMaual1, playerMaual2;
+    Reversi reversiCom, reversiManual;
+    ReversiModel modelCom, modelManual;
+    EventStatus eventStatusCom, eventStatusManual;
 
     @BeforeEach
     void setUp() throws Exception {
-        player1 = new Player("TEST1", true, AlgorithmType.Manual);
-        player2 = new Player("TEST2", false, AlgorithmType.Random);
-        reversi = new Reversi(player1, player2);
-        model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
-    }
+        playerCom1 = new Player("COM1", true, AlgorithmType.Random);
+        playerCom2 = new Player("COM2", false, AlgorithmType.Random);
+        reversiCom = new Reversi(playerCom1, playerCom2);
+        modelCom = new ReversiModel(new ReversiData(reversiCom, playerCom1, playerCom2, true), true);
+        eventStatusCom = new EventStatus(reversiCom, EventStatusValue.PLAY);
 
-    @Test
-    void testGetReversi() {
-        assertSame(reversi, model.getReversi());
-    }
-
-    @Test
-    void testGetBoard() {
-        assertSame(reversi.getBoard(), model.getBoard());
-    }
-
-    @Test
-    void testGetBoardSize() {
-        assertSame(reversi.getBoard().getSize(), model.getBoardSize());
-    }
-
-    @Test
-    void testGetPlayerBlack() {
-        assertSame(player1, model.getPlayerBlack());
-    }
-
-    @Test
-    void testGetPlayerWhite() {
-        assertSame(player2, model.getPlayerWhite());
+        playerMaual1 = new Player("MANUAL1", true, AlgorithmType.Manual);
+        playerMaual2 = new Player("MANUAL2", false, AlgorithmType.Manual);
+        reversiManual = new Reversi(playerMaual1, playerMaual2);
+        modelManual = new ReversiModel(new ReversiData(reversiManual, playerMaual1, playerMaual2, true), true);
+        eventStatusManual = new EventStatus(reversiManual, EventStatusValue.PLAY);
     }
 
     @Test
     void testGetIsDebug() {
-        assertTrue(model.getIsDebug());
+        assertTrue(modelCom.getIsDebug());
     }
 
     @Test
     void testGetIsControll() {
-        assertFalse(model.getIsControll());
+        assertFalse(modelCom.getIsControll());
     }
 
     @Test
     void testGetIsFinish() {
-        assertFalse(model.getIsFinish());
+        assertFalse(modelCom.getIsFinish());
     }
 
     @Test
     void testGetLatestTarget() {
-        assertNull(model.getLatestTarget());
+        assertNull(modelCom.getLatestTarget());
     }
 
     @Test
     void testGetEventStatus() {
-        assertEquals(EventStatusValue.WAIT.getName(), model.getEventStatus());
+        assertEquals(EventStatusValue.WAIT.getName(), modelCom.getEventStatus());
     }
 
     @Test
     void testGetGameStatusString() {
-        assertNull(model.getGameStatusString());
+        assertNull(modelCom.getGameStatusString());
     }
 
     @Test
     void testGetDebugString() {
-        assertEquals("デバッグ情報は特にありません", model.getDebugString());
+        assertEquals("デバッグ情報は特にありません", modelCom.getDebugString());
     }
 
     @Test
     void testGetWaitFrame() {
         // デフォルト： 800ミリ秒待つ, FPS=30
-        assertEquals(24, model.getWaitFrame());
+        assertEquals(24, modelCom.getWaitFrame());
     }
 
     @Test
@@ -103,18 +84,77 @@ class ReversiModelTest {
     }
 
     @Test
-    void testGenerateData() {
-        ResultData data = model.generateData();
+    void testJudge() {
+        fail("まだ実装されていません");
+    }
 
-        assertSame(reversi, data.getReversi());
-        assertSame(player1, data.getPlayerBlack());
-        assertSame(player2, data.getPlayerWhite());
+    @Test
+    void testSetWaitTime() {
+        fail("まだ実装されていません");
+    }
+
+    @Test
+    void testExportForResult() {
+        ResultData data = modelCom.exportForResult();
+
+        assertSame(reversiCom, data.getReversi());
+        assertSame(playerCom1, data.getPlayerBlack());
+        assertSame(playerCom2, data.getPlayerWhite());
         assertEquals(ResultType.None, data.getResult());
         assertSame(ResultType.None, data.getResult());
     }
 
+    /*
+     * EventStatus クラス
+     */
     @Test
-    void testGetIsUserWait() {
-        fail("まだ実装されていません");
+    void testEventStatusGetStatus() {
+        assertEquals(EventStatusValue.PLAY_COM, eventStatusCom.getStatus());
+        assertEquals(EventStatusValue.PLAY_MANUAL, eventStatusManual.getStatus());
+    }
+
+    @Test
+    void testEventStatusGetIsControll() {
+        assertFalse(eventStatusCom.getIsControll());
+        assertTrue(eventStatusManual.getIsControll());
+    }
+
+    @Test
+    void testEventStatusGetName() {
+        assertEquals(EventStatusValue.PLAY_COM.getName(), eventStatusCom.getName());
+        assertEquals(EventStatusValue.PLAY_MANUAL.getName(), eventStatusManual.getName());
+    }
+
+    @Test
+    void testEventStatusSet() {
+        // COMの時のテスト
+        eventStatusCom.set(EventStatusValue.JUDGE);
+
+        assertAll("プレイヤーがCOMでイベントステータスを JUDGE にした時、ユーザーのコントロールが不可になる",
+                () -> assertEquals(EventStatusValue.JUDGE, eventStatusCom.getStatus()),
+                () -> assertFalse(eventStatusCom.getIsControll()),
+                () -> assertEquals(EventStatusValue.JUDGE.getName(), eventStatusCom.getName()));
+
+        eventStatusCom.set(EventStatusValue.PLAY);
+
+        assertAll("プレイヤーがCOMでイベントステータスを PLAY にした時、ステータスは PLAY_COM になり、ユーザーのコントロールが不可になる",
+                () -> assertEquals(EventStatusValue.PLAY_COM, eventStatusCom.getStatus()),
+                () -> assertFalse(eventStatusCom.getIsControll()),
+                () -> assertEquals(EventStatusValue.PLAY_COM.getName(), eventStatusCom.getName()));
+
+        // マニュアル時のテスト
+        eventStatusManual.set(EventStatusValue.JUDGE);
+
+        assertAll("プレイヤーがマニュアルでイベントステータスを JUDGE にした時、ユーザーのコントロールが不可になる",
+                () -> assertEquals(EventStatusValue.JUDGE, eventStatusManual.getStatus()),
+                () -> assertFalse(eventStatusManual.getIsControll()),
+                () -> assertEquals(EventStatusValue.JUDGE.getName(), eventStatusManual.getName()));
+
+        eventStatusManual.set(EventStatusValue.PLAY);
+
+        assertAll("プレイヤーがマニュアルでイベントステータスを PLAY にした時、ステータスは PLAY_MANUAL になり、ユーザーのコントロールが可能になる",
+                () -> assertEquals(EventStatusValue.PLAY_MANUAL, eventStatusManual.getStatus()),
+                () -> assertTrue(eventStatusManual.getIsControll()),
+                () -> assertEquals(EventStatusValue.PLAY_MANUAL.getName(), eventStatusManual.getName()));
     }
 }

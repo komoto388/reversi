@@ -20,7 +20,6 @@ import model.ResultData;
 import model.ReversiModel;
 import reversi.Board;
 import reversi.Dimension;
-import reversi.Player;
 import reversi.Reversi;
 
 /**
@@ -129,13 +128,11 @@ public class ReversiController {
         model = new ReversiModel(reversiData, true);
 
         // 初期画面の描画
-        Player player = model.getPlayerBlack();
-        blackNameLabel.setText(player.getName());
-        blackAlgorithmLabel.setText("( " + player.getAlgorithmType().getName() + " )");
+        blackNameLabel.setText(model.getPlayerName(true));
+        blackAlgorithmLabel.setText("( " + model.getPlayerAlgorithmName(true) + " )");
 
-        player = model.getPlayerWhite();
-        whiteNameLabel.setText(player.getName());
-        whiteAlgorithmLabel.setText("( " + player.getAlgorithmType().getName() + " )");
+        whiteNameLabel.setText(model.getPlayerName(false));
+        whiteAlgorithmLabel.setText("( " + model.getPlayerAlgorithmName(false) + " )");
 
         // リバーシ盤の描画を行う
         Dimension boardSize = model.getReversi().getBoard().getSize();
@@ -178,7 +175,7 @@ public class ReversiController {
 
                 // ゲームが終了した場合、結果画面を表示する
                 if (model.getIsFinish()) {
-                    ResultData data = model.generateData();
+                    ResultData data = model.exportForResult();
                     timer.stop();
                     sceneSwitch.generateSceneResult(data);
                 }

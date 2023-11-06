@@ -172,7 +172,7 @@ public class PlayerSelectController implements Initializable {
         playerSelectModel.setPlayerName(false, whiteNameFeild.getText());
         playerSelectModel.setIsDebug(debugModeChekBox.isSelected());
 
-        ReversiData data = playerSelectModel.generateData();
+        ReversiData data = playerSelectModel.exportForReversi();
         sceneSwitch.generateSceneReversi(data);
     }
 

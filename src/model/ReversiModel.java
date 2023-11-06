@@ -2,9 +2,7 @@ package model;
 
 import common.Convert;
 import common.Global;
-import reversi.Board;
 import reversi.Dimension;
-import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
 
@@ -30,16 +28,7 @@ enum EventStatusValue {
  * リバーシのゲーム処理を行うクラス
  * @author komoto
  */
-public class ReversiModel {
-
-    /** リバーシを制御するインスタンス */
-    private final Reversi reversi;
-
-    /** 先手・黒のプレイヤーのインスタンス */
-    private final Player playerBlack;
-
-    /** 後手・白のプレイヤーのインスタンス */
-    private final Player playerWhite;
+public class ReversiModel extends BaseModel {
 
     /** ゲームのイベント状態を表す */
     private EventStatus eventStatus;
@@ -74,9 +63,7 @@ public class ReversiModel {
      * @param isGui 動作する環境を表す。GUIの場合は真 {@code true}, CUIの場合は {@code false} にする。
      */
     public ReversiModel(ReversiData data, Boolean isGui) {
-        this.reversi = data.getReversi();
-        this.playerBlack = data.getPlayerBlack();
-        this.playerWhite = data.getPlayerWhite();
+        super(data.getReversi(), data.getPlayerBlack(), data.getPlayerWhite());
         this.isDebug = data.getIsDebug();
 
         this.eventStatus = new EventStatus(reversi, EventStatusValue.WAIT);
@@ -94,46 +81,6 @@ public class ReversiModel {
             setWaitTime(0);
             waitInterval = 0;
         }
-    }
-
-    /**
-     * リバーシのゲーム情報を取得する
-     * @return リバーシのゲーム情報
-     */
-    public Reversi getReversi() {
-        return reversi;
-    }
-
-    /**
-     * リバーシ盤の情報を取得する
-     * @return リバーシ盤の情報を返す
-     */
-    public Board getBoard() {
-        return reversi.getBoard();
-    }
-
-    /**
-     * リバーシ盤のサイズを取得する
-     * @return リバーシ盤のサイズを返す
-     */
-    public Dimension getBoardSize() {
-        return reversi.getBoard().getSize();
-    }
-
-    /**
-     * 先手・黒のプレイヤー情報を取得する
-     * @return 先手・黒のプレイヤー情報を返す
-     */
-    public Player getPlayerBlack() {
-        return playerBlack;
-    }
-
-    /**
-     * 後手・白のプレイヤー情報を取得する
-     * @return 後手・白のプレイヤー情報を返す
-     */
-    public Player getPlayerWhite() {
-        return playerWhite;
     }
 
     /**
@@ -348,9 +295,10 @@ public class ReversiModel {
     }
 
     /**
-     * 結果画面に渡すデータを生成する
+     * 結果画面の実行に必要なデータをエクスポートする
+     * @return 結果画面処理の実行に必要なデータ
      */
-    public ResultData generateData() {
+    public ResultData exportForResult() {
         ResultData data = new ResultData(reversi, playerBlack, playerWhite, result);
 
         return data;

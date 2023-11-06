@@ -5,12 +5,9 @@ import java.util.Scanner;
 import common.Convert;
 import model.ResultData;
 import model.ReversiData;
-import reversi.ResultType;
 import reversi.Reversi;
 import reversi.Board;
 import reversi.Dimension;
-import reversi.Record;
-import reversi.RecordRow;
 
 /**
  * CUI版リバーシの処理を行うクラス
@@ -30,61 +27,12 @@ public class CuiMain {
         ResultData resultData = reversiController.run();
 
         // 結果を表示し、ゲームを終了する
-        Reversi reversi = resultData.getReversi();
-        ResultType result = resultData.getResult();
+        ResultController resultController = new ResultController(resultData);
+        resultController.run();
 
-        showResult(reversi, result);
         scanner.close();
     }
 
-    /**
-     * ゲーム結果を表示する
-     * @param result
-     */
-    public static void showResult(Reversi reversi, ResultType result) {
-        System.out.printf("\n------------------------------\n");
-        System.out.printf("対戦結果は以下の通りです。\n\n");
-
-        // 最終のリバーシ盤を表示する。
-        System.out.printf("最終盤面\n");
-        showBoard(reversi);
-
-        // 譜面記録を表示する。
-        Record record = reversi.getRecord();
-        System.out.printf("\n棋譜\n");
-        while (record.isEmpty() == false) {
-            RecordRow recordRow = record.poll();
-            System.out.printf("%2d手目  %s  %-4s  黒 %2d個 (%+3d)  白 %2d個 (%+3d)\n",
-                    recordRow.turn, recordRow.playerString, recordRow.dimString, recordRow.blackDiscNum,
-                    recordRow.increaseBlackNum, recordRow.whiteDiscNum, recordRow.increaseWhiteNum);
-        }
-        System.out.println("\n終了理由: " + record.getComment());
-
-        // 対戦結果を表示する。
-        System.out.printf("\n結果\n%d手、黒%2d個、白%2d個を以って、",
-                reversi.getTurnCount(), reversi.getBoard().getBlackDiscNum(), reversi.getBoard().getWhiteDiscNum());
-
-        switch (result) {
-        case Black: {
-            System.out.printf("先手・黒の勝ちです。\n");
-            break;
-        }
-        case White: {
-            System.out.printf("後手・白の勝ちです。\n");
-            break;
-        }
-        case Drow: {
-            System.out.printf("引き分けです。\n");
-            break;
-        }
-        case None:
-        default:
-            throw new IllegalArgumentException("Unexpected value: " + result);
-        }
-        System.out.printf("------------------------------\n");
-    }
-    
-    
     /**
      * 現在の手番とリバーシ盤の状態を表示する
      */
@@ -93,8 +41,6 @@ public class CuiMain {
         Dimension boardSize = board.getSize();
 
         System.out.printf("(%d手目)\n", reversi.getTurnCount());
-
-        //        reversiModel.getBoard().showCui();
 
         // リバーシ盤を表示する        
         // リバーシ盤の上部に列番号を表示する

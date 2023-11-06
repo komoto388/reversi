@@ -59,7 +59,7 @@ public class ReversiController {
 
         } while (!reversiModel.getIsFinish());
 
-        ResultData data = reversiModel.generateData();
+        ResultData data = reversiModel.exportForResult();
 
         return data;
     }

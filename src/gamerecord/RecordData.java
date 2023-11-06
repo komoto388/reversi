@@ -1,4 +1,4 @@
-package reversi;
+package gamerecord;
 
 import common.Convert;
 
@@ -6,7 +6,7 @@ import common.Convert;
  * 棋譜の行を定義・処理するクラス
  * @author komoto
  */
-public class RecordRow {
+class RecordData {
 
     /** ターン数 */
     public final int turn;
@@ -39,7 +39,7 @@ public class RecordRow {
      * @param increaseWhiteNum 前回からの白石の増減量
      * @param dim プレイヤーが置いた石の座標を表す文字列、またはスキップなど石を置かなかった場合の操作を表す文字列
      */
-    public RecordRow(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum,
+    public RecordData(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum,
             int increaseBlackNum, int increaseWhiteNum, String dim) {
         // 引数の正常性確認
         try {

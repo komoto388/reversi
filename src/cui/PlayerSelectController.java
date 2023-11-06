@@ -37,7 +37,7 @@ public class PlayerSelectController {
         playerSelectModel.setPlayerAlgorithm(playerIsBlack, selectAlgorithm(playerIsBlack));
 
         // プレイヤーとリバーシのインスタンスを作成する
-        ReversiData data = playerSelectModel.generateData();
+        ReversiData data = playerSelectModel.exportForReversi();
 
         return data;
     }

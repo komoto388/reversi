@@ -1,5 +1,6 @@
 package model;
 
+import gamerecord.GameRecord;
 import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
@@ -66,5 +67,9 @@ public class ResultData {
      */
     public ResultType getResult() {
         return result;
+    }
+    
+    public GameRecord getGameRecord() {
+        return reversi.getRecord();
     }
 }

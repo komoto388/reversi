@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import algorithm.Algorithm;
 import algorithm.AlgorithmType;
 import common.Global;
 
@@ -77,8 +76,8 @@ class PlayerSelectModelTest {
     }
 
     @Test
-    void testGenerateData() {
-        ReversiData data = model.generateData();
+    void testExportForReversi() {
+        ReversiData data = model.exportForReversi();
 
         assertNotNull(data);
         assertNotNull(data.getReversi());
