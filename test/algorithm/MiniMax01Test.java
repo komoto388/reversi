@@ -2,6 +2,7 @@ package algorithm;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -10,120 +11,143 @@ import org.junit.jupiter.api.Test;
 
 import reversi.Board;
 import reversi.Dimension;
+import test.ReflectMember;
 
 class MiniMax01Test {
 
+    // テスト対象クラスのインスタンス
     MiniMax01 miniMax01;
     Board board;
 
-    /**
-     * privateメソッド evaluateMax() をリフレクションしたメソッド
-     */
-    int reflectEvaluateMax(int depth, Board currnetBoard, Dimension target) {
-        int result = 0;
-        try {
-            Method method = MiniMax01.class.getDeclaredMethod("evaluateMax", int.class, Board.class, Dimension.class);
-            method.setAccessible(true);
-            result = (int) method.invoke(miniMax01, depth, board, target);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+    // テスト対象クラスの Private メンバを操作するインスタンス
+    ReflectMember reflClazz;
 
-    /**
-     * privateメソッド evaluateMini() をリフレクションしたメソッド
-     */
-    int reflectEvaluateMini(int depth, Board currnetBoard, Dimension target) {
-        int result = 0;
-        try {
-            Method method = MiniMax01.class.getDeclaredMethod("evaluateMini", int.class, Board.class, Dimension.class);
-            method.setAccessible(true);
-            result = (int) method.invoke(miniMax01, depth, board, target);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+    // リフレクションされた Private メソッド
+    Method reflEvaluateMax;
+    Method reflEvaluateMini;
+    Method reflCalcPoint;
 
-    /**
-     * privateメソッド calcPoint() をリフレクションしたメソッド
-     */
-    int reflectCalcPoint(Board board, Boolean isPlayerBlack) {
-        int result = 0;
-        try {
-            Method method = MiniMax01.class.getDeclaredMethod("calcPoint", Board.class, Boolean.class);
-            method.setAccessible(true);
-            result = (int) method.invoke(miniMax01, board, isPlayerBlack);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+    // リフレクションされた Private フィールド
+    Field reflIsAddRandom;
 
     @BeforeEach
     void setUp() throws Exception {
         board = new Board(8, 8);
         miniMax01 = new MiniMax01(board, true);
+
+        reflClazz = new ReflectMember(MiniMax01.class);
+        reflEvaluateMax = reflClazz.getMethod("evaluateMax", int.class, Board.class, Dimension.class);
+        reflEvaluateMini = reflClazz.getMethod("evaluateMini", int.class, Board.class, Dimension.class);
+        reflCalcPoint = reflClazz.getMethod("calcPoint", Board.class);
+        reflIsAddRandom = reflClazz.getField("IS_ADD_RANDOM");
+
+        // 評価値への乱数加算を無効にする
+        try {
+            reflIsAddRandom.set(miniMax01, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
     }
 
+    /*
+     * 評価店への乱数加算がない状態で、プレイヤー黒の立場での評価をテストする<br>
+     * デフォルトは加算がある
+     */
     @Test
-    void testCalcPoint() {
-        // ゲーム開始直後の評価
-        assertEquals(0, reflectCalcPoint(board, true));
-        assertEquals(0, reflectCalcPoint(board, false));
+    void testCalcPointBlackNoRandom()
+            throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        // 乱数加算が無効に変更されている
+        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
 
-        // 黒がc4に石を置いた時の評価
+        assertAll("プレイヤーが黒の時、ゲーム開始直後の評価",
+                () -> assertEquals(0, (int) reflCalcPoint.invoke(miniMax01, board)));
+
         board.put(new Dimension(3, 2), true);
-        assertEquals(300, reflectCalcPoint(board, true));
-        assertEquals(-300, reflectCalcPoint(board, false));
+
+        assertAll("プレイヤー黒がc4に石を置いた時の、黒の立場での評価",
+                () -> assertEquals(300, (int) reflCalcPoint.invoke(miniMax01, board)));
+    }
+
+    /*
+     * 評価店への乱数加算がある状態（デフォルト）で、プレイヤー黒の立場での評価をテストする
+     */
+    @Test
+    void testCalcPointBlackRandom() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        // 乱数加算を行う状態にする
+        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
+        try {
+            reflIsAddRandom.set(miniMax01, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertTrue((Boolean) reflIsAddRandom.get(miniMax01));
+
+        final int point1 = (int) reflCalcPoint.invoke(miniMax01, board);
+        assertAll("プレイヤーが黒の時、ゲーム開始直後の評価",
+                () -> assertNotEquals(0, point1),
+                () -> assertTrue(point1 > 0 && point1 < 100));
+
+        board.put(new Dimension(3, 2), true);
+
+        final int point2 = (int) reflCalcPoint.invoke(miniMax01, board);
+        assertAll("プレイヤー黒がc4に石を置いた時の、黒の立場での評価",
+                () -> assertNotEquals(300, point2),
+                () -> assertTrue(point2 > 300 && point2 < 400));
     }
 
     @Test
-    void testEvaluateMax() throws CloneNotSupportedException {
-        System.out.println("深さ探索の結果");
+    void testCalcPointWhite() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        // 乱数加算が無効に変更されている
+        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
 
-        int point0 = reflectEvaluateMax(0, board, new Dimension(3, 2));
-        System.out.println("深さ0の評価値: " + point0);
+        // プレイするプレイヤーを強制的に白に変更する
+        Field reflIsPlayerBlack = reflClazz.getField("isPlayerBlack");
+        reflIsPlayerBlack.set(miniMax01, false);
+
+        assertAll("プレイヤーが白の時、ゲーム開始直後の評価",
+                () -> assertEquals(0, (int) reflCalcPoint.invoke(miniMax01, board)));
+
+        // 
+        board.put(new Dimension(3, 2), true);
+
+        assertAll("プレイヤー黒がc4に石を置いた時の、白の立場での評価",
+                () -> assertEquals(-300, (int) reflCalcPoint.invoke(miniMax01, board)));
+    }
+
+    @Test
+    void testEvaluateMax() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        // 乱数加算が無効に変更されている
+        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
+
+        int point0 = (int) reflEvaluateMax.invoke(miniMax01, 0, board, new Dimension(3, 2));
         assertEquals(300, point0);
 
-        int point1 = reflectEvaluateMax(1, board, new Dimension(3, 2));
-        System.out.println("深さ1の評価値: " + point1);
+        int point1 = (int) reflEvaluateMax.invoke(miniMax01, 1, board, new Dimension(3, 2));
         assertEquals(0, point1);
 
-        int point2 = reflectEvaluateMax(2, board, new Dimension(3, 2));
-        System.out.println("深さ2の評価値: " + point2);
+        int point2 = (int) reflEvaluateMax.invoke(miniMax01, 2, board, new Dimension(3, 2));
         assertEquals(300, point2);
 
-        int point7 = reflectEvaluateMax(7, board, new Dimension(3, 2));
-        System.out.println("深さ7の評価値: " + point7);
-        assertEquals(200, point7);
+        int point7 = (int) reflEvaluateMax.invoke(miniMax01, 7, board, new Dimension(3, 2));
+        assertEquals(-200, point7);
     }
 
     @Test
-    void testEvaluateMini() throws CloneNotSupportedException {
-        System.out.println("深さ探索の結果");
+    void testEvaluateMini() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        // 乱数加算が無効に変更されている
+        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
 
-        int point0 = reflectEvaluateMini(0, board, new Dimension(2, 4));
-        System.out.println("深さ0の評価値: " + point0);
-        assertEquals(300, point0);
+        int point0 = (int) reflEvaluateMini.invoke(miniMax01, 0, board, new Dimension(2, 4));
+        assertEquals(-300, point0);
 
-        int point1 = reflectEvaluateMini(1, board, new Dimension(2, 4));
-        System.out.println("深さ1の評価値: " + point1);
+        int point1 = (int) reflEvaluateMini.invoke(miniMax01, 1, board, new Dimension(2, 4));
         assertEquals(0, point1);
 
-        int point2 = reflectEvaluateMini(2, board, new Dimension(2, 4));
-        System.out.println("深さ2の評価値: " + point2);
-        assertEquals(300, point2);
+        int point2 = (int) reflEvaluateMini.invoke(miniMax01, 2, board, new Dimension(2, 4));
+        assertEquals(-300, point2);
 
-        int point7 = reflectEvaluateMini(7, board, new Dimension(2, 4));
-        System.out.println("深さ7の評価値: " + point7);
+        int point7 = (int) reflEvaluateMini.invoke(miniMax01, 7, board, new Dimension(2, 4));
         assertEquals(200, point7);
     }
-
-    @Test
-    void testMiniMax01() {
-        fail("まだ実装されていません");
-    }
-
 }

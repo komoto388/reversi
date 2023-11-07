@@ -53,7 +53,7 @@ public class GameRecord {
      * @param playerIsBlack プレイヤーの石の色を表す。
      * @param blackDiscNum 黒石の数
      * @param whiteDiscNum 白石の数
-     * @param dim プレイヤーが置いた石の座標の文字列、またはスキップを表す文字列
+     * @param dim プレイヤーが置いた石の座標の文字列。{@code NULL} の場合はスキップとして扱う。
      */
     public void add(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum, String dim) {
         int increaseBlackNum = blackDiscNum - previousBlackNum;
@@ -61,13 +61,13 @@ public class GameRecord {
         previousBlackNum = blackDiscNum;
         previousWhiteNum = whiteDiscNum;
 
-        RecordData data = new RecordData(turn, playerIsBlack, blackDiscNum, whiteDiscNum, increaseBlackNum,
-                increaseWhiteNum, dim);
-
         try {
+            RecordData data = new RecordData(turn, playerIsBlack, blackDiscNum, whiteDiscNum, increaseBlackNum,
+                    increaseWhiteNum, dim);
             recordDataList.add(data);
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("棋譜に追加処理で例外が発生しました。棋譜にデータを追加できませんでした。");
         }
     }
 

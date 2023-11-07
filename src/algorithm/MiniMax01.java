@@ -11,6 +11,10 @@ public class MiniMax01 extends Algorithm {
     /** 探索する深さ */
     private final int DEPTH = 4;
 
+    /** 評価値に乱数を加算するかを表すフラグ */
+    // (通常は {@code true} で乱数を加算する。デバッグなどで乱数を使用したくない時は {@code false} にする。
+    private final Boolean IS_ADD_RANDOM = true;
+
     /**
      * 初期化を行う
      * @param board 現在のリバーシ盤の状態
@@ -32,7 +36,7 @@ public class MiniMax01 extends Algorithm {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 Dimension target = new Dimension(i, j);
                 evaluate.set(target, MIN_POINT);
-                
+
                 if (board.canPut(target, isPlayerBlack)) {
                     // 置ける場合、評価を行う
                     try {
@@ -152,8 +156,10 @@ public class MiniMax01 extends Algorithm {
         }
 
         int point = (playerDiscNum - enemyDiscNum) * 100;
-        point += random.nextInt(100);
-        
+        if (IS_ADD_RANDOM) {
+            point += random.nextInt(100);
+        }
+
         return point;
     }
 }

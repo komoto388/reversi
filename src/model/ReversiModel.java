@@ -286,7 +286,7 @@ public class ReversiModel extends BaseModel {
     private void setWaitTime(int waitMilliSec) {
         try {
             waitFrame = Convert.convertFrame(waitMilliSec, Global.FPS);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             System.err.println("処理待ち時間をなし、画面操作を可能な状態として設定します。");
             waitFrame = 0;

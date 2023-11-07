@@ -32,69 +32,36 @@ class RecordData {
     /**
      * 棋譜の行情報を記録する。
      * @param turn ターン数（手番）
-     * @param playerIsBlack プレイヤーの石の色を表す。
+     * @param isPlayerBlack プレイヤーの石の色を表す。
      * @param blackDiscNum 黒石の数
      * @param whiteDiscNum 白石の数
      * @param increaseBlackNum 前回からの黒石の増減量
      * @param increaseWhiteNum 前回からの白石の増減量
      * @param dim プレイヤーが置いた石の座標を表す文字列、またはスキップなど石を置かなかった場合の操作を表す文字列
+     * @throws IllegalArgumentException 引数が想定されていない値である
      */
-    public RecordData(int turn, Boolean playerIsBlack, int blackDiscNum, int whiteDiscNum,
-            int increaseBlackNum, int increaseWhiteNum, String dim) {
+    public RecordData(int turn, Boolean isPlayerBlack, int blackDiscNum, int whiteDiscNum,
+            int increaseBlackNum, int increaseWhiteNum, String dim) throws IllegalArgumentException {
         // 引数の正常性確認
-        try {
-            if (turn <= 0) {
-                throw new IllegalArgumentException("引数 \"turn\" の値が0以下です: " + turn);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            turn = 0;
-            System.err.println("\"turn\" の値として " + turn + " を設定します");
+        if (turn <= 0) {
+            throw new IllegalArgumentException("引数 \"turn\" の値が0以下です: " + turn);
         }
 
-        try {
-            if (playerIsBlack == null) {
-                throw new IllegalArgumentException("引数 \"playerIsBlack\" の値が NULL です");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            playerIsBlack = true;
-            System.err.println("\"playerIsBlack\" の値として " + playerIsBlack + " を設定します");
+        if (isPlayerBlack == null) {
+            throw new IllegalArgumentException("引数 \"playerIsBlack\" の値が NULL です");
         }
 
-        try {
-            if (blackDiscNum < 0) {
-                throw new IllegalArgumentException("引数 \"blackDiscNum\" の値が0未満です: " + blackDiscNum);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            blackDiscNum = 0;
-            System.err.println("\"blackDiscNum\" の値として " + blackDiscNum + " を設定します");
+        if (blackDiscNum < 0) {
+            throw new IllegalArgumentException("引数 \"blackDiscNum\" の値が0未満です: " + blackDiscNum);
         }
 
-        try {
-            if (whiteDiscNum < 0) {
-                throw new IllegalArgumentException("引数 \"whiteDiscNum\" の値が0未満です: " + whiteDiscNum);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            whiteDiscNum = 0;
-            System.err.println("\"whiteDiscNum\" の値として " + whiteDiscNum + " を設定します");
-        }
-
-        try {
-            if (dim == null) {
-                throw new IllegalArgumentException("引数 \"dim\" の値が NULL です");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            dim = "NULL";
-            System.err.println("\"dim\" の値として \"" + dim + "\" を設定します\n");
+        if (whiteDiscNum < 0) {
+            throw new IllegalArgumentException("引数 \"whiteDiscNum\" の値が0未満です: " + whiteDiscNum);
         }
 
         // 引数の値を設定します
         this.turn = turn;
-        this.playerString = Convert.getPlayerColor(playerIsBlack);
+        this.playerString = Convert.getPlayerColor(isPlayerBlack);
         this.blackDiscNum = blackDiscNum;
         this.whiteDiscNum = whiteDiscNum;
         this.increaseBlackNum = increaseBlackNum;

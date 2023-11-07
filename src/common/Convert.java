@@ -57,12 +57,12 @@ public class Convert {
         int waitFrame = 0;
 
         if (millisec < 0 || fps < 0) {
-            String exceptionStr = String.format("指定された引数が負の値です: millisec=%d, fps=%d");
-            throw new IllegalArgumentException(exceptionStr);
+            String str = String.format("指定された引数が負の値です: millisec=%d, fps=%d", millisec, fps);
+            throw new IllegalArgumentException(str);
         }
 
         if (millisec > 0) {
-            waitFrame = fps * millisec / 1000;
+            waitFrame = (int) Math.ceil(fps * millisec / (double) 1000);
         } else {
             waitFrame = 0;
         }

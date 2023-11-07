@@ -1,6 +1,5 @@
 package reversi;
 
-import common.Convert;
 import common.Global;
 import gamerecord.GameRecord;
 
