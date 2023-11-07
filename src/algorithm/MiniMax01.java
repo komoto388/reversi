@@ -1,5 +1,6 @@
 package algorithm;
 
+import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 
@@ -32,7 +33,7 @@ public class MiniMax01 extends Algorithm {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 Dimension target = new Dimension(i, j);
                 evaluate.set(target, MIN_POINT);
-                
+
                 if (board.canPut(target, isPlayerBlack)) {
                     // 置ける場合、評価を行う
                     try {
@@ -152,8 +153,10 @@ public class MiniMax01 extends Algorithm {
         }
 
         int point = (playerDiscNum - enemyDiscNum) * 100;
-        point += random.nextInt(100);
-        
+        if (Global.IS_ADD_RANDOM) {
+            point += random.nextInt(100);
+        }
+
         return point;
     }
 }

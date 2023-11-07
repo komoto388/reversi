@@ -94,15 +94,19 @@ class BoardTest {
     void testCloneCopyed() {
         Dimension target = new Dimension(3, 2);
 
-        try {
-            Board newBoard = board.clone();
-            assertNotSame(newBoard, board);
-            assertNotSame(newBoard.getSize(), board.getSize());
+        Board boardSame = board;
+        assertSame(boardSame, board);
+        assertSame(boardSame.getSize(), board.getSize());
 
-            newBoard.put(target, true);
+        try {
+            Board boardClone = board.clone();
+            assertNotSame(boardClone, board);
+            assertNotSame(boardClone.getSize(), board.getSize());
+
+            boardClone.put(target, true);
             assertAll("コピー先の操作がコピー元に反映されないことを確認する",
                     () -> assertTrue(board.isEmpty(target), "コピー元のマスに、置いていない石があります"),
-                    () -> assertFalse(newBoard.isEmpty(target), "コピー先のマスに、置いた石がありません"));
+                    () -> assertFalse(boardClone.isEmpty(target), "コピー先のマスに、置いた石がありません"));
 
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -114,14 +118,14 @@ class BoardTest {
         Dimension target = new Dimension(3, 2);
 
         try {
-            Board newBoard = board.clone();
-            assertNotSame(newBoard, board);
-            assertNotSame(newBoard.getSize(), board.getSize());
+            Board boardClone = board.clone();
+            assertNotSame(boardClone, board);
+            assertNotSame(boardClone.getSize(), board.getSize());
 
             board.put(target, true);
             assertAll("コピー元の操作がコピー先に反映されないことを確認する",
                     () -> assertFalse(board.isEmpty(target), "コピー元のマスに、置いた石がありません"),
-                    () -> assertTrue(newBoard.isEmpty(target), "コピー先のマスに、置いていない石があります"));
+                    () -> assertTrue(boardClone.isEmpty(target), "コピー先のマスに、置いていない石があります"));
 
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();

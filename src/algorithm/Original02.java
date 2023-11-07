@@ -1,5 +1,6 @@
 package algorithm;
 
+import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 
@@ -33,7 +34,6 @@ public class Original02 extends Algorithm {
                 try {
                     int point = 0;
                     point = evaluate(DEPTH, board, true, target);
-                    point += random.nextInt(100);
                     evaluate.add(target, point);
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
@@ -114,6 +114,11 @@ public class Original02 extends Algorithm {
             enemyDiscNum = currnetBoard.getBlackDiscNum();
         }
 
-        return ((playerDiscNum - enemyDiscNum) * 100);
+        int point = (playerDiscNum - enemyDiscNum) * 100;
+        if (Global.IS_ADD_RANDOM) {
+            point += random.nextInt(100);
+        }
+
+        return point;
     }
 }

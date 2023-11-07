@@ -6,8 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import reversi.ResultType;
-import reversi.Reversi;
+import model.ReversiData;
+import model.ResultData;
 
 /**
  * シーン切替処理を行うクラス
@@ -63,10 +63,9 @@ class SceneSwitch {
 
     /**
      * リバーシのゲーム画面を生成し、表示する
-     * @param reversi リバーシのゲーム処理を行うインスタンス
-     * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false} を返す。
+     * @param reversiData プレイヤー選択画面から渡されるデータ
      */
-    public void generateSceneReversi(Reversi reversi, Boolean isDebug) {
+    public void generateSceneReversi(ReversiData reversiData) {
         FXMLLoader fxmlloader = null;
         BorderPane rootPane = null;
         String fxmlFile = "../fxml/Reversi.fxml";
@@ -80,7 +79,7 @@ class SceneSwitch {
         rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
 
         ReversiController controller = (ReversiController) fxmlloader.getController();
-        controller.init(this, reversi, isDebug);
+        controller.init(this, reversiData);
 
         // 描画する画面をフレームに設定する
         Scene scene = new Scene(rootPane);
@@ -94,10 +93,9 @@ class SceneSwitch {
 
     /**
      * 結果画面を生成し、表示する
-     * @param reversi リバーシのゲーム処理を行うインスタンス
-     * @param result 勝敗結果を表す
+     * @param resultData ゲーム画面から渡されるデータ
      */
-    public void generateSceneResult(Reversi reversi, ResultType result) {
+    public void generateSceneResult(ResultData resultData) {
         FXMLLoader fxmlloader = null;
         BorderPane rootPane = null;
         String fxmlFile = "../fxml/Result.fxml";
@@ -111,7 +109,7 @@ class SceneSwitch {
         rootPane.setPrefSize(Global.ROOT_PANE_WIDTH, Global.ROOT_PANE_HEIGHT);
 
         ResultController controller = (ResultController) fxmlloader.getController();
-        controller.init(this, reversi, result);
+        controller.init(this, resultData);
 
         // 描画する画面をフレームに設定する
         Scene scene = new Scene(rootPane);

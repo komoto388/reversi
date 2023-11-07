@@ -33,6 +33,6 @@ public class DetailResultController {
         }
 
         BoardController boardController = new BoardController(gridPane, board.getSize(), Global.GRID_SIZE_RESULT);
-        boardController.drawStone(board);
+        boardController.update(board, false);
     }
 }

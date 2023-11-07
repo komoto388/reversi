@@ -1,11 +1,15 @@
 package gui;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import algorithm.AlgorithmType;
 import common.Global;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -15,23 +19,20 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import reversi.Player;
-import reversi.Reversi;
+import model.ReversiData;
+import model.PlayerSelectModel;
 
 /**
  * プレイヤーの使用アルゴリズムを選択するクラス
  * @author komoto
  */
-public class PlayerSelectController {
+public class PlayerSelectController implements Initializable {
+
+    /** プレイヤー選択・設定のデータ処理を行うインスタンス（モデル） */
+    private PlayerSelectModel playerSelectModel;
 
     /** シーン切替処理を行うインスタンス */
     private SceneSwitch sceneSwitch;
-
-    /** 先手・黒側の使用アルゴリズム */
-    private AlgorithmType algorithmTypeBlack;
-
-    /** 後手・白側の使用アルゴリズム */
-    private AlgorithmType algorithmTypeWhite;
 
     /** 先手・黒側のラベル */
     @FXML
@@ -70,7 +71,22 @@ public class PlayerSelectController {
     private Button exitButton;
 
     /**
-     * 先手・後手両方のアルゴリズムを選択するラジオボタンを生成する
+     * データ処理モデルの初期化、初期画面の描画を行う
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        playerSelectModel = new PlayerSelectModel();
+
+        blackNameFeild.setText(playerSelectModel.getName(true));
+        whiteNameFeild.setText(playerSelectModel.getName(false));
+        debugModeChekBox.setSelected(playerSelectModel.getIsDebug());
+
+        setGridPane(blackPane, true);
+        setGridPane(whitePane, false);
+    }
+
+    /**
+     * パラメータを読み込み、初期化する
      * @param sceneSwitch シーン切替処理を行うインスタンス
      */
     public void init(SceneSwitch sceneSwitch) {
@@ -86,25 +102,16 @@ public class PlayerSelectController {
             System.exit(exitCode);
         }
 
+        // 初期化（シーン選択インスタンスの設定）
         this.sceneSwitch = sceneSwitch;
-        blackNameFeild.setText(Global.DEFAULT_PLAYER_NAME_BLACK);
-        whiteNameFeild.setText(Global.DEFAULT_PLAYER_NAME_WHITE);
-
-        setGridPane(blackPane, true);
-        setGridPane(whitePane, false);
-
-        AlgorithmType[] algorithmTypes = AlgorithmType.values();
-        algorithmTypeBlack = algorithmTypes[Global.DEFAULT_ALGORITHM];
-        algorithmTypeWhite = algorithmTypes[Global.DEFAULT_ALGORITHM];
-
     }
 
     /**
      * 指定されたプレイヤー側のアルゴリズムを選択するラジオボタンを生成する
      * @param vbox 生成したラジオボタンの描画先のペイン
-     * @param isBlack プレイヤーの石の色が黒かどうか
+     * @param isPlayerBlack プレイヤーの石の色が黒かどうか
      */
-    private void setGridPane(VBox vbox, Boolean isBlack) {
+    private void setGridPane(VBox vbox, Boolean isPlayerBlack) {
         AlgorithmType[] types = AlgorithmType.values();
         ToggleGroup group = new ToggleGroup();
 
@@ -115,12 +122,14 @@ public class PlayerSelectController {
             radioButton.setPrefWidth(Global.RADIO_BUTTON_WIDTH);
             radioButton.setPrefHeight(Global.RADIO_BUTTON_HEIGHT);
 
-            if (i == Global.DEFAULT_ALGORITHM) {
+            // デフォルト値のラジオボタンにチェックを入れる
+            if (types[i] == playerSelectModel.getAlgorithmType(isPlayerBlack)) {
                 radioButton.setSelected(true);
             }
+
             vbox.getChildren().add(radioButton);
         }
-        group.selectedToggleProperty().addListener(new ToggleButtonEvent(isBlack));
+        group.selectedToggleProperty().addListener(new ToggleButtonEvent(isPlayerBlack));
     }
 
     /**
@@ -128,14 +137,14 @@ public class PlayerSelectController {
      */
     private class ToggleButtonEvent implements ChangeListener<Toggle> {
         /** 制御しているのは先手・黒のラジオボタンか */
-        private Boolean isBlack;
+        private Boolean isPlayerBlack;
 
         /**
          * ラジオボタンの情報の反映先を設定する
-         * @param isBlack ラジオボタンの情報の反映先が先手・黒のプレイヤーか
+         * @param isPlayerBlack ラジオボタンの情報の反映先が先手・黒のプレイヤーか
          */
-        public ToggleButtonEvent(Boolean isBlack) {
-            this.isBlack = isBlack;
+        public ToggleButtonEvent(Boolean isPlayerBlack) {
+            this.isPlayerBlack = isPlayerBlack;
         }
 
         /**
@@ -149,11 +158,7 @@ public class PlayerSelectController {
             }
 
             ToggleButton selectedButton = (ToggleButton) newValue;
-            if (isBlack) {
-                algorithmTypeBlack = (AlgorithmType) selectedButton.getUserData();
-            } else {
-                algorithmTypeWhite = (AlgorithmType) selectedButton.getUserData();
-            }
+            playerSelectModel.setPlayerAlgorithm(isPlayerBlack, (AlgorithmType) selectedButton.getUserData());
         }
     }
 
@@ -163,26 +168,12 @@ public class PlayerSelectController {
      */
     @FXML
     void onStartButtonAction(ActionEvent event) {
-        String nameBlack, nameWhite;
+        playerSelectModel.setPlayerName(true, blackNameFeild.getText());
+        playerSelectModel.setPlayerName(false, whiteNameFeild.getText());
+        playerSelectModel.setIsDebug(debugModeChekBox.isSelected());
 
-        if (blackNameFeild.getText() == null) {
-            nameBlack = Global.DEFAULT_PLAYER_NAME_BLACK;
-        } else {
-            nameBlack = blackNameFeild.getText();
-        }
-
-        if (whiteNameFeild.getText() == null) {
-            nameWhite = Global.DEFAULT_PLAYER_NAME_WHITE;
-        } else {
-            nameWhite = whiteNameFeild.getText();
-        }
-
-        // プレイヤーとリバーシのインスタンスを作成する
-        Player playerBlack = new Player(nameBlack, true, algorithmTypeBlack);
-        Player playerWhite = new Player(nameWhite, false, algorithmTypeWhite);
-        Reversi reversi = new Reversi(playerBlack, playerWhite);
-        
-        sceneSwitch.generateSceneReversi(reversi, debugModeChekBox.isSelected());
+        ReversiData data = playerSelectModel.exportForReversi();
+        sceneSwitch.generateSceneReversi(data);
     }
 
     /**

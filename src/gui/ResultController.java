@@ -9,10 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
-import reversi.Player;
-import reversi.Record;
-import reversi.RecordRow;
-import reversi.ResultType;
+import model.ResultData;
+import model.ResultModel;
+import reversi.Board;
 import reversi.Reversi;
 
 /**
@@ -20,6 +19,8 @@ import reversi.Reversi;
  * @author komoto
  */
 public class ResultController {
+
+    ResultModel resultModel;
 
     /** シーン切替処理を行うインスタンス */
     private SceneSwitch sceneSwitch;
@@ -79,20 +80,16 @@ public class ResultController {
     /**
      * 対戦結果内容を画面に設定する
      * @param sceneSwitch シーン切替処理を行うインスタンス
-     * @param reversi リバーシの処理を行うインスタンス
-     * @param result 勝敗の結果
+     * @param resultData 結果出力処理を実行するために必要なデータの集合
      */
-    public void init(SceneSwitch sceneSwitch, Reversi reversi, ResultType result) {
+    public void init(SceneSwitch sceneSwitch, ResultData resultData) {
         // 引数の正常性確認
         try {
             if (sceneSwitch == null) {
                 throw new IllegalArgumentException("引数 \"sceneSwitch\" の値が NULL です");
             }
-            if (reversi == null) {
-                throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
-            }
-            if (result == null) {
-                throw new IllegalArgumentException("引数 \"result\" の値が NULL です");
+            if (resultData == null) {
+                throw new IllegalArgumentException("引数 \"resultData\" の値が NULL です");
             }
         } catch (IllegalArgumentException e) {
             int exitCode = Global.EXIT_FAILURE;
@@ -101,51 +98,25 @@ public class ResultController {
             System.exit(exitCode);
         }
 
+        this.resultModel = new ResultModel(resultData);
         this.sceneSwitch = sceneSwitch;
 
-        // 対戦結果を表示する
-        Player blackPlayer = reversi.getPlayerBlack();
-        Player whitePlayer = reversi.getPlayerWhite();
+        Reversi reveris = resultModel.getReversi();
+        Board board = resultModel.getBoard();
 
-        blackHeaderLabel.setText(String.format("先手・黒 ( %s )", blackPlayer.getAlgorithmType().getName()));
-        whiteHeaderLabel.setText(String.format("後手・白 ( %s )", whitePlayer.getAlgorithmType().getName()));
-        blackNameLabel.setText(blackPlayer.getName());
-        whiteNameLabel.setText(whitePlayer.getName());
-        blackDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getBlackDiscNum()));
-        whiteDiscNumLabel.setText(String.format("%d 個", reversi.getBoard().getWhiteDiscNum()));
-
-        String turnString = String.format("%d手をもって、", reversi.getTurnCount());
-        switch (result) {
-        case Black: {
-            resultLabel.setText(turnString + "先手・黒「" + blackPlayer.getName() + "」の勝ちです！");
-            break;
-        }
-        case White: {
-            resultLabel.setText(turnString + "後手・白「" + whitePlayer.getName() + "」の勝ちです！");
-            break;
-        }
-        case Drow: {
-            resultLabel.setText(turnString + "引き分けです！");
-            break;
-        }
-        case None:
-        default:
-            throw new IllegalArgumentException("Unexpected value: " + result);
-        }
+        // 対戦結果を表示する       
+        blackHeaderLabel.setText(String.format("先手・黒 ( %s )", resultModel.getPlayerAlgorithmName(true)));
+        whiteHeaderLabel.setText(String.format("後手・白 ( %s )", resultModel.getPlayerAlgorithmName(false)));
+        blackNameLabel.setText(resultModel.getPlayerName(true));
+        whiteNameLabel.setText(resultModel.getPlayerName(false));
+        blackDiscNumLabel.setText(String.format("%d 個", board.getBlackDiscNum()));
+        whiteDiscNumLabel.setText(String.format("%d 個", board.getWhiteDiscNum()));
+        resultLabel.setText(resultModel.getResultString());
 
         // 各タブ内の画面を生成する
-        generateDetailResultPane(detailResultTab, reversi);
-        RecordController recordController = generateRecordPane(recordTab);
-        GraphResultController graphResultController = generateGraphResultPane(graphTab);
-
-        // 棋譜リストを元に、棋譜・グラフを描画する
-        Record record = reversi.getRecord();
-        for (int i = 1; record.isEmpty() == false; i++) {
-            RecordRow recordRow = record.poll();
-            recordController.addRecordRow(i, recordRow);
-            graphResultController.addData(i, recordRow);
-        }
-        recordController.setComment("終了した理由: " + record.getComment());
+        generateDetailResultPane(detailResultTab, reveris);
+        generateRecordPane(recordTab);
+        generateGraphResultPane(graphTab);
     }
 
     /**
@@ -178,9 +149,8 @@ public class ResultController {
     /**
      * 棋譜画面を生成する
      * @param tabPane 生成したペインの描画先となるペイン
-     * @param 棋譜画面のコントローラー
      */
-    private RecordController generateRecordPane(Tab tabPane) {
+    private void generateRecordPane(Tab tabPane) {
         FXMLLoader fxmlloader = null;
         ScrollPane pane = null;
         String fxmlFile = "../fxml/Record.fxml";
@@ -196,17 +166,17 @@ public class ResultController {
         }
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
-        tabPane.setContent(pane);
+        RecordController controller = (RecordController) fxmlloader.getController();
+        controller.setRecord(resultModel.getRecord());
 
-        return (RecordController) fxmlloader.getController();
+        tabPane.setContent(pane);
     }
 
     /**
      * グラフ画面を生成する
      * @param tabPane 生成したペインの描画先となるペイン
-     * @param グラフ画面のコントローラー
      */
-    private GraphResultController generateGraphResultPane(Tab tabPane) {
+    private void generateGraphResultPane(Tab tabPane) {
         FXMLLoader fxmlloader = null;
         VBox pane = null;
         String fxmlFile = "../fxml/GraphResult.fxml";
@@ -222,9 +192,10 @@ public class ResultController {
         }
         pane.setPrefSize(Global.RESULT_TAB_PANE_WIDTH, Global.RESULT_TAB_PANE_HEIGHT);
 
-        tabPane.setContent(pane);
+        GraphResultController controller = (GraphResultController) fxmlloader.getController();
+        controller.setGraph(resultModel.getRecord());
 
-        return (GraphResultController) fxmlloader.getController();
+        tabPane.setContent(pane);
     }
 
     /**

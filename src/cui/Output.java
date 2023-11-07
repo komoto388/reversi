@@ -72,4 +72,21 @@ public class Output {
             System.out.printf(CYAN + "Info: " + str + END, args);
         }
     }
+
+    /**
+     * 区切り線を表示する
+     * @param length 区切り線の長さ（文字数）
+     * @param c 区切り線に使用する文字
+     */
+    public static String printLine(int length, char c) {
+        String str = "";
+
+        for (int i = 0; i < length; i++) {
+            str += c;
+        }
+
+        System.out.printf("\n%s\n", str);
+
+        return str;
+    }
 }

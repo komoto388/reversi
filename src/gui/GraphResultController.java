@@ -3,6 +3,7 @@ package gui;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import gamerecord.GameRecord;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
@@ -10,7 +11,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.layout.VBox;
-import reversi.RecordRow;
 
 /**
  * 黒・白の石の獲得推移をグラフに描画するクラス
@@ -61,20 +61,34 @@ public class GraphResultController implements Initializable {
         // 描画するグラフを生成する
         lineChart = new LineChart<Number, Number>(xAxis, yAxis);
         lineChart.getData().addAll(series);
-//        lineChart.setPadding(new Insets(30));
+        //        lineChart.setPadding(new Insets(30));
 
         // グラフをルートペインに追加する
         graphRootPane.getChildren().add(lineChart);
     }
 
     /**
-     * グラフにデータを追加する
-     * @param turnNum ターン数
-     * @param recordRow {@code turnNum} 手目の棋譜
+     * グラフを作成する
+     * @param record 棋譜
      */
-    public void addData(int turnNum, RecordRow recordRow) {
+    public void setGraph(GameRecord record) {
+        for (int i = 0; i < record.size(); i++) {
+            add(record, i);
+        }
+    }
+
+    /**
+     * グラフにデータを追加する
+     * @param record 棋譜
+     * @param index リストの要素番号
+     */
+    public void add(GameRecord record, int index) {
+        int turnNum = record.getTurn(index);
+        int blackDiscNum = record.getBlackDiscNum(index);
+        int whiteDiscNum = record.getWhiteDiscNum(index);
+
         // グラフのデータを描画する
-        int diff = recordRow.blackDiscNum - recordRow.whiteDiscNum;
+        int diff = blackDiscNum - whiteDiscNum;
         series.getData().add(new Data<Number, Number>(turnNum, diff));
 
         // X軸の最大値を設定する

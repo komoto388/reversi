@@ -8,7 +8,7 @@ public class Global {
 
     /** 何らかの理由による異常終了時の終了コード */
     public static final int EXIT_FAILURE = 1;
-    
+
     /* リバーシに関する定数 */
     /** リバーシ盤の幅（マス） */
     public static final int BOARD_WIDTH = 8;
@@ -18,12 +18,12 @@ public class Global {
 
     /** デフォルトで使用するアルゴリズムの要素番号 */
     public static final int DEFAULT_ALGORITHM = 0;
-    
+
     /** 先手・黒の名前のデフォルト値 */
     public static final String DEFAULT_PLAYER_NAME_BLACK = "プレイヤー1";
 
     /** 後手・白の名前のデフォルト値 */
-    public static final String DEFAULT_PLAYER_NAME_WHITE= "プレイヤー2";
+    public static final String DEFAULT_PLAYER_NAME_WHITE = "プレイヤー2";
 
     /* 画面描画のデザインに関する定数 */
     /** ルートペインの横幅 */
@@ -68,4 +68,11 @@ public class Global {
 
     /** ターン間に操作を待つ時間（ミリ秒） */
     public static final int WAIT_MILLISEC_INTERVAL = 500;
+
+    // デバッグに関する定数
+    /**
+     * 評価値に乱数を加算するかを表すフラグ
+     * (通常は {@code true} で乱数を加算する。デバッグなどで乱数を使用したくない時は {@code false} にする。
+     */
+    public static final Boolean IS_ADD_RANDOM = true;
 }
