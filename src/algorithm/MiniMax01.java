@@ -1,5 +1,6 @@
 package algorithm;
 
+import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 
@@ -10,10 +11,6 @@ import reversi.Dimension;
 public class MiniMax01 extends Algorithm {
     /** 探索する深さ */
     private final int DEPTH = 4;
-
-    /** 評価値に乱数を加算するかを表すフラグ */
-    // (通常は {@code true} で乱数を加算する。デバッグなどで乱数を使用したくない時は {@code false} にする。
-    private final Boolean IS_ADD_RANDOM = true;
 
     /**
      * 初期化を行う
@@ -156,7 +153,7 @@ public class MiniMax01 extends Algorithm {
         }
 
         int point = (playerDiscNum - enemyDiscNum) * 100;
-        if (IS_ADD_RANDOM) {
+        if (Global.IS_ADD_RANDOM) {
             point += random.nextInt(100);
         }
 

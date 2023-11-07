@@ -1,5 +1,6 @@
 package algorithm;
 
+import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 
@@ -78,7 +79,9 @@ public class Original01 extends Algorithm {
         point += getEdgePoint(target, board.getSize());
 
         // 1～99のランダム値を加算する
-        point += random.nextInt(100);
+        if (Global.IS_ADD_RANDOM) {
+            point += random.nextInt(100);
+        }
 
         return point;
     }

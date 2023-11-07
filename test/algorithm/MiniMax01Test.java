@@ -6,14 +6,22 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 import test.ReflectMember;
+import test.TestIO;
 
 class MiniMax01Test {
+
+    // クラス名
+    static String className;
 
     // テスト対象クラスのインスタンス
     MiniMax01 miniMax01;
@@ -28,7 +36,13 @@ class MiniMax01Test {
     Method reflCalcPoint;
 
     // リフレクションされた Private フィールド
-    Field reflIsAddRandom;
+
+    @BeforeAll
+    static void setUpBeforeClass() throws Exception {
+        className = new Object() {
+        }.getClass().getEnclosingClass().getName();
+        TestIO.printRandomDisable(className);
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -39,15 +53,15 @@ class MiniMax01Test {
         reflEvaluateMax = reflClazz.getMethod("evaluateMax", int.class, Board.class, Dimension.class);
         reflEvaluateMini = reflClazz.getMethod("evaluateMini", int.class, Board.class, Dimension.class);
         reflCalcPoint = reflClazz.getMethod("calcPoint", Board.class);
-        reflIsAddRandom = reflClazz.getField("IS_ADD_RANDOM");
+    }
 
-        // 評価値への乱数加算を無効にする
-        try {
-            reflIsAddRandom.set(miniMax01, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
+    @AfterEach
+    void tearDown() throws Exception {
+    }
+
+    @AfterAll
+    static void tearDownAfterClass() throws Exception {
+        TestIO.printRestoreSetting(className);
     }
 
     /*
@@ -57,8 +71,7 @@ class MiniMax01Test {
     @Test
     void testCalcPointBlackNoRandom()
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        // 乱数加算が無効に変更されている
-        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
+        assertFalse(Global.IS_ADD_RANDOM);
 
         assertAll("プレイヤーが黒の時、ゲーム開始直後の評価",
                 () -> assertEquals(0, (int) reflCalcPoint.invoke(miniMax01, board)));
@@ -69,37 +82,9 @@ class MiniMax01Test {
                 () -> assertEquals(300, (int) reflCalcPoint.invoke(miniMax01, board)));
     }
 
-    /*
-     * 評価店への乱数加算がある状態（デフォルト）で、プレイヤー黒の立場での評価をテストする
-     */
-    @Test
-    void testCalcPointBlackRandom() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        // 乱数加算を行う状態にする
-        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
-        try {
-            reflIsAddRandom.set(miniMax01, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        assertTrue((Boolean) reflIsAddRandom.get(miniMax01));
-
-        final int point1 = (int) reflCalcPoint.invoke(miniMax01, board);
-        assertAll("プレイヤーが黒の時、ゲーム開始直後の評価",
-                () -> assertNotEquals(0, point1),
-                () -> assertTrue(point1 > 0 && point1 < 100));
-
-        board.put(new Dimension(3, 2), true);
-
-        final int point2 = (int) reflCalcPoint.invoke(miniMax01, board);
-        assertAll("プレイヤー黒がc4に石を置いた時の、黒の立場での評価",
-                () -> assertNotEquals(300, point2),
-                () -> assertTrue(point2 > 300 && point2 < 400));
-    }
-
     @Test
     void testCalcPointWhite() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        // 乱数加算が無効に変更されている
-        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
+        assertFalse(Global.IS_ADD_RANDOM);
 
         // プレイするプレイヤーを強制的に白に変更する
         Field reflIsPlayerBlack = reflClazz.getField("isPlayerBlack");
@@ -117,8 +102,7 @@ class MiniMax01Test {
 
     @Test
     void testEvaluateMax() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        // 乱数加算が無効に変更されている
-        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
+        assertFalse(Global.IS_ADD_RANDOM);
 
         int point0 = (int) reflEvaluateMax.invoke(miniMax01, 0, board, new Dimension(3, 2));
         assertEquals(300, point0);
@@ -135,8 +119,7 @@ class MiniMax01Test {
 
     @Test
     void testEvaluateMini() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        // 乱数加算が無効に変更されている
-        assertFalse((Boolean) reflIsAddRandom.get(miniMax01));
+        assertFalse(Global.IS_ADD_RANDOM);
 
         int point0 = (int) reflEvaluateMini.invoke(miniMax01, 0, board, new Dimension(2, 4));
         assertEquals(-300, point0);
