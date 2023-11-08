@@ -113,7 +113,7 @@ class ReversiModelTest {
 
     @Test
     void testRun() {
-        assertNotNull(modelCom.run());
+        assertNull(modelCom.run());
         assertNull(modelManual.run());
     }
 

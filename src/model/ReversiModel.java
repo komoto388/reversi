@@ -2,6 +2,7 @@ package model;
 
 import common.Convert;
 import common.Global;
+import gamerecord.GameRecord;
 import reversi.Dimension;
 import reversi.ResultType;
 import reversi.Reversi;
@@ -57,6 +58,9 @@ public class ReversiModel extends BaseModel {
     /** 画面のデバッグ欄に表示する文字列 */
     private String debugString;
 
+    /** 棋譜の記録を行うインスタンス */
+    private GameRecord gameRecord;
+
     /**
      * リバーシゲーム実行のデータ処理を行うモデル
      * @param data ゲーム実行に必要なデータ
@@ -64,6 +68,7 @@ public class ReversiModel extends BaseModel {
      */
     public ReversiModel(ReversiData data, Boolean isGui) {
         super(data.getReversi(), data.getPlayerBlack(), data.getPlayerWhite());
+
         this.isDebug = data.getIsDebug();
 
         this.eventStatus = new EventStatus(reversi, EventStatusValue.WAIT);
@@ -72,6 +77,7 @@ public class ReversiModel extends BaseModel {
         this.latestTarget = null;
         this.statusString = null;
         this.debugString = "デバッグ情報は特にありません";
+        this.gameRecord = new GameRecord();
 
         if (isGui) {
             setWaitTime(Global.WAIT_MILLISEC_START);
@@ -174,6 +180,10 @@ public class ReversiModel extends BaseModel {
             break;
         }
         case SKIP: {
+            // 棋譜にスキップを記録する
+            gameRecord.addAsSkip(reversi.getTurnCount(), reversi.getCurrentPlayer().isBlack(), board.getBlackDiscNum(),
+                    board.getWhiteDiscNum());
+
             // 石がどこにも置けない時のスキップ処理を定義
             statusString = Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " はスキップします。";
             reversi.next();
@@ -240,6 +250,10 @@ public class ReversiModel extends BaseModel {
         if (isPut) {
             latestTarget = target;
 
+            // 棋譜を記録する
+            gameRecord.add(reversi.getTurnCount(), reversi.getCurrentPlayer().isBlack(), board.getBlackDiscNum(),
+                    board.getWhiteDiscNum(), target.getString());
+
             String playerString = Convert.getPlayerColor(reversi.getPlayerIsBlack());
             statusString = String.format("%s は %s に石を置きました。", playerString, target.getString());
 
@@ -257,7 +271,7 @@ public class ReversiModel extends BaseModel {
      */
     private void judge() {
         try {
-            result = reversi.judge();
+            result = reversi.judge(gameRecord);
             switch (result) {
             case None: {
                 reversi.next();
@@ -271,7 +285,7 @@ public class ReversiModel extends BaseModel {
                 break;
             }
             default:
-                throw new IllegalArgumentException("Unexpected value: " + reversi.judge());
+                throw new IllegalArgumentException("Unexpected value: " + reversi.judge(gameRecord));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -299,7 +313,7 @@ public class ReversiModel extends BaseModel {
      * @return 結果画面処理の実行に必要なデータ
      */
     public ResultData exportForResult() {
-        ResultData data = new ResultData(reversi, playerBlack, playerWhite, result);
+        ResultData data = new ResultData(reversi, playerBlack, playerWhite, result, gameRecord);
 
         return data;
     }

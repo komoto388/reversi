@@ -5,7 +5,9 @@ import reversi.ResultType;
 
 public class ResultModel extends BaseModel {
 
-    private final ResultType result;
+    private ResultType result;
+    
+    private GameRecord gameRecord;
 
     /**
      * 初期化する
@@ -14,6 +16,7 @@ public class ResultModel extends BaseModel {
     public ResultModel(ResultData data) {
         super(data.getReversi(), data.getPlayerBlack(), data.getPlayerBlack());
         result = data.getResult();
+        gameRecord = data.getGameRecord();
     }
 
     /**
@@ -29,7 +32,7 @@ public class ResultModel extends BaseModel {
      * @return 棋譜の情報
      */
     public GameRecord getRecord() {
-        return reversi.getRecord();
+        return gameRecord;
     }
 
     /**
