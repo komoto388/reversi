@@ -37,13 +37,6 @@ class MiniMax01Test {
 
     // リフレクションされた Private フィールド
 
-    @BeforeAll
-    static void setUpBeforeClass() throws Exception {
-        className = new Object() {
-        }.getClass().getEnclosingClass().getName();
-        TestIO.printRandomDisable(className);
-    }
-
     @BeforeEach
     void setUp() throws Exception {
         board = new Board(8, 8);
@@ -53,15 +46,6 @@ class MiniMax01Test {
         reflEvaluateMax = reflClazz.getMethod("evaluateMax", int.class, Board.class, Dimension.class);
         reflEvaluateMini = reflClazz.getMethod("evaluateMini", int.class, Board.class, Dimension.class);
         reflCalcPoint = reflClazz.getMethod("calcPoint", Board.class);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-    }
-
-    @AfterAll
-    static void tearDownAfterClass() throws Exception {
-        TestIO.printRestoreSetting(className);
     }
 
     /*
@@ -80,6 +64,7 @@ class MiniMax01Test {
 
         assertAll("プレイヤー黒がc4に石を置いた時の、黒の立場での評価",
                 () -> assertEquals(300, (int) reflCalcPoint.invoke(miniMax01, board)));
+        fail("値の算出について要確認");
     }
 
     @Test

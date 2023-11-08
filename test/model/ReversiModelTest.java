@@ -22,17 +22,9 @@ class ReversiModelTest {
     Player playerCom1, playerCom2, playerMaual1, playerMaual2;
     Reversi reversiCom, reversiManual;
     ReversiModel modelCom, modelManual;
-    EventStatus eventStatusCom, eventStatusManual;
 
     // テスト対象クラスの Private メンバを操作するインスタンス
     ReflectMember reflClazz;
-
-    // リフレクションされた Private クラス
-    // reflEventStatus;
-    // reflLatestTarget;
-
-    // リフレクションされた Private 列挙型
-    // reflResult;
 
     // リフレクションされた Private メソッド
     Method refljudge;
@@ -46,19 +38,21 @@ class ReversiModelTest {
     Field reflStatusString;
     Field reflDegugString;
 
+    Field reflEventStatus;
+    Field reflResult;
+    Field reflLatestTarget;
+    
     @BeforeEach
     void setUp() throws Exception {
         playerCom1 = new Player("COM1", true, AlgorithmType.Random);
         playerCom2 = new Player("COM2", false, AlgorithmType.Random);
         reversiCom = new Reversi(playerCom1, playerCom2);
         modelCom = new ReversiModel(new ReversiData(reversiCom, playerCom1, playerCom2, true), true);
-        eventStatusCom = new EventStatus(reversiCom, EventStatusValue.PLAY);
 
         playerMaual1 = new Player("MANUAL1", true, AlgorithmType.Manual);
         playerMaual2 = new Player("MANUAL2", false, AlgorithmType.Manual);
         reversiManual = new Reversi(playerMaual1, playerMaual2);
         modelManual = new ReversiModel(new ReversiData(reversiManual, playerMaual1, playerMaual2, true), false);
-        eventStatusManual = new EventStatus(reversiManual, EventStatusValue.PLAY);
 
         // Private メンバの取得
         reflClazz = new ReflectMember(ReversiModel.class);
@@ -73,25 +67,33 @@ class ReversiModelTest {
         refljudge = reflClazz.getMethod("judge");
         reflSetWaitTime = reflClazz.getMethod("setWaitTime", int.class);
 
-        //        reflEventStatus = reflClazz.getField("eventStatus");
-        //        reflResult = reflClazz.getField("result");
-        //        reflLatestTarget = reflClazz.getField("latestTarget");
+        reflEventStatus = reflClazz.getField("eventStatus");
+        reflResult = reflClazz.getField("result");
+        reflLatestTarget = reflClazz.getField("latestTarget");
     }
 
     @Test
-    void testReversiModel() {
+    void testReversiModel() throws IllegalArgumentException, IllegalAccessException {
+        EventStatus reflEventStatusCom = (EventStatus) reflEventStatus.get(modelCom);
+        EventStatus reflEventStatusManual = (EventStatus) reflEventStatus.get(modelManual);
+        
         assertAll("プレイヤーがCOM かつ GUI での動作想定で、初期値が想定通り設定できていること",
                 () -> assertTrue((Boolean) reflIsDebug.get(modelCom)),
                 () -> assertFalse((Boolean) reflIsFinish.get(modelCom)),
                 () -> assertEquals(Global.WAIT_MILLISEC_INTERVAL, (int) reflWaitInterval.get(modelCom)),
                 () -> assertEquals(24, (int) reflWaitFrame.get(modelCom)),
                 () -> assertNull((String) reflStatusString.get(modelCom)),
-                () -> assertEquals("デバッグ情報は特にありません", (String) reflDegugString.get(modelCom)));
+                () -> assertEquals("デバッグ情報は特にありません", (String) reflDegugString.get(modelCom)),
+                () -> assertEquals(EventStatusValue.WAIT, reflEventStatusCom.getStatus()),
+                () -> assertEquals(EventStatusValue.WAIT.getName(), reflEventStatusCom.getName()),
+                () -> assertFalse(reflEventStatusCom.canUserControll()),
+                () -> assertNull((Dimension) reflLatestTarget.get(modelCom)),
+                () -> assertEquals(ResultType.None, reflResult.get(modelCom)));
 
         assertAll("プレイヤーがCOM かつ GUI での動作想定で、getterで取得した値が初期値であること",
-                () -> assertTrue(modelCom.getIsDebug()),
-                () -> assertFalse(modelCom.getIsControll()),
-                () -> assertFalse(modelCom.getIsFinish()),
+                () -> assertTrue(modelCom.isDebugMode()),
+                () -> assertFalse(modelCom.canUserControll()),
+                () -> assertFalse(modelCom.isGameFinish()),
                 () -> assertNull(modelCom.getLatestTarget()),
                 () -> assertEquals(EventStatusValue.WAIT.getName(), modelCom.getEventStatus()),
                 () -> assertNull(modelCom.getGameStatusString()),
@@ -104,11 +106,12 @@ class ReversiModelTest {
                 () -> assertEquals(0, (int) reflWaitInterval.get(modelManual)),
                 () -> assertEquals(0, (int) reflWaitFrame.get(modelManual)),
                 () -> assertNull((String) reflStatusString.get(modelManual)),
-                () -> assertEquals("デバッグ情報は特にありません", (String) reflDegugString.get(modelManual)));
-
-        fail("eventStatus のテストが実装されていません");
-        fail("reflResult のテストが実装されていません");
-        fail("reflLatestTarget のテストが実装されていません");
+                () -> assertEquals("デバッグ情報は特にありません", (String) reflDegugString.get(modelManual)),
+                () -> assertEquals(EventStatusValue.WAIT, reflEventStatusManual.getStatus()),
+                () -> assertEquals(EventStatusValue.WAIT.getName(), reflEventStatusManual.getName()),
+                () -> assertFalse(reflEventStatusManual.canUserControll()),
+                () -> assertNull((Dimension) reflLatestTarget.get(modelCom)),
+                () -> assertEquals(ResultType.None, reflResult.get(modelManual)));
     }
 
     @Test
@@ -119,8 +122,17 @@ class ReversiModelTest {
 
     @Test
     void testPut() {
-        assertTrue(modelCom.put(new Dimension(3, 2)));
-        assertFalse(modelManual.put(new Dimension(1, 1)));
+        assertAll("置ける場所に設置した時、True を返す",
+                () -> assertTrue(modelCom.put(new Dimension(3, 2))));
+
+        assertAll("置けない場所に設置しようとした時、False を返す",
+                () -> assertFalse(modelManual.put(new Dimension(1, 1))));
+
+        assertAll("置ける場所の値がNULLの時、False を返してイベントステータスをSkipにする",
+                () -> assertFalse(modelCom.put(null)),
+                () -> assertEquals("出力された石の座標が NULL のため、プレイヤーの手はスキップとします", modelCom.getDebugString()),
+                () -> assertEquals(EventStatusValue.SKIP, ((EventStatus) reflEventStatus.get(modelCom)).getStatus()),
+                () -> assertEquals(Global.WAIT_MILLISEC_INTERVAL, (int) reflWaitInterval.get(modelCom)));
     }
 
     @Test
@@ -176,59 +188,5 @@ class ReversiModelTest {
         assertSame(playerCom2, data.getPlayerWhite());
         assertEquals(ResultType.None, data.getResult());
         assertSame(ResultType.None, data.getResult());
-    }
-
-    /*
-     * EventStatus クラス
-     */
-    @Test
-    void testEventStatusGetStatus() {
-        assertEquals(EventStatusValue.PLAY_COM, eventStatusCom.getStatus());
-        assertEquals(EventStatusValue.PLAY_MANUAL, eventStatusManual.getStatus());
-    }
-
-    @Test
-    void testEventStatusGetIsControll() {
-        assertFalse(eventStatusCom.getIsControll());
-        assertTrue(eventStatusManual.getIsControll());
-    }
-
-    @Test
-    void testEventStatusGetName() {
-        assertEquals(EventStatusValue.PLAY_COM.getName(), eventStatusCom.getName());
-        assertEquals(EventStatusValue.PLAY_MANUAL.getName(), eventStatusManual.getName());
-    }
-
-    @Test
-    void testEventStatusSet() {
-        // COMの時のテスト
-        eventStatusCom.set(EventStatusValue.JUDGE);
-
-        assertAll("プレイヤーがCOMでイベントステータスを JUDGE にした時、ユーザーのコントロールが不可になる",
-                () -> assertEquals(EventStatusValue.JUDGE, eventStatusCom.getStatus()),
-                () -> assertFalse(eventStatusCom.getIsControll()),
-                () -> assertEquals(EventStatusValue.JUDGE.getName(), eventStatusCom.getName()));
-
-        eventStatusCom.set(EventStatusValue.PLAY);
-
-        assertAll("プレイヤーがCOMでイベントステータスを PLAY にした時、ステータスは PLAY_COM になり、ユーザーのコントロールが不可になる",
-                () -> assertEquals(EventStatusValue.PLAY_COM, eventStatusCom.getStatus()),
-                () -> assertFalse(eventStatusCom.getIsControll()),
-                () -> assertEquals(EventStatusValue.PLAY_COM.getName(), eventStatusCom.getName()));
-
-        // マニュアル時のテスト
-        eventStatusManual.set(EventStatusValue.JUDGE);
-
-        assertAll("プレイヤーがマニュアルでイベントステータスを JUDGE にした時、ユーザーのコントロールが不可になる",
-                () -> assertEquals(EventStatusValue.JUDGE, eventStatusManual.getStatus()),
-                () -> assertFalse(eventStatusManual.getIsControll()),
-                () -> assertEquals(EventStatusValue.JUDGE.getName(), eventStatusManual.getName()));
-
-        eventStatusManual.set(EventStatusValue.PLAY);
-
-        assertAll("プレイヤーがマニュアルでイベントステータスを PLAY にした時、ステータスは PLAY_MANUAL になり、ユーザーのコントロールが可能になる",
-                () -> assertEquals(EventStatusValue.PLAY_MANUAL, eventStatusManual.getStatus()),
-                () -> assertTrue(eventStatusManual.getIsControll()),
-                () -> assertEquals(EventStatusValue.PLAY_MANUAL.getName(), eventStatusManual.getName()));
     }
 }

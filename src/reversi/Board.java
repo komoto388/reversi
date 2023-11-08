@@ -1,7 +1,5 @@
 package reversi;
 
-import org.junit.jupiter.params.aggregator.ArgumentAccessException;
-
 /**
  * リバーシ盤の定義・処理をするクラス
  * @author komoto

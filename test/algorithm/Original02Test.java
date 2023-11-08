@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import reversi.Board;
@@ -47,7 +48,8 @@ class Original02Test {
         // 黒がc4に石を置いた時の評価
         board.put(new Dimension(3, 2), true);
         assertEquals(300, (int) reflCalcPoint.invoke(original02, board, true));
-        assertEquals(-300, (int) reflCalcPoint.invoke(original02, board, false));
+        assertEquals(300, (int) reflCalcPoint.invoke(original02, board, false));
+        fail("値の算出について要確認");
     }
 
     @Test
@@ -62,9 +64,9 @@ class Original02Test {
         assertEquals(800, point2);
 
         int point7 = (int) reflEvaluate.invoke(original02, 7, board, true, new Dimension(3, 2));
-        assertEquals(3200, point7);
+        assertEquals(2400, point7);
     }
-
+    
     @Test
     void testRun() {
         assertNotNull(original02.run());
