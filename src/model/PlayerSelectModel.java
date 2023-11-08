@@ -13,7 +13,7 @@ public class PlayerSelectModel {
     /** 先手・黒のプレイヤー名 */
     private String nameBlack;
 
-    /** 先手・黒のプレイヤー名 */
+    /** 後手・白のプレイヤー名 */
     private String nameWhite;
 
     /** 先手・黒側の使用アルゴリズム */

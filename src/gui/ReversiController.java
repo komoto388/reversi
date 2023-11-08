@@ -223,14 +223,14 @@ public class ReversiController {
         boardController.update(board, model.getIsControll());
 
         // 現在の手番、石の個数を更新する
-        if (reversi.getPlayerIsBlack()) {
+        if (reversi.getCurrentPlayer().isBlack()) {
             currentDiscCircle.setFill(Paint.valueOf("black"));
         } else {
             currentDiscCircle.setFill(Paint.valueOf("white"));
         }
         turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
-        blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
-        whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
+        blackDiscNumLabel.setText(String.format("黒: %2d個", board.getDiscNum(true)));
+        whiteDiscNumLabel.setText(String.format("白: %2d個", board.getDiscNum(false)));
 
         statusLabel.setText(model.getGameStatusString());
 

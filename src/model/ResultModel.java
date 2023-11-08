@@ -5,8 +5,10 @@ import reversi.ResultType;
 
 public class ResultModel extends BaseModel {
 
+    /** 対戦結果の情報を持つインスタンス */
     private ResultType result;
-    
+
+    /** 棋譜の情報を持つインスタンス */
     private GameRecord gameRecord;
 
     /**
@@ -14,7 +16,7 @@ public class ResultModel extends BaseModel {
      * @param data ゲーム画面から引き渡した、結果表示に必要なデータ
      */
     public ResultModel(ResultData data) {
-        super(data.getReversi(), data.getPlayerBlack(), data.getPlayerBlack());
+        super(data.getReversi(), data.getPlayerBlack(), data.getPlayerWhite());
         result = data.getResult();
         gameRecord = data.getGameRecord();
     }

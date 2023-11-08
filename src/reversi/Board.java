@@ -1,5 +1,7 @@
 package reversi;
 
+import org.junit.jupiter.params.aggregator.ArgumentAccessException;
+
 /**
  * リバーシ盤の定義・処理をするクラス
  * @author komoto
@@ -91,26 +93,33 @@ public class Board implements Cloneable {
     }
 
     /**
-     * 現在盤上にある黒石の個数を返す
-     * @return 現在の黒石の個数
+     * 現在盤上にあるプレイヤーの石の個数を返す
+     * @param isPlayerBlack 対象のプレイヤー (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @return 指定したプレイヤーの石の個数
      */
-    public int getBlackDiscNum() {
-        return blackDiscNum;
-    }
+    public int getDiscNum(Boolean isPlayerBlack) {
+        try {
+            if (isPlayerBlack == null) {
+                throw new NullPointerException("引数 \" isPlayerBlack \" の値が NULL です");
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            System.err.println("戻り値を 0 として処理します。");
+            return 0;
+        }
 
-    /**
-     * 現在盤上にある白石の個数を返す
-     * @return 現在の白石の個数
-     */
-    public int getWhiteDiscNum() {
-        return whiteDiscNum;
+        if (isPlayerBlack) {
+            return blackDiscNum;
+        } else {
+            return whiteDiscNum;
+        }
     }
 
     /**
      * 現在盤上で石が置かれていない場所の数を返す
      * @return 石が置かれていない場所の数
      */
-    public int getEmptyNum() {
+    public int getEmptyDiscNum() {
         return boardSize.getRow() * boardSize.getColumn() - blackDiscNum - whiteDiscNum;
     }
 
@@ -119,7 +128,7 @@ public class Board implements Cloneable {
      * @param target 調べる石の座標
      * @return 黒であれば真 {@code true}、それ以外（白、空）であれば偽 {@code false} を返す。
      */
-    public Boolean isBlack(Dimension target) {
+    public Boolean isDiscBlack(Dimension target) {
         if (board[target.getRow()][target.getColumn()] == DiscStatus.BLACK) {
             return true;
         } else {
@@ -132,7 +141,7 @@ public class Board implements Cloneable {
      * @param target 調べる石の座標
      * @return 白であれば真 {@code true}、それ以外（黒、空）であれば偽 {@code false} を返す。
      */
-    public Boolean isWhite(Dimension target) {
+    public Boolean isDiscWhite(Dimension target) {
         if (board[target.getRow()][target.getColumn()] == DiscStatus.WHITE) {
             return true;
         } else {
@@ -145,7 +154,7 @@ public class Board implements Cloneable {
      * @param target 調べる石の座標
      * @return 未設置であれば真 {@code true}、設置済みであれば偽 {@code false} を返す。
      */
-    public Boolean isEmpty(Dimension target) {
+    public Boolean isDiscEmpty(Dimension target) {
         if (board[target.getRow()][target.getColumn()] == DiscStatus.EMPTY) {
             return true;
         } else {
@@ -161,7 +170,7 @@ public class Board implements Cloneable {
      */
     public Boolean canPut(Dimension target, Boolean isBlack) {
         // マスに石が既に置かれていない確認する
-        if (isEmpty(target) == false) {
+        if (isDiscEmpty(target) == false) {
             return false;
         }
 
@@ -235,7 +244,7 @@ public class Board implements Cloneable {
      */
     public int countReversibleDisc(Dimension target, Boolean isBlack) {
         // マスに石が既に置かれていない確認する
-        if (isEmpty(target) == false) {
+        if (isDiscEmpty(target) == false) {
             return 0;
         }
 

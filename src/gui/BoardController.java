@@ -147,13 +147,13 @@ public class BoardController {
                 // マスに描画されている石を消去する
                 boardPane[i][j].getChildren().clear();
 
-                if (board.isEmpty(target) == false) {
+                if (board.isDiscEmpty(target) == false) {
                     // リバーシの石を描画する
                     Circle circle = new Circle(discRadius);
                     circle.setLayoutX(gridSize / 2.0);
                     circle.setLayoutY(gridSize / 2.0);
 
-                    if (board.isBlack(target)) {
+                    if (board.isDiscBlack(target)) {
                         circle.setId("disc-black");
                     } else {
                         circle.setId("disc-white");
