@@ -57,9 +57,9 @@ public class CuiMain {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 Dimension target = new Dimension(i, j);
 
-                if (board.isBlack(target)) {
+                if (board.isDiscBlack(target)) {
                     System.out.printf(" ◯");
-                } else if (board.isWhite(target)) {
+                } else if (board.isDiscWhite(target)) {
                     System.out.printf(" ●");
                 } else {
                     System.out.printf(" ―");
@@ -68,9 +68,9 @@ public class CuiMain {
             System.out.printf("\n");
         }
 
-        System.out.printf("黒石◯: %2d\n", board.getBlackDiscNum());
-        System.out.printf("白石●: %2d\n", board.getWhiteDiscNum());
+        System.out.printf("黒石◯: %2d\n", board.getDiscNum(true));
+        System.out.printf("白石●: %2d\n", board.getDiscNum(false));
 
-        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(reversi.getPlayerIsBlack()));
+        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(reversi.getCurrentPlayer().isBlack()));
     }
 }

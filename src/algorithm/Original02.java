@@ -107,11 +107,11 @@ public class Original02 extends Algorithm {
         int playerDiscNum, enemyDiscNum;
 
         if (currentPlayer) {
-            playerDiscNum = currnetBoard.getBlackDiscNum();
-            enemyDiscNum = currnetBoard.getWhiteDiscNum();
+            playerDiscNum = currnetBoard.getDiscNum(true);
+            enemyDiscNum = currnetBoard.getDiscNum(false);
         } else {
-            playerDiscNum = currnetBoard.getWhiteDiscNum();
-            enemyDiscNum = currnetBoard.getBlackDiscNum();
+            playerDiscNum = currnetBoard.getDiscNum(true);
+            enemyDiscNum = currnetBoard.getDiscNum(false);
         }
 
         int point = (playerDiscNum - enemyDiscNum) * 100;

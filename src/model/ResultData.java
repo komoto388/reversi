@@ -23,18 +23,23 @@ public class ResultData {
     /** 対戦結果を表すインスタンス */
     private final ResultType result;
 
+    private final GameRecord gameRecord;
+
     /**
      * 値を設定する
      * @param reversi リバーシのインスタンス
      * @param playerBlack 先手・黒のプレイヤーのインスタンス
      * @param playerWhite 後手・白のプレイヤーのインスタンス
      * @param result 対戦結果を表すインスタンス
+     * @param gameRecord 棋譜を表すインスタンス
      */
-    public ResultData(Reversi reversi, Player playerBlack, Player playerWhite, ResultType result) {
+    public ResultData(Reversi reversi, Player playerBlack, Player playerWhite, ResultType result,
+            GameRecord gameRecord) {
         this.reversi = reversi;
         this.playerBlack = playerBlack;
         this.playerWhite = playerWhite;
         this.result = result;
+        this.gameRecord = gameRecord;
     }
 
     /**
@@ -68,8 +73,12 @@ public class ResultData {
     public ResultType getResult() {
         return result;
     }
-    
+
+    /**
+     * 棋譜のインスタンスを取得する
+     * @return 棋譜のインスタンス
+     */
     public GameRecord getGameRecord() {
-        return reversi.getRecord();
+        return gameRecord;
     }
 }

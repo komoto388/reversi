@@ -95,7 +95,10 @@ public class GameRecord {
      * @param index 要素の番号
      * @return 指定された番号の要素にあるターン数
      */
-    public int getTurn(int index) {
+    public int getTurn(int index) throws IndexOutOfBoundsException {
+        if (index < 0 && index >= recordDataList.size()) {
+            throw new IndexOutOfBoundsException("範囲外の値（0未満、または棋譜の要素数以上）が指定されました: " + index);
+        }
         return recordDataList.get(index).turn;
     }
 
@@ -105,6 +108,9 @@ public class GameRecord {
      * @return 指定された番号の要素にあるプレイヤーの文字列
      */
     public String getPlayerString(int index) {
+        if (index < 0 && index >= recordDataList.size()) {
+            throw new IndexOutOfBoundsException("範囲外の値（0未満、または棋譜の要素数以上）が指定されました: " + index);
+        }
         return recordDataList.get(index).playerString;
     }
 
@@ -115,11 +121,14 @@ public class GameRecord {
      * @return 指定された番号の要素にあるプレイヤーが打った石の座標の文字列
      */
     public String getDimString(int index) {
+        if (index < 0 && index >= recordDataList.size()) {
+            throw new IndexOutOfBoundsException("範囲外の値（0未満、または棋譜の要素数以上）が指定されました: " + index);
+        }
+
         String str = recordDataList.get(index).dimString;
         if (str == null) {
             str = "Skip";
         }
-
         return str;
     }
 
@@ -129,6 +138,9 @@ public class GameRecord {
      * @return 指定された番号の要素にある先手・黒の石の個数 
      */
     public int getBlackDiscNum(int index) {
+        if (index < 0 && index >= recordDataList.size()) {
+            throw new IndexOutOfBoundsException("範囲外の値（0未満、または棋譜の要素数以上）が指定されました: " + index);
+        }
         return recordDataList.get(index).blackDiscNum;
     }
 
@@ -138,6 +150,9 @@ public class GameRecord {
      * @return 指定された番号の要素にある後手・白の石の個数 
      */
     public int getWhiteDiscNum(int index) {
+        if (index < 0 && index >= recordDataList.size()) {
+            throw new IndexOutOfBoundsException("範囲外の値（0未満、または棋譜の要素数以上）が指定されました: " + index);
+        }
         return recordDataList.get(index).whiteDiscNum;
     }
 
@@ -147,6 +162,9 @@ public class GameRecord {
      * @return 指定された番号の要素にある先手・黒の石の増減数
      */
     public int getIncreaseBlackNum(int index) {
+        if (index < 0 && index >= recordDataList.size()) {
+            throw new IndexOutOfBoundsException("範囲外の値（0未満、または棋譜の要素数以上）が指定されました: " + index);
+        }
         return recordDataList.get(index).increaseBlackNum;
     }
 
@@ -156,6 +174,9 @@ public class GameRecord {
      * @return 指定された番号の要素にある後手・白の石の増減数
      */
     public int getIncreaseWhiteNum(int index) {
+        if (index < 0 && index >= recordDataList.size()) {
+            throw new IndexOutOfBoundsException("範囲外の値（0未満、または棋譜の要素数以上）が指定されました: " + index);
+        }
         return recordDataList.get(index).increaseWhiteNum;
     }
 

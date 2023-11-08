@@ -52,7 +52,7 @@ public class ResultController {
 
     private void outputRecord() {
         // 譜面記録を表示する。
-        GameRecord record = resultModel.getReversi().getRecord();
+        GameRecord record = resultModel.getRecord();
         System.out.printf("\n棋譜\n");
 
         for (int i = 0; i < record.size(); i++) {

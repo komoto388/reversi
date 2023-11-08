@@ -75,7 +75,7 @@ public class Player {
      * プレイヤーの石の色が黒かどうか
      * @return 使用する石の色が黒の場合は真 {@code true}, 白の場合は偽 {@code false} を返す。
      */
-    public Boolean isDiscBlack() {
+    public Boolean isBlack() {
         if (isPlayerBlack) {
             return true;
         } else {

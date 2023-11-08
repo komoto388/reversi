@@ -147,7 +147,7 @@ public class ReversiController {
         }
 
         // デバッグ情報の表示切替
-        if (model.getIsDebug()) {
+        if (model.isDebugMode()) {
             this.fps = new Fps();
             debugPane.setVisible(true);
         } else {
@@ -166,7 +166,7 @@ public class ReversiController {
                 model.run();
 
                 // デバッグ情報表示が有効の場合、FPSの計測を行う
-                if (model.getIsDebug()) {
+                if (model.isDebugMode()) {
                     fps.update();
                 }
 
@@ -174,7 +174,7 @@ public class ReversiController {
                 update();
 
                 // ゲームが終了した場合、結果画面を表示する
-                if (model.getIsFinish()) {
+                if (model.isGameFinish()) {
                     ResultData data = model.exportForResult();
                     timer.stop();
                     sceneSwitch.generateSceneResult(data);
@@ -220,22 +220,22 @@ public class ReversiController {
         Reversi reversi = model.getReversi();
         Board board = model.getBoard();
 
-        boardController.update(board, model.getIsControll());
+        boardController.update(board, model.canUserControll());
 
         // 現在の手番、石の個数を更新する
-        if (reversi.getPlayerIsBlack()) {
+        if (reversi.getCurrentPlayer().isBlack()) {
             currentDiscCircle.setFill(Paint.valueOf("black"));
         } else {
             currentDiscCircle.setFill(Paint.valueOf("white"));
         }
         turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
-        blackDiscNumLabel.setText(String.format("黒: %2d個", board.getBlackDiscNum()));
-        whiteDiscNumLabel.setText(String.format("白: %2d個", board.getWhiteDiscNum()));
+        blackDiscNumLabel.setText(String.format("黒: %2d個", board.getDiscNum(true)));
+        whiteDiscNumLabel.setText(String.format("白: %2d個", board.getDiscNum(false)));
 
         statusLabel.setText(model.getGameStatusString());
 
         // デバッグ情報の処理
-        if (model.getIsDebug()) {
+        if (model.isDebugMode()) {
             fpsLabel.setText(String.format("%.2f fps", fps.getFps()));
             waitFrameLabel.setText(String.format("待ちフレーム数: %3d", model.getWaitFrame()));
             eventStatusLabel.setText(model.getEventStatus());

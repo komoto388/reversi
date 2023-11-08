@@ -145,11 +145,11 @@ public class MiniMax01 extends Algorithm {
         int playerDiscNum, enemyDiscNum;
 
         if (isPlayerBlack) {
-            playerDiscNum = currnetBoard.getBlackDiscNum();
-            enemyDiscNum = currnetBoard.getWhiteDiscNum();
+            playerDiscNum = currnetBoard.getDiscNum(true);
+            enemyDiscNum = currnetBoard.getDiscNum(false);
         } else {
-            playerDiscNum = currnetBoard.getWhiteDiscNum();
-            enemyDiscNum = currnetBoard.getBlackDiscNum();
+            playerDiscNum = currnetBoard.getDiscNum(false);
+            enemyDiscNum = currnetBoard.getDiscNum(true);
         }
 
         int point = (playerDiscNum - enemyDiscNum) * 100;

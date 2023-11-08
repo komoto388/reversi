@@ -2,27 +2,10 @@ package model;
 
 import common.Convert;
 import common.Global;
+import gamerecord.GameRecord;
 import reversi.Dimension;
+import reversi.Player;
 import reversi.ResultType;
-import reversi.Reversi;
-
-/**
- * ゲームのイベント状態の値
- */
-enum EventStatusValue {
-    PLAY("プレイヤー操作中"), PLAY_MANUAL("プレイヤー操作中(マニュアル)"), PLAY_COM("プレイヤー操作中(COM)"), SKIP("スキップ処理"), WAIT(
-            "インターバル中"), JUDGE("判定処理"), WAIT_FINAL("終了待ち"), FINISH("終了");
-
-    private final String name;
-
-    private EventStatusValue(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-}
 
 /**
  * リバーシのゲーム処理を行うクラス
@@ -57,6 +40,9 @@ public class ReversiModel extends BaseModel {
     /** 画面のデバッグ欄に表示する文字列 */
     private String debugString;
 
+    /** 棋譜の記録を行うインスタンス */
+    private GameRecord gameRecord;
+
     /**
      * リバーシゲーム実行のデータ処理を行うモデル
      * @param data ゲーム実行に必要なデータ
@@ -64,6 +50,7 @@ public class ReversiModel extends BaseModel {
      */
     public ReversiModel(ReversiData data, Boolean isGui) {
         super(data.getReversi(), data.getPlayerBlack(), data.getPlayerWhite());
+
         this.isDebug = data.getIsDebug();
 
         this.eventStatus = new EventStatus(reversi, EventStatusValue.WAIT);
@@ -72,6 +59,7 @@ public class ReversiModel extends BaseModel {
         this.latestTarget = null;
         this.statusString = null;
         this.debugString = "デバッグ情報は特にありません";
+        this.gameRecord = new GameRecord();
 
         if (isGui) {
             setWaitTime(Global.WAIT_MILLISEC_START);
@@ -87,7 +75,7 @@ public class ReversiModel extends BaseModel {
      * デバッグ情報を表示するかを表す
      * @return 表示する場合は真 {@code true}, 表示しない場合は偽 {@code false} を返す
      */
-    public Boolean getIsDebug() {
+    public Boolean isDebugMode() {
         return isDebug;
     }
 
@@ -95,15 +83,15 @@ public class ReversiModel extends BaseModel {
      * リバーシ盤が操作可能（ユーザの操作待ち状態）かどうかを表す
      * @return 操作可能の場合は真 {@code true}, 操作不可の場合は偽 {@code false} を返す
      */
-    public Boolean getIsControll() {
-        return eventStatus.getIsControll();
+    public Boolean canUserControll() {
+        return eventStatus.canUserControll();
     }
 
     /**
      * ゲームが終了したかを表すフラグを取得する
      * @return ゲームが終了しているの場合は真 {@code true}, 終了していない場合は偽 {@code false} を返す
      */
-    public Boolean getIsFinish() {
+    public Boolean isGameFinish() {
         return isFinish;
     }
 
@@ -153,6 +141,7 @@ public class ReversiModel extends BaseModel {
      */
     public Dimension run() {
         Dimension target = null;
+        Player currentPlayer = reversi.getCurrentPlayer();
 
         // ステータスを設定する
         if (eventStatus.getStatus() == EventStatusValue.PLAY_MANUAL
@@ -169,13 +158,17 @@ public class ReversiModel extends BaseModel {
         }
         case PLAY_COM: {
             // アルゴリズムに従い処理を行う
-            target = reversi.run();
+            target = currentPlayer.run(board);
             put(target);
             break;
         }
         case SKIP: {
+            // 棋譜にスキップを記録する
+            gameRecord.addAsSkip(reversi.getTurnCount(), currentPlayer.isBlack(), board.getDiscNum(true),
+                    board.getDiscNum(false));
+
             // 石がどこにも置けない時のスキップ処理を定義
-            statusString = Convert.getPlayerColor(reversi.getPlayerIsBlack()) + " はスキップします。";
+            statusString = Convert.getPlayerColor(currentPlayer.isBlack()) + " はスキップします。";
             reversi.next();
             eventStatus.set(EventStatusValue.WAIT);
             setWaitTime(waitInterval);
@@ -227,25 +220,39 @@ public class ReversiModel extends BaseModel {
      * @return 石の設置ができた場合は真 {@code true}, 既に石が存在している等で設置できなかった場合は偽 {@code false} を返す。
      */
     public Boolean put(Dimension target) {
-        // 座標に対して、石を置けるか判定する
         Boolean isPut = false;
+        Player currentPlayer = reversi.getCurrentPlayer();
+
+        // 石の設置処理
         try {
             isPut = reversi.put(target);
         } catch (IllegalArgumentException e) {
             // 例外が発生した場合、石を置けないと判断して処理を続ける。
             e.printStackTrace();
-            isPut = false;
+            debugString = "出力された石の座標が NULL のため、プレイヤーの手はスキップとします";
+            System.err.println(debugString);
+
+            eventStatus.set(EventStatusValue.SKIP);
+            setWaitTime(waitInterval);
+
+            return false;
         }
 
         if (isPut) {
+            /** 石の設置に成功した場合は値の更新処理を行い、イベントステータスを変更して判定処理に進める */
+
+            // 棋譜を記録する
+            gameRecord.add(reversi.getTurnCount(), currentPlayer.isBlack(), board.getDiscNum(true),
+                    board.getDiscNum(false), target.getString());
+
+            // 表示文字列、イベントステータスなど値の更新
             latestTarget = target;
-
-            String playerString = Convert.getPlayerColor(reversi.getPlayerIsBlack());
+            String playerString = Convert.getPlayerColor(currentPlayer.isBlack());
             statusString = String.format("%s は %s に石を置きました。", playerString, target.getString());
-
             eventStatus.set(EventStatusValue.JUDGE);
             setWaitTime(waitInterval);
         } else {
+            /** 石の設置に失敗した場合、次のターンに進めない */
             debugString = String.format("%s には石を置けません", target.getString());
         }
 
@@ -256,26 +263,13 @@ public class ReversiModel extends BaseModel {
      * 勝敗判定を行う
      */
     private void judge() {
-        try {
-            result = reversi.judge();
-            switch (result) {
-            case None: {
-                reversi.next();
-                eventStatus.set(EventStatusValue.WAIT);
-                setWaitTime(waitInterval);
-                break;
-            }
-            case Drow:
-            case Black:
-            case White: {
-                break;
-            }
-            default:
-                throw new IllegalArgumentException("Unexpected value: " + reversi.judge());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = ResultType.None;
+        result = reversi.judge(gameRecord);
+
+        if (result == ResultType.None) {
+            // イベントステータスを更新し、次のターンに進める
+            reversi.next();
+            eventStatus.set(EventStatusValue.WAIT);
+            setWaitTime(waitInterval);
         }
     }
 
@@ -299,77 +293,8 @@ public class ReversiModel extends BaseModel {
      * @return 結果画面処理の実行に必要なデータ
      */
     public ResultData exportForResult() {
-        ResultData data = new ResultData(reversi, playerBlack, playerWhite, result);
+        ResultData data = new ResultData(reversi, playerBlack, playerWhite, result, gameRecord);
 
         return data;
-    }
-}
-
-/**
- * イベントステータスを操作するクラス
- */
-class EventStatus {
-
-    /** リバーシを制御するインスタンス */
-    private final Reversi reversi;
-
-    /** 現在のイベントステータス */
-    private EventStatusValue eventStatus;
-
-    /** リバーシ盤の操作可否フラグ */
-    private Boolean isControll;
-
-    /**
-     * 初期化する
-     * @param reversi リバーシを制御するインスタンス
-     * @param status イベントステータスの初期値
-     */
-    public EventStatus(Reversi reversi, EventStatusValue status) {
-        this.reversi = reversi;
-        set(status);
-    }
-
-    /**
-     * イベントステータスの値を取得する
-     * @return イベントステータスの値
-     */
-    public EventStatusValue getStatus() {
-        return eventStatus;
-    }
-
-    public Boolean getIsControll() {
-        return isControll;
-    }
-
-    /**
-     * イベントステータスの名前を取得する
-     * @return イベントステータスの名前の文字列
-     */
-    public String getName() {
-        return eventStatus.getName();
-    }
-
-    /**
-     * イベントステータスの値を設定する
-     * @param eventStatus 設定するイベントステータスの値
-     */
-    public void set(EventStatusValue eventStatus) {
-        // 値が PLAY の場合、値を PLAY_MANUAL または PLAY_COM に付け替える
-        if (eventStatus == EventStatusValue.PLAY) {
-            if (reversi.isCurrentPlayerManual()) {
-                eventStatus = EventStatusValue.PLAY_MANUAL;
-            } else {
-                eventStatus = EventStatusValue.PLAY_COM;
-            }
-        }
-
-        // ステータス、リバーシ盤操作可否の更新
-        this.eventStatus = eventStatus;
-
-        if (eventStatus == EventStatusValue.PLAY_MANUAL) {
-            isControll = true;
-        } else {
-            isControll = false;
-        }
     }
 }

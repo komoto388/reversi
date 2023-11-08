@@ -12,13 +12,16 @@ import reversi.Reversi;
 public abstract class BaseModel {
 
     /** リバーシを制御するインスタンス */
-    protected final Reversi reversi;
+    protected Reversi reversi;
+    
+    /** リバーシ盤の状態を表すインスタンス */
+    protected Board board;
 
     /** 先手・黒のプレイヤーのインスタンス */
-    protected final Player playerBlack;
+    protected Player playerBlack;
 
     /** 後手・白のプレイヤーのインスタンス */
-    protected final Player playerWhite;
+    protected Player playerWhite;
 
     /**
      * 初期化する
@@ -28,6 +31,7 @@ public abstract class BaseModel {
      */
     public BaseModel(Reversi reversi, Player playerBlack, Player playerWhite) {
         this.reversi = reversi;
+        this.board = reversi.getBoard();
         this.playerBlack = playerBlack;
         this.playerWhite = playerWhite;
     }

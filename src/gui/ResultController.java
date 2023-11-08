@@ -109,8 +109,8 @@ public class ResultController {
         whiteHeaderLabel.setText(String.format("後手・白 ( %s )", resultModel.getPlayerAlgorithmName(false)));
         blackNameLabel.setText(resultModel.getPlayerName(true));
         whiteNameLabel.setText(resultModel.getPlayerName(false));
-        blackDiscNumLabel.setText(String.format("%d 個", board.getBlackDiscNum()));
-        whiteDiscNumLabel.setText(String.format("%d 個", board.getWhiteDiscNum()));
+        blackDiscNumLabel.setText(String.format("%d 個", board.getDiscNum(true)));
+        whiteDiscNumLabel.setText(String.format("%d 個", board.getDiscNum(false)));
         resultLabel.setText(resultModel.getResultString());
 
         // 各タブ内の画面を生成する

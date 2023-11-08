@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import algorithm.AlgorithmType;
+import gamerecord.GameRecord;
 import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
@@ -14,7 +15,7 @@ class ResultDataTest {
     Player player1 = new Player("TEST1", true, AlgorithmType.Manual);
     Player player2 = new Player("TEST2", false, AlgorithmType.Random);
     Reversi reversi = new Reversi(player1, player2);
-    ResultData data = new ResultData(reversi, player1, player2, ResultType.Drow);
+    ResultData data = new ResultData(reversi, player1, player2, ResultType.Drow, new GameRecord());
 
     @Test
     void testGetReversi() {

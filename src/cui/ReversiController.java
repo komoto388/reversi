@@ -52,12 +52,12 @@ public class ReversiController {
             }
 
             // 手動入力待ちの時、手動入力の処理を行う
-            if (reversiModel.getIsControll()) {
+            if (reversiModel.canUserControll()) {
                 Dimension target = inputManual();
                 reversiModel.put(target);
             }
 
-        } while (!reversiModel.getIsFinish());
+        } while (!reversiModel.isGameFinish());
 
         ResultData data = reversiModel.exportForResult();
 

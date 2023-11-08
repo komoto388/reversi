@@ -32,8 +32,6 @@ public class RandomAlgorithm extends Algorithm {
                 if (board.countReversibleDisc(target, isPlayerBlack) > 0) {
                     int point = random.nextInt(1000);
                     evaluate.add(target, point);
-                    
-                    System.out.println("Player: " + isPlayerBlack + ", rand: " + point);
                 }
             }
         }

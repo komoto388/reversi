@@ -23,12 +23,7 @@ public class ReflectMember {
     }
 
     /**
-     * クラスで定義される Private 変数を、参照可能な状態で取得する。<br>
-     * 取得した変数は以下の操作例のように操作する。<br>
-     * 参照: {@code int value = (int) reflectField.get(classInstance);}<br>
-     * 設定: {@code reflectField.set(classInstance, value)}<br>
-     * {@code classInstance} は対象のPrivateメンバを定義しているクラスのインスタンスを指す。
-     * ({@code Sample sample} の場合では、{@code sample} を指定する)
+     * クラスで定義されるフィールド(Privateを含む)を、参照可能な状態で取得する。
      * @param name 参照したい Private 変数の名前
      * @return {@code name}で指定した名前の変数
      */
