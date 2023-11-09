@@ -20,6 +20,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import model.ReversiData;
+import reversi.Disc;
 import model.PlayerSelectModel;
 
 /**
@@ -157,8 +158,16 @@ public class PlayerSelectController implements Initializable {
                 return;
             }
 
+            // Boolean から Discへの変換
+            Disc playerDisc;
+            if(isPlayerBlack) {
+                playerDisc = Disc.BLACK;
+            } else {
+                playerDisc = Disc.WHITE;
+            }
+            
             ToggleButton selectedButton = (ToggleButton) newValue;
-            playerSelectModel.setPlayerAlgorithm(isPlayerBlack, (AlgorithmType) selectedButton.getUserData());
+            playerSelectModel.setPlayerAlgorithm(playerDisc, (AlgorithmType) selectedButton.getUserData());
         }
     }
 

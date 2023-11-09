@@ -6,15 +6,8 @@ package reversi;
  */
 public class Board implements Cloneable {
 
-    /** 石の状態を表す値 */
-    private enum DiscStatus {
-        EMPTY, // 空（設置されていない） 
-        BLACK, // 白
-        WHITE, // 黒
-    }
-
-    /** リバーシ盤の状態を表す */
-    private DiscStatus[][] board;
+    /** リバーシ盤の状態を表す。マスに石が置かれていない時は {@code NULL} で表す。 */
+    private Disc[][] board;
 
     /** リバーシ盤のサイズ（マス） */
     private Dimension boardSize;
@@ -41,7 +34,7 @@ public class Board implements Cloneable {
         }
 
         // フィールドの初期化
-        this.board = new DiscStatus[boardHeight][boardWidth];
+        this.board = new Disc[boardHeight][boardWidth];
         this.boardSize = new Dimension(boardHeight, boardWidth);
         this.blackDiscNum = 0;
         this.whiteDiscNum = 0;
@@ -52,14 +45,14 @@ public class Board implements Cloneable {
                 // 盤の中心に初期の石を設置する
                 if ((i == boardHeight / 2 - 1 && j == boardHeight / 2 - 1)
                         || (i == boardWidth / 2 && j == boardWidth / 2)) {
-                    board[i][j] = DiscStatus.WHITE;
+                    board[i][j] = Disc.WHITE;
                     whiteDiscNum++;
                 } else if ((i == boardHeight / 2 - 1 && j == boardWidth / 2)
                         || (i == boardHeight / 2 && j == boardWidth / 2 - 1)) {
-                    board[i][j] = DiscStatus.BLACK;
+                    board[i][j] = Disc.BLACK;
                     blackDiscNum++;
                 } else {
-                    board[i][j] = DiscStatus.EMPTY;
+                    board[i][j] = null;
                 }
             }
         }
@@ -92,21 +85,21 @@ public class Board implements Cloneable {
 
     /**
      * 現在盤上にあるプレイヤーの石の個数を取得する
-     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーの石の色
      * @return 指定したプレイヤーの石の個数
      */
-    public int getDiscNum(Boolean isPlayerBlack) {
+    public int getDiscNum(Disc playerDisc) {
         try {
-            if (isPlayerBlack == null) {
-                throw new NullPointerException("引数 \" isPlayerBlack \" の値が NULL です");
+            if (playerDisc == null) {
+                throw new IllegalArgumentException("引数 \" playerDisc \" の値が NULL です");
             }
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             System.err.println("戻り値を 0 として処理します。");
             return 0;
         }
 
-        if (isPlayerBlack) {
+        if (playerDisc == Disc.BLACK) {
             return blackDiscNum;
         } else {
             return whiteDiscNum;
@@ -127,7 +120,7 @@ public class Board implements Cloneable {
      * @return 黒であれば真 {@code true}、それ以外（白、空）であれば偽 {@code false}
      */
     public Boolean isDiscBlack(Dimension target) {
-        if (board[target.getRow()][target.getColumn()] == DiscStatus.BLACK) {
+        if (board[target.getRow()][target.getColumn()] == Disc.BLACK) {
             return true;
         } else {
             return false;
@@ -140,7 +133,7 @@ public class Board implements Cloneable {
      * @return 白であれば真 {@code true}、それ以外（黒、空）であれば偽 {@code false}
      */
     public Boolean isDiscWhite(Dimension target) {
-        if (board[target.getRow()][target.getColumn()] == DiscStatus.WHITE) {
+        if (board[target.getRow()][target.getColumn()] == Disc.WHITE) {
             return true;
         } else {
             return false;
@@ -153,7 +146,7 @@ public class Board implements Cloneable {
      * @return 空である場合は真 {@code true}、空でない場合は偽 {@code false}
      */
     public Boolean isDiscEmpty(Dimension target) {
-        if (board[target.getRow()][target.getColumn()] == DiscStatus.EMPTY) {
+        if (board[target.getRow()][target.getColumn()] == null) {
             return true;
         } else {
             return false;
@@ -165,38 +158,38 @@ public class Board implements Cloneable {
      * 対称座標を中心として全方向に対して順次探索を行いますが、１方向でも設置可能と判明した場合は即座に {@code true} を返します。
      * 未探索の方向は探索しません。
      * @param target 石を置く座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 設置できる場合は真 {@code true}、石を設置できない場合は偽 {@code false}
      */
-    public Boolean canPut(Dimension target, Boolean isBlack) {
+    public Boolean canPut(Dimension target, Disc playerDisc) {
         // マスに石が既に置かれていない確認する
         if (isDiscEmpty(target) == false) {
             return false;
         }
 
         // 反転できる石があるか
-        if (countReversibleDiscUp(target, isBlack) > 0) {
+        if (countReversibleDiscUp(target, playerDisc) > 0) {
             return true;
         }
-        if (countReversibleDiscDown(target, isBlack) > 0) {
+        if (countReversibleDiscDown(target, playerDisc) > 0) {
             return true;
         }
-        if (countReversibleDiscLeft(target, isBlack) > 0) {
+        if (countReversibleDiscLeft(target, playerDisc) > 0) {
             return true;
         }
-        if (countReversibleDiscRight(target, isBlack) > 0) {
+        if (countReversibleDiscRight(target, playerDisc) > 0) {
             return true;
         }
-        if (countReversibleDiscLeftUp(target, isBlack) > 0) {
+        if (countReversibleDiscLeftUp(target, playerDisc) > 0) {
             return true;
         }
-        if (countReversibleDiscRightUp(target, isBlack) > 0) {
+        if (countReversibleDiscRightUp(target, playerDisc) > 0) {
             return true;
         }
-        if (countReversibleDiscLeftDown(target, isBlack) > 0) {
+        if (countReversibleDiscLeftDown(target, playerDisc) > 0) {
             return true;
         }
-        if (countReversibleDiscRightDown(target, isBlack) > 0) {
+        if (countReversibleDiscRightDown(target, playerDisc) > 0) {
             return true;
         }
         return false;
@@ -204,13 +197,13 @@ public class Board implements Cloneable {
 
     /**
      * 全てのマスに対して、石を置けるか確認する
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石が存在する場合は {@code true}, 存在しない場合は {@code false}
      */
-    public Boolean canPutAll(Boolean isBlack) {
+    public Boolean canPutAll(Disc playerDisc) {
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
-                if (canPut(new Dimension(i, j), isBlack)) {
+                if (canPut(new Dimension(i, j), playerDisc)) {
                     return true;
                 }
             }
@@ -219,32 +212,14 @@ public class Board implements Cloneable {
     }
 
     /**
-     * 対象の座標にある石と、プレイヤーの石の色が異なるか判定する
-     * @param target 対象の石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
-     * @return 石の色が異なる場合は真 {@true}, 同じ場合は偽 {@code false}
-     */
-    private Boolean isDifferentDisc(Dimension target, Boolean isBlack) {
-        int row = target.getRow();
-        int column = target.getColumn();
-
-        if ((isBlack && board[row][column] == DiscStatus.WHITE)
-                || (isBlack == false && board[row][column] == DiscStatus.BLACK)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * 対象の座標に石を置いた時、反転する石の個数を返す<br>
      * 対称座標を中心として全方向に対して順次探索を行い、全ての方向の探索が完了するまで処理を続けます。
      * 個数に関わらず１個以上の石を反転できるかの判定については、処理時間の観点で {@code canPut()} を使用してください。
      * @param target 石を置く座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の数
      */
-    public int countReversibleDisc(Dimension target, Boolean isBlack) {
+    public int countReversibleDisc(Dimension target, Disc playerDisc) {
         // マスに石が既に置かれていない確認する
         if (isDiscEmpty(target) == false) {
             return 0;
@@ -252,14 +227,14 @@ public class Board implements Cloneable {
 
         // 反転できる石があるか
         int reuslt = 0;
-        reuslt += countReversibleDiscUp(target, isBlack);
-        reuslt += countReversibleDiscDown(target, isBlack);
-        reuslt += countReversibleDiscLeft(target, isBlack);
-        reuslt += countReversibleDiscRight(target, isBlack);
-        reuslt += countReversibleDiscLeftUp(target, isBlack);
-        reuslt += countReversibleDiscRightUp(target, isBlack);
-        reuslt += countReversibleDiscLeftDown(target, isBlack);
-        reuslt += countReversibleDiscRightDown(target, isBlack);
+        reuslt += countReversibleDiscUp(target, playerDisc);
+        reuslt += countReversibleDiscDown(target, playerDisc);
+        reuslt += countReversibleDiscLeft(target, playerDisc);
+        reuslt += countReversibleDiscRight(target, playerDisc);
+        reuslt += countReversibleDiscLeftUp(target, playerDisc);
+        reuslt += countReversibleDiscRightUp(target, playerDisc);
+        reuslt += countReversibleDiscLeftDown(target, playerDisc);
+        reuslt += countReversibleDiscRightDown(target, playerDisc);
 
         return reuslt;
     }
@@ -267,20 +242,22 @@ public class Board implements Cloneable {
     /**
      * 置いた石の上方向に対して、反転可能な石が何個あるか調べる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の個数
      */
-    private int countReversibleDiscUp(Dimension target, Boolean isBlack) {
+    private int countReversibleDiscUp(Dimension target, Disc playerDisc) {
         int reversibleDisc = 0;
         int column = target.getColumn();
 
         for (int i = target.getRow() - 1; i >= 0 && i < boardSize.getRow(); i--) {
-            if (isDifferentDisc(new Dimension(i, column), isBlack)) {
-                // 色違いで反転可能な石である場合は、反転対象としてカウントする
-                reversibleDisc++;
-            } else if (board[i][column] == DiscStatus.EMPTY) {
+            if (board[i][column] == null) {
                 // 空きマスの場合は自分の石で挟めておらず反転できないので、0を返す。
                 return 0;
+            }
+
+            if (board[i][column] != playerDisc) {
+                // 色違いで反転可能な石である場合は、反転対象としてカウントする
+                reversibleDisc++;
             } else {
                 // 自分の石があった場合、これまでにカウントした反転対象の石の個数を返す。
                 return reversibleDisc;
@@ -293,18 +270,20 @@ public class Board implements Cloneable {
     /**
      * 置いた石の下方向に対して、反転可能な石が何個あるか調べる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の個数
      */
-    private int countReversibleDiscDown(Dimension target, Boolean isBlack) {
+    private int countReversibleDiscDown(Dimension target, Disc playerDisc) {
         int reversibleDisc = 0;
         int column = target.getColumn();
 
         for (int i = target.getRow() + 1; i >= 0 && i < boardSize.getRow(); i++) {
-            if (isDifferentDisc(new Dimension(i, column), isBlack)) {
-                reversibleDisc++;
-            } else if (board[i][column] == DiscStatus.EMPTY) {
+            if (board[i][column] == null) {
                 return 0;
+            }
+
+            if (board[i][column] != playerDisc) {
+                reversibleDisc++;
             } else {
                 return reversibleDisc;
             }
@@ -315,19 +294,20 @@ public class Board implements Cloneable {
     /**
      * 置いた石の左方向に対して、反転可能な石が何個あるか調べる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の個数
      */
-    private int countReversibleDiscLeft(Dimension target, Boolean isBlack) {
+    private int countReversibleDiscLeft(Dimension target, Disc playerDisc) {
         int reversibleDisc = 0;
         int row = target.getRow();
 
         for (int j = target.getColumn() - 1; j >= 0 && j < boardSize.getColumn(); j--) {
-            if (isDifferentDisc(new Dimension(row, j), isBlack)) {
-                reversibleDisc++;
-            } else if (board[row][j] == DiscStatus.EMPTY) {
-                reversibleDisc = 0;
+            if (board[row][j] == null) {
                 return 0;
+            }
+
+            if (board[row][j] != playerDisc) {
+                reversibleDisc++;
             } else {
                 return reversibleDisc;
             }
@@ -338,18 +318,20 @@ public class Board implements Cloneable {
     /**
      * 置いた石の右方向に対して、反転可能な石が何個あるか調べる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の個数
      */
-    private int countReversibleDiscRight(Dimension target, Boolean isBlack) {
+    private int countReversibleDiscRight(Dimension target, Disc playerDisc) {
         int reversibleDisc = 0;
         int row = target.getRow();
 
         for (int j = target.getColumn() + 1; j >= 0 && j < boardSize.getColumn(); j++) {
-            if (isDifferentDisc(new Dimension(row, j), isBlack)) {
-                reversibleDisc++;
-            } else if (board[row][j] == DiscStatus.EMPTY) {
+            if (board[row][j] == null) {
                 return 0;
+            }
+
+            if (board[row][j] != playerDisc) {
+                reversibleDisc++;
             } else {
                 return reversibleDisc;
             }
@@ -360,18 +342,20 @@ public class Board implements Cloneable {
     /**
      * 置いた石の左上方向に対して、反転可能な石が何個あるか調べる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の個数
      */
-    private int countReversibleDiscLeftUp(Dimension target, Boolean isBlack) {
+    private int countReversibleDiscLeftUp(Dimension target, Disc playerDisc) {
         int reversibleDisc = 0;
 
         for (int i = target.getRow() - 1, j = target.getColumn() - 1; i >= 0 && j >= 0 && i < boardSize.getRow()
                 && j < boardSize.getColumn(); i--, j--) {
-            if (isDifferentDisc(new Dimension(i, j), isBlack)) {
-                reversibleDisc++;
-            } else if (board[i][j] == DiscStatus.EMPTY) {
+            if (board[i][j] == null) {
                 return 0;
+            }
+
+            if (board[i][j] != playerDisc) {
+                reversibleDisc++;
             } else {
                 return reversibleDisc;
             }
@@ -382,18 +366,20 @@ public class Board implements Cloneable {
     /**
      * 置いた石の右上方向に対して、反転可能な石が何個あるか調べる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の個数
      */
-    private int countReversibleDiscRightUp(Dimension target, Boolean isBlack) {
+    private int countReversibleDiscRightUp(Dimension target, Disc playerDisc) {
         int reversibleDisc = 0;
 
         for (int i = target.getRow() - 1, j = target.getColumn() + 1; i >= 0 && j >= 0 && i < boardSize.getRow()
                 && j < boardSize.getColumn(); i--, j++) {
-            if (isDifferentDisc(new Dimension(i, j), isBlack)) {
-                reversibleDisc++;
-            } else if (board[i][j] == DiscStatus.EMPTY) {
+            if (board[i][j] == null) {
                 return 0;
+            }
+
+            if (board[i][j] != playerDisc) {
+                reversibleDisc++;
             } else {
                 return reversibleDisc;
             }
@@ -404,18 +390,20 @@ public class Board implements Cloneable {
     /**
      * 置いた石の左下方向に対して、反転可能な石が何個あるか調べる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の個数
      */
-    private int countReversibleDiscLeftDown(Dimension target, Boolean isBlack) {
+    private int countReversibleDiscLeftDown(Dimension target, Disc playerDisc) {
         int reversibleDisc = 0;
 
         for (int i = target.getRow() + 1, j = target.getColumn() - 1; i >= 0 && j >= 0 && i < boardSize.getRow()
                 && j < boardSize.getColumn(); i++, j--) {
-            if (isDifferentDisc(new Dimension(i, j), isBlack)) {
-                reversibleDisc++;
-            } else if (board[i][j] == DiscStatus.EMPTY) {
+            if (board[i][j] == null) {
                 return 0;
+            }
+
+            if (board[i][j] != playerDisc) {
+                reversibleDisc++;
             } else {
                 return reversibleDisc;
             }
@@ -426,18 +414,20 @@ public class Board implements Cloneable {
     /**
      * 置いた石の右下方向に対して、反転可能な石が何個あるか調べる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転可能な石の個数
      */
-    private int countReversibleDiscRightDown(Dimension target, Boolean isBlack) {
+    private int countReversibleDiscRightDown(Dimension target, Disc playerDisc) {
         int reversibleDisc = 0;
 
         for (int i = target.getRow() + 1, j = target.getColumn() + 1; i >= 0 && j >= 0 && i < boardSize.getRow()
                 && j < boardSize.getColumn(); i++, j++) {
-            if (isDifferentDisc(new Dimension(i, j), isBlack)) {
-                reversibleDisc++;
-            } else if (board[i][j] == DiscStatus.EMPTY) {
+            if (board[i][j] == null) {
                 return 0;
+            }
+
+            if (board[i][j] != playerDisc) {
+                reversibleDisc++;
             } else {
                 return reversibleDisc;
             }
@@ -448,50 +438,50 @@ public class Board implements Cloneable {
     /**
      * 石を置き、状態を更新する
      * @param target 石を置く座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 石を設置できる場合は真 {@code true}、設置できない場合は偽 {@code false} を返す。
      * @throws IllegalArgumentException 引数 {@code target, isBlack} のいずれかが {@code NULL} の場合、エラーを返す。
      */
-    public Boolean put(Dimension target, Boolean isBlack) throws IllegalArgumentException {
+    public Boolean put(Dimension target, Disc playerDisc) throws IllegalArgumentException {
         // 引数の正常性確認
         if (target == null) {
             throw new IllegalArgumentException("引数 \"target\" が NULL です。");
         }
-        if (isBlack == null) {
-            throw new IllegalArgumentException("引数 \"isBlack\" が NULL です。");
+        if (playerDisc == null) {
+            throw new IllegalArgumentException("引数 \"playerDisc\" が NULL です。");
         }
 
         // 対象の位置に石を置けるか判定する
-        if (canPut(target, isBlack) == false) {
+        if (canPut(target, playerDisc) == false) {
             return false;
         }
 
         // 全方向に対して操作し、反転可能な石を反転させる
         int reverseCount = 0;
 
-        if (countReversibleDiscUp(target, isBlack) > 0) {
-            reverseCount += reverseDiscUp(target, isBlack);
+        if (countReversibleDiscUp(target, playerDisc) > 0) {
+            reverseCount += reverseDiscUp(target, playerDisc);
         }
-        if (countReversibleDiscDown(target, isBlack) > 0) {
-            reverseCount += reverseDiscDown(target, isBlack);
+        if (countReversibleDiscDown(target, playerDisc) > 0) {
+            reverseCount += reverseDiscDown(target, playerDisc);
         }
-        if (countReversibleDiscLeft(target, isBlack) > 0) {
-            reverseCount += reverseDiscLeft(target, isBlack);
+        if (countReversibleDiscLeft(target, playerDisc) > 0) {
+            reverseCount += reverseDiscLeft(target, playerDisc);
         }
-        if (countReversibleDiscRight(target, isBlack) > 0) {
-            reverseCount += reverseDiscRight(target, isBlack);
+        if (countReversibleDiscRight(target, playerDisc) > 0) {
+            reverseCount += reverseDiscRight(target, playerDisc);
         }
-        if (countReversibleDiscLeftUp(target, isBlack) > 0) {
-            reverseCount += reverseDiscLeftUp(target, isBlack);
+        if (countReversibleDiscLeftUp(target, playerDisc) > 0) {
+            reverseCount += reverseDiscLeftUp(target, playerDisc);
         }
-        if (countReversibleDiscRightUp(target, isBlack) > 0) {
-            reverseCount += reverseDiscRightUp(target, isBlack);
+        if (countReversibleDiscRightUp(target, playerDisc) > 0) {
+            reverseCount += reverseDiscRightUp(target, playerDisc);
         }
-        if (countReversibleDiscLeftDown(target, isBlack) > 0) {
-            reverseCount += reverseDiscLeftDown(target, isBlack);
+        if (countReversibleDiscLeftDown(target, playerDisc) > 0) {
+            reverseCount += reverseDiscLeftDown(target, playerDisc);
         }
-        if (countReversibleDiscRightDown(target, isBlack) > 0) {
-            reverseCount += reverseDiscRightDown(target, isBlack);
+        if (countReversibleDiscRightDown(target, playerDisc) > 0) {
+            reverseCount += reverseDiscRightDown(target, playerDisc);
         }
 
         // 反転できる石が1つもないのはルール上石を置くことができないため、石を置く処理を行わず終了する。
@@ -499,13 +489,20 @@ public class Board implements Cloneable {
             return false;
         }
 
-        if (isBlack) {
-            board[target.getRow()][target.getColumn()] = DiscStatus.BLACK;
+        // 指定された座標にプレイヤーの石を設定する
+        int row = target.getRow();
+        int column = target.getColumn();
+
+        if (playerDisc == Disc.BLACK) {
+            board[row][column] = playerDisc;
             blackDiscNum++;
-        } else {
-            board[target.getRow()][target.getColumn()] = DiscStatus.WHITE;
+        }
+
+        if (playerDisc == Disc.WHITE) {
+            board[row][column] = playerDisc;
             whiteDiscNum++;
         }
+
         return true;
     }
 
@@ -517,12 +514,12 @@ public class Board implements Cloneable {
         int row = target.getRow();
         int column = target.getColumn();
 
-        if (board[row][column] == DiscStatus.BLACK) {
-            board[row][column] = DiscStatus.WHITE;
+        if (board[row][column] == Disc.BLACK) {
+            board[row][column] = Disc.WHITE;
             blackDiscNum--;
             whiteDiscNum++;
-        } else {
-            board[row][column] = DiscStatus.BLACK;
+        } else if (board[row][column] == Disc.WHITE) {
+            board[row][column] = Disc.BLACK;
             blackDiscNum++;
             whiteDiscNum--;
         }
@@ -531,18 +528,17 @@ public class Board implements Cloneable {
     /**
      * 置いた石の上方向にある石を反転させる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転させた石の個数
      */
-    private int reverseDiscUp(Dimension target, Boolean isBlack) {
+    private int reverseDiscUp(Dimension target, Disc playerDisc) {
         int reverseDisc = 0;
         int column = target.getColumn();
 
         for (int i = target.getRow() - 1; i >= 0 && i < boardSize.getRow(); i--) {
             // プレイヤーの石の色とマスに置かれた石の色が異なる場合、マスに置かれた石を反転させる。
-            Dimension reverseTarget = new Dimension(i, column);
-            if (isDifferentDisc(reverseTarget, isBlack)) {
-                reverse(reverseTarget);
+            if (board[i][column] != null && board[i][column] != playerDisc) {
+                reverse(new Dimension(i, column));
                 reverseDisc++;
             } else {
                 break;
@@ -554,18 +550,17 @@ public class Board implements Cloneable {
     /**
      * 置いた石の下方向にある石を反転させる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転させた石の個数
      */
-    private int reverseDiscDown(Dimension target, Boolean isBlack) {
+    private int reverseDiscDown(Dimension target, Disc playerDisc) {
         int reverseDisc = 0;
         int column = target.getColumn();
 
         for (int i = target.getRow() + 1; i >= 0 && i < boardSize.getRow(); i++) {
             // プレイヤーの石の色とマスに置かれた石の色が異なる場合、マスに置かれた石を反転させる。
-            Dimension reverseTarget = new Dimension(i, column);
-            if (isDifferentDisc(reverseTarget, isBlack)) {
-                reverse(reverseTarget);
+            if (board[i][column] != null && board[i][column] != playerDisc) {
+                reverse(new Dimension(i, column));
                 reverseDisc++;
             } else {
                 break;
@@ -577,18 +572,17 @@ public class Board implements Cloneable {
     /**
      * 置いた石の左方向にある石を反転させる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転させた石の個数
      */
-    private int reverseDiscLeft(Dimension target, Boolean isBlack) {
+    private int reverseDiscLeft(Dimension target, Disc playerDisc) {
         int reverseDisc = 0;
         int row = target.getRow();
 
         for (int j = target.getColumn() - 1; j >= 0 && j < boardSize.getColumn(); j--) {
             // プレイヤーの石の色とマスに置かれた石の色が異なる場合、マスに置かれた石を反転させる。
-            Dimension reverseTarget = new Dimension(row, j);
-            if (isDifferentDisc(reverseTarget, isBlack)) {
-                reverse(reverseTarget);
+            if (board[row][j] != null && board[row][j] != playerDisc) {
+                reverse(new Dimension(row, j));
                 reverseDisc++;
             } else {
                 break;
@@ -600,18 +594,17 @@ public class Board implements Cloneable {
     /**
      * 置いた石の右方向にある石を反転させる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転させた石の個数
      */
-    private int reverseDiscRight(Dimension target, Boolean isBlack) {
+    private int reverseDiscRight(Dimension target, Disc playerDisc) {
         int reverseDisc = 0;
         int row = target.getRow();
 
         for (int j = target.getColumn() + 1; j >= 0 && j < boardSize.getColumn(); j++) {
             // プレイヤーの石の色とマスに置かれた石の色が異なる場合、マスに置かれた石を反転させる。
-            Dimension reverseTarget = new Dimension(row, j);
-            if (isDifferentDisc(reverseTarget, isBlack)) {
-                reverse(reverseTarget);
+            if (board[row][j] != null && board[row][j] != playerDisc) {
+                reverse(new Dimension(row, j));
                 reverseDisc++;
             } else {
                 break;
@@ -623,18 +616,17 @@ public class Board implements Cloneable {
     /**
      * 置いた石の左上方向にある石を反転させる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転させた石の個数
      */
-    private int reverseDiscLeftUp(Dimension target, Boolean isBlack) {
+    private int reverseDiscLeftUp(Dimension target, Disc playerDisc) {
         int reverseDisc = 0;
 
         for (int i = target.getRow() - 1, j = target.getColumn() - 1; i >= 0 && i < boardSize.getRow() && j >= 0
                 && j < boardSize.getColumn(); i--, j--) {
             // プレイヤーの石の色とマスに置かれた石の色が異なる場合、マスに置かれた石を反転させる。
-            Dimension reverseTarget = new Dimension(i, j);
-            if (isDifferentDisc(reverseTarget, isBlack)) {
-                reverse(reverseTarget);
+            if (board[i][j] != null && board[i][j] != playerDisc) {
+                reverse(new Dimension(i, j));
                 reverseDisc++;
             } else {
                 break;
@@ -646,18 +638,17 @@ public class Board implements Cloneable {
     /**
      * 置いた石の右上方向にある石を反転させる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転させた石の個数
      */
-    private int reverseDiscRightUp(Dimension target, Boolean isBlack) {
+    private int reverseDiscRightUp(Dimension target, Disc playerDisc) {
         int reverseDisc = 0;
 
         for (int i = target.getRow() - 1, j = target.getColumn() + 1; i >= 0 && i < boardSize.getRow() && j >= 0
                 && j < boardSize.getColumn(); i--, j++) {
             // プレイヤーの石の色とマスに置かれた石の色が異なる場合、マスに置かれた石を反転させる。
-            Dimension reverseTarget = new Dimension(i, j);
-            if (isDifferentDisc(reverseTarget, isBlack)) {
-                reverse(reverseTarget);
+            if (board[i][j] != null && board[i][j] != playerDisc) {
+                reverse(new Dimension(i, j));
                 reverseDisc++;
             } else {
                 break;
@@ -669,18 +660,17 @@ public class Board implements Cloneable {
     /**
      * 置いた石の左下方向にある石を反転させる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転させた石の個数
      */
-    private int reverseDiscLeftDown(Dimension target, Boolean isBlack) {
+    private int reverseDiscLeftDown(Dimension target, Disc playerDisc) {
         int reverseDisc = 0;
 
         for (int i = target.getRow() + 1, j = target.getColumn() - 1; i >= 0 && i < boardSize.getRow() && j >= 0
                 && j < boardSize.getColumn(); i++, j--) {
             // プレイヤーの石の色とマスに置かれた石の色が異なる場合、マスに置かれた石を反転させる。
-            Dimension reverseTarget = new Dimension(i, j);
-            if (isDifferentDisc(reverseTarget, isBlack)) {
-                reverse(reverseTarget);
+            if (board[i][j] != null && board[i][j] != playerDisc) {
+                reverse(new Dimension(i, j));
                 reverseDisc++;
             } else {
                 break;
@@ -692,18 +682,17 @@ public class Board implements Cloneable {
     /**
      * 置いた石の右下方向にある石を反転させる
      * @param target プレイヤーが置く石の座標
-     * @param isBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      * @return 反転させた石の個数
      */
-    private int reverseDiscRightDown(Dimension target, Boolean isBlack) {
+    private int reverseDiscRightDown(Dimension target, Disc playerDisc) {
         int reverseDisc = 0;
 
         for (int i = target.getRow() + 1, j = target.getColumn() + 1; i >= 0 && i < boardSize.getRow() && j >= 0
                 && j < boardSize.getColumn(); i++, j++) {
             // プレイヤーの石の色とマスに置かれた石の色が異なる場合、マスに置かれた石を反転させる。
-            Dimension reverseTarget = new Dimension(i, j);
-            if (isDifferentDisc(reverseTarget, isBlack)) {
-                reverse(reverseTarget);
+            if (board[i][j] != null && board[i][j] != playerDisc) {
+                reverse(new Dimension(i, j));
                 reverseDisc++;
             } else {
                 break;

@@ -20,6 +20,7 @@ import model.ResultData;
 import model.ReversiModel;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 import reversi.Reversi;
 
 /**
@@ -223,14 +224,14 @@ public class ReversiController {
         boardController.update(board, model.canUserControll());
 
         // 現在の手番、石の個数を更新する
-        if (reversi.getCurrentPlayer().isBlack()) {
+        if (reversi.getCurrentPlayer().getUseDisc() == Disc.BLACK) {
             currentDiscCircle.setFill(Paint.valueOf("black"));
         } else {
             currentDiscCircle.setFill(Paint.valueOf("white"));
         }
         turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
-        blackDiscNumLabel.setText(String.format("黒: %2d個", board.getDiscNum(true)));
-        whiteDiscNumLabel.setText(String.format("白: %2d個", board.getDiscNum(false)));
+        blackDiscNumLabel.setText(String.format("黒: %2d個", board.getDiscNum(Disc.BLACK)));
+        whiteDiscNumLabel.setText(String.format("白: %2d個", board.getDiscNum(Disc.WHITE)));
 
         statusLabel.setText(model.getGameStatusString());
 

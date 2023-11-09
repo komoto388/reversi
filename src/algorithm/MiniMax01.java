@@ -3,6 +3,7 @@ package algorithm;
 import common.Global;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 
 /**
  * Mini_Max法のアルゴリズムで石を置く位置を決める
@@ -15,10 +16,10 @@ public class MiniMax01 extends Algorithm {
     /**
      * 初期化を行う
      * @param board 現在のリバーシ盤の状態
-     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      */
-    public MiniMax01(Board board, Boolean isPlayerBlack) {
-        super(board, isPlayerBlack);
+    public MiniMax01(Board board, Disc playerDisc) {
+        super(board, playerDisc);
     }
 
     /**
@@ -34,7 +35,7 @@ public class MiniMax01 extends Algorithm {
                 Dimension target = new Dimension(i, j);
                 evaluate.set(target, MIN_POINT);
 
-                if (board.canPut(target, isPlayerBlack)) {
+                if (board.canPut(target, playerDisc)) {
                     // 置ける場合、評価を行う
                     try {
                         int point = evaluateMax(DEPTH, board, target);
@@ -63,7 +64,7 @@ public class MiniMax01 extends Algorithm {
             throws CloneNotSupportedException, RuntimeException {
         // 次の手の状態を表すリバーシ盤を作成する
         Board nextBoard = currnetBoard.clone();
-        if (nextBoard.put(target, isPlayerBlack) == false) {
+        if (nextBoard.put(target, playerDisc) == false) {
             throw new RuntimeException("石を置けない座標が指定されました" + target.getString());
         }
 
@@ -79,7 +80,7 @@ public class MiniMax01 extends Algorithm {
                 Dimension nextTarget = new Dimension(i, j);
 
                 // 相手の石が置けるマスのみ評価する
-                if (nextBoard.canPut(nextTarget, !isPlayerBlack)) {
+                if (nextBoard.canPut(nextTarget, playerDisc.next())) {
                     int point = evaluateMini(depth - 1, nextBoard, nextTarget);
 
                     // 自分にとって良い手（自分の評価値が高い手）か判定する
@@ -106,7 +107,7 @@ public class MiniMax01 extends Algorithm {
 
         // 次の手の状態を表すリバーシ盤を作成する
         Board nextBoard = currnetBoard.clone();
-        if (nextBoard.put(target, !isPlayerBlack) == false) {
+        if (nextBoard.put(target, playerDisc.next()) == false) {
             throw new RuntimeException("石を置けない座標が指定されました" + target.getString());
         }
 
@@ -122,7 +123,7 @@ public class MiniMax01 extends Algorithm {
                 Dimension nextTarget = new Dimension(i, j);
 
                 // 自分の石が置けるマスのみ評価する
-                if (nextBoard.canPut(nextTarget, isPlayerBlack)) {
+                if (nextBoard.canPut(nextTarget, playerDisc)) {
                     int point = evaluateMax(depth - 1, nextBoard, nextTarget);
 
                     // 相手にとって良い手（自分の評価値が低い手）か判定する
@@ -144,12 +145,12 @@ public class MiniMax01 extends Algorithm {
         // 現在の盤面での、自分の石と相手の石の個数で評価する
         int playerDiscNum, enemyDiscNum;
 
-        if (isPlayerBlack) {
-            playerDiscNum = currnetBoard.getDiscNum(true);
-            enemyDiscNum = currnetBoard.getDiscNum(false);
+        if (playerDisc == Disc.BLACK) {
+            playerDiscNum = currnetBoard.getDiscNum(Disc.BLACK);
+            enemyDiscNum = currnetBoard.getDiscNum(Disc.WHITE);
         } else {
-            playerDiscNum = currnetBoard.getDiscNum(false);
-            enemyDiscNum = currnetBoard.getDiscNum(true);
+            playerDiscNum = currnetBoard.getDiscNum(Disc.WHITE);
+            enemyDiscNum = currnetBoard.getDiscNum(Disc.BLACK);
         }
 
         int point = (playerDiscNum - enemyDiscNum) * 100;

@@ -3,6 +3,7 @@ package algorithm;
 import common.Global;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 
 /**
  * 四隅・端および反転できる石の個数に基づく評価を行うクラス
@@ -30,10 +31,10 @@ public class Original01 extends Algorithm {
     /**
      * ランダムアルゴリズムの初期化を行う
      * @param board 現在のリバーシ盤の状態
-     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      */
-    public Original01(Board board, Boolean isPlayerBlack) {
-        super(board, isPlayerBlack);
+    public Original01(Board board, Disc playerDisc) {
+        super(board, playerDisc);
     }
 
     /**
@@ -65,7 +66,7 @@ public class Original01 extends Algorithm {
         int point = 0;
 
         // 対称座標に置いた時、反転できる相手の石の個数
-        int countReversibleDisc = board.countReversibleDisc(target, isPlayerBlack);
+        int countReversibleDisc = board.countReversibleDisc(target, playerDisc);
 
         // 石を置けないマスは評価値を最小にする
         if (countReversibleDisc == 0) {

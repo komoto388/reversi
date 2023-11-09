@@ -34,19 +34,6 @@ public class Convert {
     }
 
     /**
-     * プレイヤーの石の色を元に、「先手・黒」「後手・白」文字列を取得する
-     * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
-     * @return プレイヤーを表す文字列（先手後手、石の色）
-     */
-    public static String getPlayerColor(Boolean isBlack) {
-        if (isBlack) {
-            return "先手・黒";
-        } else {
-            return "後手・白";
-        }
-    }
-
-    /**
      * 指定したミリ秒をフレーム数に変換する
      * @param millisec 指定したミリ秒
      * @param fps 1秒間に描画するフレーム数(FPS)

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import algorithm.AlgorithmType;
 import common.Global;
+import reversi.Disc;
 
 class PlayerSelectModelTest {
 
@@ -52,15 +53,15 @@ class PlayerSelectModelTest {
 
     @Test
     void testSetPlayerAlgorithm() {
-        assertFalse(model.setPlayerAlgorithm(true, null));
-        assertFalse(model.setPlayerAlgorithm(false, null));
+        assertFalse(model.setPlayerAlgorithm(Disc.BLACK, null));
+        assertFalse(model.setPlayerAlgorithm(Disc.WHITE, null));
 
         assertAll("プレイヤー黒にアルゴリズム種別を設定する",
-                () -> assertTrue(model.setPlayerAlgorithm(true, AlgorithmType.RANDOM)),
+                () -> assertTrue(model.setPlayerAlgorithm(Disc.BLACK, AlgorithmType.RANDOM)),
                 () -> assertEquals(AlgorithmType.RANDOM, model.getAlgorithmType(true)));
 
         assertAll("プレイヤー黒にアルゴリズム種別を設定する",
-                () -> assertTrue(model.setPlayerAlgorithm(false, AlgorithmType.ORIGINAL_01)),
+                () -> assertTrue(model.setPlayerAlgorithm(Disc.WHITE, AlgorithmType.ORIGINAL_01)),
                 () -> assertEquals(AlgorithmType.ORIGINAL_01, model.getAlgorithmType(false)));
     }
 

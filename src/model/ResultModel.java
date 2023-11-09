@@ -47,11 +47,13 @@ public class ResultModel extends BaseModel {
 
         switch (result) {
         case BLACK: {
-            resutlStr = String.format("先手・黒「%s」の勝ちです！", playerBlack.getName());
+            resutlStr = String.format("%s 「%s」 の勝ちです！", playerBlack.getUseDisc().getPrefixForPlayerName(),
+                    playerBlack.getName());
             break;
         }
         case WHITE: {
-            resutlStr = String.format("後手・白「%s」の勝ちです！", playerWhite.getName());
+            resutlStr = String.format("%s 「%s」 の勝ちです！", playerWhite.getUseDisc().getPrefixForPlayerName(),
+                    playerWhite.getName());
             break;
         }
         case DRAW: {

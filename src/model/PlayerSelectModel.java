@@ -2,6 +2,7 @@ package model;
 
 import algorithm.AlgorithmType;
 import common.Global;
+import reversi.Disc;
 import reversi.Player;
 import reversi.Reversi;
 
@@ -100,18 +101,20 @@ public class PlayerSelectModel {
     /**
      * プレイヤーの情報を設定する。
      * 引数 {@code algorithmType} が {@code NULL} の場合は設定変更せず、前の値かデフォルト値のままにする。
-     * @param isPlayerBlack 対象のプレイヤー (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc 対象のプレイヤーの石の色
      * @param algorithmType 設定するアルゴリズム種別
      * @return 設定変更に成功した場合は真 {@code true}, 失敗した場合は偽 {@code false}
      */
-    public Boolean setPlayerAlgorithm(Boolean isPlayerBlack, AlgorithmType algorithmType) {
+    public Boolean setPlayerAlgorithm(Disc playerDisc, AlgorithmType algorithmType) {
         if (algorithmType == null) {
             System.err.println("アルゴリズム種別が空のため、値は変更されませんでした");
-            System.err.printf("現在値: (黒) %s, (白) %s\n", algorithmTypeBlack.getName(), algorithmTypeWhite.getName());
+            System.err.printf("現在値: (%s) %s, (%s) %s\n", 
+                    Disc.BLACK.getPrefixForPlayerName(), algorithmTypeBlack.getName(), 
+                    Disc.WHITE.getPrefixForPlayerName(), algorithmTypeWhite.getName());
             return false;
         }
 
-        if (isPlayerBlack) {
+        if (playerDisc == Disc.BLACK) {
             algorithmTypeBlack = algorithmType;
         } else {
             algorithmTypeWhite = algorithmType;
@@ -133,8 +136,8 @@ public class PlayerSelectModel {
      * @return ゲーム画面処理の実行に必要なデータ
      */
     public ReversiData exportForReversi() {
-        Player playerBlack = new Player(nameBlack, true, algorithmTypeBlack);
-        Player playerWhite = new Player(nameWhite, false, algorithmTypeWhite);
+        Player playerBlack = new Player(nameBlack, Disc.BLACK, algorithmTypeBlack);
+        Player playerWhite = new Player(nameWhite, Disc.WHITE, algorithmTypeWhite);
         Reversi reversi = new Reversi(playerBlack, playerWhite);
 
         ReversiData data = new ReversiData(reversi, playerBlack, playerWhite, isDebug);

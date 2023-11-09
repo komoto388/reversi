@@ -3,6 +3,7 @@ package algorithm;
 import common.Global;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 
 /**
  * 数手先まで盤面を読み、最も石の個数が多くなるマスに石を置く
@@ -14,10 +15,10 @@ public class Original02 extends Algorithm {
     /**
      * 初期化を行う
      * @param board 現在のリバーシ盤の状態
-     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param disc プレイヤーが使用する石
      */
-    public Original02(Board board, Boolean isPlayerBlack) {
-        super(board, isPlayerBlack);
+    public Original02(Board board, Disc disc) {
+        super(board, disc);
     }
 
     /**
@@ -60,16 +61,16 @@ public class Original02 extends Algorithm {
         int point = 0;
 
         // 評価をするにあたり、この盤面でプレイしているプレイヤーを調べる
-        Boolean currentPlayer;
+        Disc currentPlayerDisc;
         if (isMe) {
-            currentPlayer = isPlayerBlack;
+            currentPlayerDisc = playerDisc;
         } else {
-            currentPlayer = !isPlayerBlack;
+            currentPlayerDisc = playerDisc.next();
         }
 
         // 次の手の状態を表すリバーシ盤を作成する
         Board nextBoard = currnetBoard.clone();
-        if (nextBoard.put(target, currentPlayer) == false) {
+        if (nextBoard.put(target, currentPlayerDisc) == false) {
             // 探索の深さに関わらず、石を置けない座標の場合は下限値(MIN_POINT)を返す
             return MIN_POINT;
         }
@@ -88,9 +89,9 @@ public class Original02 extends Algorithm {
 
         // 現在の盤面での評価値を加算する
         if (isMe) {
-            point += calcPoint(nextBoard, currentPlayer);
+            point += calcPoint(nextBoard, currentPlayerDisc);
         } else {
-            point -= calcPoint(nextBoard, currentPlayer);
+            point -= calcPoint(nextBoard, currentPlayerDisc);
         }
 
         return point;
@@ -102,16 +103,16 @@ public class Original02 extends Algorithm {
      * @param currentPlayer 評価する盤面をプレイしているプレイヤー
      * @return 盤面の評価値
      */
-    private int calcPoint(Board currnetBoard, Boolean currentPlayer) {
+    private int calcPoint(Board currnetBoard, Disc currentPlayerDisc) {
         // 現在の盤面での、自分の石と相手の石の個数で評価する
         int playerDiscNum, enemyDiscNum;
 
-        if (currentPlayer) {
-            playerDiscNum = currnetBoard.getDiscNum(true);
-            enemyDiscNum = currnetBoard.getDiscNum(false);
+        if (currentPlayerDisc == Disc.BLACK) {
+            playerDiscNum = currnetBoard.getDiscNum(Disc.BLACK);
+            enemyDiscNum = currnetBoard.getDiscNum(Disc.WHITE);
         } else {
-            playerDiscNum = currnetBoard.getDiscNum(true);
-            enemyDiscNum = currnetBoard.getDiscNum(false);
+            playerDiscNum = currnetBoard.getDiscNum(Disc.WHITE);
+            enemyDiscNum = currnetBoard.getDiscNum(Disc.BLACK);
         }
 
         int point = (playerDiscNum - enemyDiscNum) * 100;

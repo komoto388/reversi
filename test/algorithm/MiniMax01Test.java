@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import common.Global;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 import test.ReflectMember;
 
 class MiniMax01Test {
@@ -36,7 +37,7 @@ class MiniMax01Test {
     @BeforeEach
     void setUp() throws Exception {
         board = new Board(8, 8);
-        miniMax01 = new MiniMax01(board, true);
+        miniMax01 = new MiniMax01(board, Disc.BLACK);
 
         reflClazz = new ReflectMember(MiniMax01.class);
         reflEvaluateMax = reflClazz.getMethod("evaluateMax", int.class, Board.class, Dimension.class);
@@ -49,36 +50,31 @@ class MiniMax01Test {
      * デフォルトは加算がある
      */
     @Test
-    void testCalcPointBlackNoRandom()
+    void testCalcPoint()
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         assertFalse(Global.IS_ADD_RANDOM);
 
+        Field reflPlayerDisc = reflClazz.getField("playerDisc");
+
         assertAll("プレイヤーが黒の時、ゲーム開始直後の評価",
-                () -> assertEquals(0, (int) reflCalcPoint.invoke(miniMax01, board)));
+                () -> assertEquals(0, (int) reflCalcPoint.invoke(miniMax01, board)),
+                () -> {
+                    // 評価する対象のプレイヤーを一時的に後手・白に変える
+                    reflPlayerDisc.set(miniMax01, Disc.WHITE);
+                    assertEquals(0, (int) reflCalcPoint.invoke(miniMax01, board));
+                    reflPlayerDisc.set(miniMax01, Disc.BLACK);
+                });
 
-        board.put(new Dimension(3, 2), true);
+        board.put(new Dimension(3, 2), Disc.BLACK);
 
-        assertAll("プレイヤー黒がc4に石を置いた時の、黒の立場での評価",
-                () -> assertEquals(300, (int) reflCalcPoint.invoke(miniMax01, board)));
-        fail("値の算出について要確認");
-    }
-
-    @Test
-    void testCalcPointWhite() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        assertFalse(Global.IS_ADD_RANDOM);
-
-        // プレイするプレイヤーを強制的に白に変更する
-        Field reflIsPlayerBlack = reflClazz.getField("isPlayerBlack");
-        reflIsPlayerBlack.set(miniMax01, false);
-
-        assertAll("プレイヤーが白の時、ゲーム開始直後の評価",
-                () -> assertEquals(0, (int) reflCalcPoint.invoke(miniMax01, board)));
-
-        // 
-        board.put(new Dimension(3, 2), true);
-
-        assertAll("プレイヤー黒がc4に石を置いた時の、白の立場での評価",
-                () -> assertEquals(-300, (int) reflCalcPoint.invoke(miniMax01, board)));
+        assertAll("プレイヤー黒がc4に石を置いた時の、両方のプレイヤーの評価点が期待通りであること",
+                () -> assertEquals(300, (int) reflCalcPoint.invoke(miniMax01, board)),
+                () -> {
+                    // 評価する対象のプレイヤーを一時的に後手・白に変える
+                    reflPlayerDisc.set(miniMax01, Disc.WHITE);
+                    assertEquals(-300, (int) reflCalcPoint.invoke(miniMax01, board));
+                    reflPlayerDisc.set(miniMax01, Disc.BLACK);
+                });
     }
 
     @Test
@@ -96,6 +92,8 @@ class MiniMax01Test {
 
         int point7 = (int) reflEvaluateMax.invoke(miniMax01, 7, board, new Dimension(3, 2));
         assertEquals(-200, point7);
+        
+        fail("[未実装] テストは成功したが、念のため評価点の期待値が正しいか確認する");
     }
 
     @Test
@@ -113,8 +111,10 @@ class MiniMax01Test {
 
         int point7 = (int) reflEvaluateMini.invoke(miniMax01, 7, board, new Dimension(2, 4));
         assertEquals(200, point7);
+        
+        fail("[未実装] テストは成功したが、念のため評価点の期待値が正しいか確認する");
     }
-    
+
     @Test
     void testRun() {
         assertNotNull(miniMax01.run());

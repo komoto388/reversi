@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import model.ResultData;
 import model.ResultModel;
 import reversi.Board;
+import reversi.Disc;
 import reversi.Reversi;
 
 /**
@@ -109,8 +110,8 @@ public class ResultController {
         whiteHeaderLabel.setText(String.format("後手・白 ( %s )", resultModel.getPlayerAlgorithmName(false)));
         blackNameLabel.setText(resultModel.getPlayerName(true));
         whiteNameLabel.setText(resultModel.getPlayerName(false));
-        blackDiscNumLabel.setText(String.format("%d 個", board.getDiscNum(true)));
-        whiteDiscNumLabel.setText(String.format("%d 個", board.getDiscNum(false)));
+        blackDiscNumLabel.setText(String.format("%d 個", board.getDiscNum(Disc.BLACK)));
+        whiteDiscNumLabel.setText(String.format("%d 個", board.getDiscNum(Disc.WHITE)));
         resultLabel.setText(resultModel.getResultString());
 
         // 各タブ内の画面を生成する

@@ -66,6 +66,30 @@ public class Reversi {
     }
 
     /**
+     * 次にプレイするプレイヤーを取得する
+     * @return 現在プレイしているプレイヤー
+     */
+    public Player getNextPlayer() {
+        return players[getNextPlayerIndex()];
+    }
+    
+    /**
+     * 現在プレイしているプレイヤーを取得する
+     * @return 現在プレイしているプレイヤー
+     */
+    private int getNextPlayerIndex() {
+        int index = currentPlayerIndex + 1;
+        
+        if (index >= players.length) {
+            index = 0;
+        }
+        
+        return index;
+    }
+    
+    
+    
+    /**
      * 現在の経過ターン数を取得する
      * @return 現在の経過ターン数
      */
@@ -80,7 +104,7 @@ public class Reversi {
     public Boolean isSkip() {
         // 全てのマスに対してプレイヤーが石を置けるか調べる
         // 石を置ける場合はスキップしない、置けない場合はスキップすると判断する
-        if (board.canPutAll(getCurrentPlayer().isBlack())) {
+        if (board.canPutAll(getCurrentPlayer().getUseDisc())) {
             return false;
         } else {
             return true;
@@ -102,7 +126,7 @@ public class Reversi {
         // ボードに石を置く処理
         Boolean isPut = false;
         try {
-            isPut = board.put(target, getCurrentPlayer().isBlack());
+            isPut = board.put(target, getCurrentPlayer().getUseDisc());
         } catch (IllegalArgumentException e) {
             // 石を置く処理で例外が発生した場合、異常終了する
             int exitCode = Global.EXIT_FAILURE;
@@ -119,20 +143,22 @@ public class Reversi {
      * @return 対戦結果の値 (勝敗がつかない場合は {@code Result.None})
      */
     public ResultType judge(GameRecord gameRecord) {
-        ResultType result;
-
-        if (isGameFinish(gameRecord)) {
-            if (board.getDiscNum(true) == board.getDiscNum(false)) {
-                result = ResultType.DRAW;
-            } else if (board.getDiscNum(true) > board.getDiscNum(false)) {
-                result = ResultType.BLACK;
-            } else {
-                result = ResultType.WHITE;
-            }
-        } else {
-            result = ResultType.NONE;
+        // 勝敗がついていない場合
+        if (isGameFinish(gameRecord) == false) {
+            return ResultType.NONE;
         }
-        return result;
+
+        // 勝敗がついている場合
+        int blackDiscNum = board.getDiscNum(Disc.BLACK);
+        int whiteDiscNum = board.getDiscNum(Disc.WHITE);
+
+        if (blackDiscNum == whiteDiscNum) {
+            return ResultType.DRAW;
+        } else if (blackDiscNum > whiteDiscNum) {
+            return ResultType.BLACK;
+        } else {
+            return ResultType.WHITE;
+        }
     }
 
     /**
@@ -140,6 +166,9 @@ public class Reversi {
      * @return ゲーム終了の場合は真 {@code true}, 続行の場合は偽 {@code false}
      */
     private Boolean isGameFinish(GameRecord gameRecord) {
+        int blackDiscNum = board.getDiscNum(Disc.BLACK);
+        int whiteDiscNum = board.getDiscNum(Disc.WHITE);
+
         // 盤上に空きがない場合
         if (board.getEmptyDiscNum() <= 0) {
             gameRecord.setComment("全てのマスが埋まりました");
@@ -147,23 +176,20 @@ public class Reversi {
         }
 
         // 片方のプレイヤーの石が0個になった場合
-        if (board.getDiscNum(true) <= 0) {
+        if (blackDiscNum <= 0) {
             gameRecord.setComment("先手・黒の石がなくなりました");
             return true;
         }
-        if (board.getDiscNum(false) <= 0) {
+        if (whiteDiscNum <= 0) {
             gameRecord.setComment("後手・白の石がなくなりました");
             return true;
         }
 
         // 両プレイヤーともに石を置く位置がなく、ともにスキップする場合
-        if (board.canPutAll(true) == false && board.canPutAll(false) == false) {
-            // 両者スキップする棋譜を追加する
-            Boolean isPlayerBlack = getCurrentPlayer().isBlack();
-            int blackDiscNum = board.getDiscNum(true);
-            int whiteDiscNum = board.getDiscNum(false);
-            gameRecord.addAsSkip(++turnCount, isPlayerBlack, blackDiscNum, whiteDiscNum);
-            gameRecord.addAsSkip(++turnCount, !isPlayerBlack, blackDiscNum, whiteDiscNum);
+        if (board.canPutAll(Disc.BLACK) == false && board.canPutAll(Disc.WHITE) == false) {
+            // 両方のプレイヤーのスキップを棋譜に追加する
+            gameRecord.addAsSkip(++turnCount, getCurrentPlayer(), blackDiscNum, whiteDiscNum);
+            gameRecord.addAsSkip(++turnCount, getNextPlayer(), blackDiscNum, whiteDiscNum);
             gameRecord.setComment("両プレイヤーともにスキップが選択されました");
 
             return true;
@@ -177,10 +203,6 @@ public class Reversi {
      */
     public void next() {
         turnCount++;
-
-        // 次に打つプレイヤーを入れ替える
-        if (++currentPlayerIndex >= players.length) {
-            currentPlayerIndex = 0;
-        }
+        currentPlayerIndex = getNextPlayerIndex();
     }
 }

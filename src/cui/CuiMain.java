@@ -8,6 +8,7 @@ import model.ReversiData;
 import reversi.Reversi;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 
 /**
  * CUI版リバーシの処理を行うクラス
@@ -36,11 +37,28 @@ public class CuiMain {
     /**
      * 現在の手番とリバーシ盤の状態を表示する
      */
-    public static void showBoard(Reversi reversi) {
+    static void showBoard(Reversi reversi) {
         Board board = reversi.getBoard();
-        Dimension boardSize = board.getSize();
 
         System.out.printf("(%d手目)\n", reversi.getTurnCount());
+
+        showBoardOnly(reversi);
+
+        System.out.printf("黒石◯: %2d\n", board.getDiscNum(Disc.BLACK));
+        System.out.printf("白石●: %2d\n", board.getDiscNum(Disc.WHITE));
+
+        System.out.printf("【%s】%s のターンです。\n",
+                reversi.getCurrentPlayer().getUseDisc().getPrefixForPlayerName(),
+                reversi.getCurrentPlayer().getName());
+    }
+
+    /**
+     * リバーシの状態を表示する
+     * @param reversi
+     */
+    static void showBoardOnly(Reversi reversi) {
+        Board board = reversi.getBoard();
+        Dimension boardSize = board.getSize();
 
         // リバーシ盤を表示する        
         // リバーシ盤の上部に列番号を表示する
@@ -67,10 +85,5 @@ public class CuiMain {
             }
             System.out.printf("\n");
         }
-
-        System.out.printf("黒石◯: %2d\n", board.getDiscNum(true));
-        System.out.printf("白石●: %2d\n", board.getDiscNum(false));
-
-        System.out.printf("【%s】のターンです。\n", Convert.getPlayerColor(reversi.getCurrentPlayer().isBlack()));
     }
 }

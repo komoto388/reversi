@@ -10,11 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-
 import algorithm.AlgorithmType;
 import common.Global;
 import reversi.Dimension;
+import reversi.Disc;
 import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
@@ -50,8 +49,8 @@ class ReversiModelTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.RANDOM);
-            player2 = new Player("COM2", false, AlgorithmType.RANDOM);
+            player1 = new Player("COM1", Disc.BLACK, AlgorithmType.RANDOM);
+            player2 = new Player("COM2", Disc.WHITE, AlgorithmType.RANDOM);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
 
@@ -132,8 +131,8 @@ class ReversiModelTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.MANUAL);
-            player2 = new Player("COM2", false, AlgorithmType.MANUAL);
+            player1 = new Player("COM1", Disc.BLACK, AlgorithmType.MANUAL);
+            player2 = new Player("COM2", Disc.WHITE, AlgorithmType.MANUAL);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), false);
 
@@ -207,8 +206,8 @@ class ReversiModelTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.RANDOM);
-            player2 = new Player("COM2", false, AlgorithmType.RANDOM);
+            player1 = new Player("COM1", Disc.BLACK, AlgorithmType.RANDOM);
+            player2 = new Player("COM2", Disc.WHITE, AlgorithmType.RANDOM);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
 
@@ -307,8 +306,8 @@ class ReversiModelTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("Manual1", true, AlgorithmType.MANUAL);
-            player2 = new Player("Manual2", false, AlgorithmType.MANUAL);
+            player1 = new Player("Manual1", Disc.BLACK, AlgorithmType.MANUAL);
+            player2 = new Player("Manual2", Disc.WHITE, AlgorithmType.MANUAL);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), false);
 

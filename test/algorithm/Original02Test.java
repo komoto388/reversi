@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import common.Global;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 import test.ReflectMember;
 
 class Original02Test {
@@ -31,12 +32,12 @@ class Original02Test {
     @BeforeEach
     void setUp() throws Exception {
         board = new Board(8, 8);
-        original02 = new Original02(board, true);
+        original02 = new Original02(board, Disc.BLACK);
 
         reflClazz = new ReflectMember(Original02.class);
 
         reflEvaluate = reflClazz.getMethod("evaluate", int.class, Board.class, Boolean.class, Dimension.class);
-        reflCalcPoint = reflClazz.getMethod("calcPoint", Board.class, Boolean.class);
+        reflCalcPoint = reflClazz.getMethod("calcPoint", Board.class, Disc.class);
     }
 
     @Test
@@ -44,14 +45,15 @@ class Original02Test {
         assertFalse(Global.IS_ADD_RANDOM);
         
         // ゲーム開始直後の評価
-        assertEquals(0, (int) reflCalcPoint.invoke(original02, board, true));
-        assertEquals(0, (int) reflCalcPoint.invoke(original02, board, false));
+        assertEquals(0, (int) reflCalcPoint.invoke(original02, board, Disc.BLACK));
+        assertEquals(0, (int) reflCalcPoint.invoke(original02, board, Disc.WHITE));
 
         // 黒がc4に石を置いた時の評価
-        board.put(new Dimension(3, 2), true);
-        assertEquals(300, (int) reflCalcPoint.invoke(original02, board, true));
-        assertEquals(300, (int) reflCalcPoint.invoke(original02, board, false));
-        fail("値の算出について要確認");
+        board.put(new Dimension(3, 2), Disc.BLACK);
+        assertEquals(300, (int) reflCalcPoint.invoke(original02, board, Disc.BLACK));
+        assertEquals(-300, (int) reflCalcPoint.invoke(original02, board, Disc.WHITE));
+        
+        fail("[未実装] テストは成功したが、念のため評価点の期待値が正しいか確認する");
     }
 
     @Test
@@ -68,7 +70,9 @@ class Original02Test {
         assertEquals(800, point2);
 
         int point7 = (int) reflEvaluate.invoke(original02, 7, board, true, new Dimension(3, 2));
-        assertEquals(2400, point7);
+        assertEquals(3200, point7);
+
+        fail("[未実装] テストは成功したが、念のため評価点の期待値が正しいか確認する");
     }
     
     @Test

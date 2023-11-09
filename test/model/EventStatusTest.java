@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import algorithm.AlgorithmType;
+import reversi.Disc;
 import reversi.Player;
 import reversi.Reversi;
 import test.ReflectMember;
@@ -37,8 +38,8 @@ class EventStatusTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.RANDOM);
-            player2 = new Player("COM2", false, AlgorithmType.RANDOM);
+            player1 = new Player("COM1", Disc.BLACK, AlgorithmType.RANDOM);
+            player2 = new Player("COM2", Disc.WHITE, AlgorithmType.RANDOM);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
             eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);
@@ -83,8 +84,8 @@ class EventStatusTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.RANDOM);
-            player2 = new Player("COM2", false, AlgorithmType.RANDOM);
+            player1 = new Player("COM1", Disc.BLACK, AlgorithmType.RANDOM);
+            player2 = new Player("COM2", Disc.WHITE, AlgorithmType.RANDOM);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
             eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);
@@ -153,8 +154,8 @@ class EventStatusTest {
         @BeforeEach
         void setUp() throws Exception {
             // COM のテストとは違い、プレイヤーのアルゴリズムがマニュアルになっている
-            player1 = new Player("Manual1", true, AlgorithmType.MANUAL);
-            player2 = new Player("Manual2", false, AlgorithmType.MANUAL);
+            player1 = new Player("Manual1", Disc.BLACK, AlgorithmType.MANUAL);
+            player2 = new Player("Manual2", Disc.WHITE, AlgorithmType.MANUAL);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
             eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);

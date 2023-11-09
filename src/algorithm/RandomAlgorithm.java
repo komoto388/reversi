@@ -2,6 +2,7 @@ package algorithm;
 
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 
 /**
  * ランダムに石を置くアルゴリズム
@@ -11,10 +12,10 @@ public class RandomAlgorithm extends Algorithm {
     /**
      * ランダムアルゴリズムの初期化を行う
      * @param board 現在のリバーシ盤の状態
-     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーが使用する石
      */
-    public RandomAlgorithm(Board board, Boolean isPlayerBlack) {
-        super(board, isPlayerBlack);
+    public RandomAlgorithm(Board board, Disc playerDisc) {
+        super(board, playerDisc);
     }
 
     /**
@@ -29,7 +30,7 @@ public class RandomAlgorithm extends Algorithm {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 // 石を置けるますの場合は、1～99のランダム値を加える。
                 Dimension target = new Dimension(i, j);
-                if (board.countReversibleDisc(target, isPlayerBlack) > 0) {
+                if (board.countReversibleDisc(target, playerDisc) > 0) {
                     int point = random.nextInt(1000);
                     evaluate.add(target, point);
                 }

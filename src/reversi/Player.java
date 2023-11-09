@@ -19,8 +19,8 @@ public class Player {
     /** プレイヤーの名前 */
     private String name;
 
-    /** プレイヤーの石が黒かどうか */
-    private Boolean isPlayerBlack;
+    /** プレイヤーが使用する石 */
+    private Disc disc;
 
     /** プレイヤーが使用するアルゴリズムの種類 */
     private AlgorithmType algorithmType;
@@ -29,15 +29,15 @@ public class Player {
      * プレイヤーの初期設定を行う。
      * 使用するアルゴリズムを決定する。
      * @param name プレイヤーの名前
-     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param disc プレイヤーが使用する石
      * @param type 使用するアルゴリズムの種類
      */
 
-    public Player(String name, Boolean isPlayerBlack, AlgorithmType type) {
+    public Player(String name, Disc disc, AlgorithmType type) {
         // 引数の正常性確認
         try {
-            if (isPlayerBlack == null) {
-                throw new IllegalArgumentException("引数 \"isPlayerBlack\" の値が NULL です");
+            if (disc == null) {
+                throw new IllegalArgumentException("引数 \"disc\" の値が NULL です");
             }
             if (type == null) {
                 throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
@@ -51,8 +51,8 @@ public class Player {
 
         // フィールドの初期化
         this.name = name;
+        this.disc = disc;
         this.algorithmType = type;
-        this.isPlayerBlack = isPlayerBlack;
     }
 
     /**
@@ -64,6 +64,14 @@ public class Player {
     }
 
     /**
+     * プレイヤーが使用する石を取得する
+     * @return プレイヤーが使用する石
+     */
+    public Disc getUseDisc() {
+        return disc;
+    }
+
+    /**
      * プレイヤーの使用するアルゴリズムタイプを取得する
      * @return プレイヤーの使用するアルゴリズムタイプ
      */
@@ -71,17 +79,18 @@ public class Player {
         return algorithmType;
     }
 
-    /**
-     * プレイヤーの石の色を取得する
-     * @return 黒の場合は真 {@code true}, 白の場合は偽 {@code false}
-     */
-    public Boolean isBlack() {
-        if (isPlayerBlack) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+//    /**
+//     * プレイヤーの石の色を取得する
+//     * @return 黒の場合は真 {@code true}, 白の場合は偽 {@code false}
+//     */
+//    public Boolean isBlack() {
+//        if (disc == Disc.BLACK) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+    
 
     /**
      * プレイヤーの使用するアルゴリズムが手動かの真偽値を取得する
@@ -109,7 +118,7 @@ public class Player {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("例外発生のため、「ランダムアルゴリズム」を使用します");
-            algorithm = new RandomAlgorithm(board, isPlayerBlack);
+            algorithm = new RandomAlgorithm(board, disc);
         }
 
         // アルゴリズムに基づいて石を置く座標を求める
@@ -127,19 +136,19 @@ public class Player {
 
         switch (algorithmType) {
         case RANDOM: {
-            algorithm = new RandomAlgorithm(board, isPlayerBlack);
+            algorithm = new RandomAlgorithm(board, disc);
             break;
         }
         case ORIGINAL_01: {
-            algorithm = new Original01(board, isPlayerBlack);
+            algorithm = new Original01(board, disc);
             break;
         }
         case ORIGINAL_02: {
-            algorithm = new Original02(board, isPlayerBlack);
+            algorithm = new Original02(board, disc);
             break;
         }
         case MINI_MAX_01:{
-            algorithm = new MiniMax01(board, isPlayerBlack);
+            algorithm = new MiniMax01(board, disc);
             break;
         }
         case MANUAL: {

@@ -1,6 +1,6 @@
 package gamerecord;
 
-import common.Convert;
+import reversi.Player;
 
 /**
  * 棋譜の行を定義・処理するクラス
@@ -32,7 +32,7 @@ class RecordData {
     /**
      * 棋譜の行情報を記録する。
      * @param turn ターン数（手番）
-     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param player 石を置いたプレイヤー
      * @param blackDiscNum 黒石の数
      * @param whiteDiscNum 白石の数
      * @param increaseBlackNum 前回からの黒石の増減量
@@ -40,15 +40,15 @@ class RecordData {
      * @param dim プレイヤーが置いた石の座標を表す文字列、またはスキップなど石を置かなかった場合の操作を表す文字列
      * @throws IllegalArgumentException 引数が想定されていない値である
      */
-    public RecordData(int turn, Boolean isPlayerBlack, int blackDiscNum, int whiteDiscNum,
+    public RecordData(int turn, Player player, int blackDiscNum, int whiteDiscNum,
             int increaseBlackNum, int increaseWhiteNum, String dim) throws IllegalArgumentException {
         // 引数の正常性確認
         if (turn <= 0) {
             throw new IllegalArgumentException("引数 \"turn\" の値が0以下です: " + turn);
         }
 
-        if (isPlayerBlack == null) {
-            throw new IllegalArgumentException("引数 \"playerIsBlack\" の値が NULL です");
+        if (player == null) {
+            throw new IllegalArgumentException("引数 \"player\" の値が NULL です");
         }
 
         if (blackDiscNum < 0) {
@@ -61,7 +61,7 @@ class RecordData {
 
         // 引数の値を設定します
         this.turn = turn;
-        this.playerString = Convert.getPlayerColor(isPlayerBlack);
+        this.playerString = player.getUseDisc().getPrefixForPlayerName();
         this.blackDiscNum = blackDiscNum;
         this.whiteDiscNum = whiteDiscNum;
         this.increaseBlackNum = increaseBlackNum;

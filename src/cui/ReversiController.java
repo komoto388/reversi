@@ -37,6 +37,14 @@ public class ReversiController {
     public ResultData run() {
         int currnetTurn = 0;
 
+        // 初期状態のリバーシ盤を表示する
+        System.out.println("(初期状態)");
+        CuiMain.showBoardOnly(reversiModel.getReversi());
+        System.out.println();
+
+        Output.printLine(50, '*');
+        
+        // リバーシのゲーム処理を行う
         do {
             Reversi reversi = reversiModel.getReversi();
 
