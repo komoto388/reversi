@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 
 /**
  * GUIでリバーシ盤の描画を行うクラス
@@ -154,9 +155,9 @@ public class BoardController {
                     circle.setLayoutY(gridSize / 2.0);
 
                     if (board.isDiscBlack(target)) {
-                        circle.setId("disc-black");
+                        circle.setId(Disc.BLACK.getFxId());
                     } else {
-                        circle.setId("disc-white");
+                        circle.setId(Disc.WHITE.getFxId());
                     }
                     boardPane[i][j].getChildren().add(circle);
                 }

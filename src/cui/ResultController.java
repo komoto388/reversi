@@ -8,7 +8,7 @@ import model.ResultModel;
  * CUIに結果を表示するコントロール
  * @author komoto
  */
-public class ResultController {
+class ResultController {
 
     /** 区切り線の長さ（表示する文字数） */
     private final int LINE_LENGTH = 60;

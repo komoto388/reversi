@@ -7,7 +7,7 @@ import model.ReversiData;
 import reversi.Disc;
 import model.PlayerSelectModel;
 
-public class PlayerSelectController {
+class PlayerSelectController {
 
     /** プレイヤー選択・設定のデータ処理を行うインスタンス（モデル） */
     private PlayerSelectModel playerSelectModel;

@@ -221,23 +221,22 @@ public class ReversiController {
         Reversi reversi = model.getReversi();
         Board board = model.getBoard();
 
+        // リバーシ盤の更新
         boardController.update(board, model.canUserControll());
 
-        // 現在の手番、石の個数を更新する
-        if (reversi.getCurrentPlayer().getUseDisc() == Disc.BLACK) {
-            currentDiscCircle.setFill(Paint.valueOf("black"));
-        } else {
-            currentDiscCircle.setFill(Paint.valueOf("white"));
-        }
+        // 現在の手番、石の個数などの文字情報の更新
+        currentDiscCircle.setFill(Paint.valueOf(reversi.getCurrentPlayer().getUseDisc().getColorCode()));
         turnLabel.setText(String.format("%d手目", reversi.getTurnCount()));
-        blackDiscNumLabel.setText(String.format("黒: %2d個", board.getDiscNum(Disc.BLACK)));
-        whiteDiscNumLabel.setText(String.format("白: %2d個", board.getDiscNum(Disc.WHITE)));
+        blackDiscNumLabel
+                .setText(String.format("%s: %2d個", Disc.BLACK.getPrefixForPlayerName(), board.getDiscNum(Disc.BLACK)));
+        whiteDiscNumLabel
+                .setText(String.format("%s: %2d個", Disc.WHITE.getPrefixForPlayerName(), board.getDiscNum(Disc.WHITE)));
 
         statusLabel.setText(model.getGameStatusString());
 
-        // デバッグ情報の処理
+        // デバッグ情報の更新
         if (model.isDebugMode()) {
-            fpsLabel.setText(String.format("%.2f fps", fps.getFps()));
+            fpsLabel.setText(String.format("%.2f fps / %d fps", fps.getFps(), Global.FPS));
             waitFrameLabel.setText(String.format("待ちフレーム数: %3d", model.getWaitFrame()));
             eventStatusLabel.setText(model.getEventStatus());
             debugLabel.setText(model.getDebugString());

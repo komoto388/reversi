@@ -12,7 +12,7 @@ import reversi.Reversi;
 /**
  * CUI向けのリバーシのゲーム処理を行うコントローラー
  */
-public class ReversiController {
+class ReversiController {
 
     /** ゲーム実行のデータ処理を行うインスタンス（モデル） */
     private ReversiModel reversiModel;

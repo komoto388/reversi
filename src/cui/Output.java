@@ -3,9 +3,8 @@ package cui;
 /**
  * 画面出力の操作に関するクラス
  * @author komoto
- *
  */
-public class Output {
+class Output {
     /** 文字列出力の有効・無効を表すフラグ */
     private static Boolean isVisible = true;
 
