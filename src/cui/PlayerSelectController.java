@@ -55,7 +55,7 @@ public class PlayerSelectController {
 
         do {
             System.out.printf("%sが使用するアルゴリズムを選択してください。手動で操作したい場合は、「%s」を選択してください。\n",
-                    name, AlgorithmType.Manual.getName());
+                    name, AlgorithmType.MANUAL.getName());
 
             // 選択肢の表示
             for (int i = 0; i < typeList.length; i++) {

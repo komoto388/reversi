@@ -25,8 +25,8 @@ class PlayerSelectModelTest {
 
     @Test
     void testGetAlgorithmType() {
-        assertEquals(AlgorithmType.Manual, model.getAlgorithmType(true));
-        assertEquals(AlgorithmType.Manual, model.getAlgorithmType(false));
+        assertEquals(AlgorithmType.MANUAL, model.getAlgorithmType(true));
+        assertEquals(AlgorithmType.MANUAL, model.getAlgorithmType(false));
     }
 
     @Test
@@ -56,12 +56,12 @@ class PlayerSelectModelTest {
         assertFalse(model.setPlayerAlgorithm(false, null));
 
         assertAll("プレイヤー黒にアルゴリズム種別を設定する",
-                () -> assertTrue(model.setPlayerAlgorithm(true, AlgorithmType.Random)),
-                () -> assertEquals(AlgorithmType.Random, model.getAlgorithmType(true)));
+                () -> assertTrue(model.setPlayerAlgorithm(true, AlgorithmType.RANDOM)),
+                () -> assertEquals(AlgorithmType.RANDOM, model.getAlgorithmType(true)));
 
         assertAll("プレイヤー黒にアルゴリズム種別を設定する",
-                () -> assertTrue(model.setPlayerAlgorithm(false, AlgorithmType.Original_01)),
-                () -> assertEquals(AlgorithmType.Original_01, model.getAlgorithmType(false)));
+                () -> assertTrue(model.setPlayerAlgorithm(false, AlgorithmType.ORIGINAL_01)),
+                () -> assertEquals(AlgorithmType.ORIGINAL_01, model.getAlgorithmType(false)));
     }
 
     @Test

@@ -6,11 +6,11 @@ package reversi;
  */
 public enum ResultType {
     /** 勝敗がついていない */
-    None,
+    NONE,
     /** 引き分け */
-    Drow,
+    DRAW,
     /** 黒の勝ち */
-    Black,
+    BLACK,
     /** 白の勝ち */
-    White,
+    WHITE,
 }

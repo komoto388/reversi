@@ -50,8 +50,8 @@ class ReversiModelTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.Random);
-            player2 = new Player("COM2", false, AlgorithmType.Random);
+            player1 = new Player("COM1", true, AlgorithmType.RANDOM);
+            player2 = new Player("COM2", false, AlgorithmType.RANDOM);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
 
@@ -88,7 +88,7 @@ class ReversiModelTest {
                     () -> assertEquals(EventStatusValue.PLAY.getName(), reflEventStatus.getName()),
                     () -> assertFalse(reflEventStatus.canUserControll()),
                     () -> assertNull((Dimension) reflLatestTarget.get(model)),
-                    () -> assertEquals(ResultType.None, reflResult.get(model)));
+                    () -> assertEquals(ResultType.NONE, reflResult.get(model)));
         }
 
         void testGetter() {
@@ -132,8 +132,8 @@ class ReversiModelTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.Manual);
-            player2 = new Player("COM2", false, AlgorithmType.Manual);
+            player1 = new Player("COM1", true, AlgorithmType.MANUAL);
+            player2 = new Player("COM2", false, AlgorithmType.MANUAL);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), false);
 
@@ -170,7 +170,7 @@ class ReversiModelTest {
                     () -> assertEquals(EventStatusValue.PLAY.getName(), reflEventStatus.getName()),
                     () -> assertFalse(reflEventStatus.canUserControll()),
                     () -> assertNull((Dimension) reflLatestTarget.get(model)),
-                    () -> assertEquals(ResultType.None, reflResult.get(model)));
+                    () -> assertEquals(ResultType.NONE, reflResult.get(model)));
         }
 
         void testGetter() {
@@ -207,8 +207,8 @@ class ReversiModelTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.Random);
-            player2 = new Player("COM2", false, AlgorithmType.Random);
+            player1 = new Player("COM1", true, AlgorithmType.RANDOM);
+            player2 = new Player("COM2", false, AlgorithmType.RANDOM);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
 
@@ -281,8 +281,8 @@ class ReversiModelTest {
             assertSame(reversi, data.getReversi());
             assertSame(player1, data.getPlayerBlack());
             assertSame(player2, data.getPlayerWhite());
-            assertEquals(ResultType.None, data.getResult());
-            assertSame(ResultType.None, data.getResult());
+            assertEquals(ResultType.NONE, data.getResult());
+            assertSame(ResultType.NONE, data.getResult());
         }
     }
 
@@ -307,8 +307,8 @@ class ReversiModelTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("Manual1", true, AlgorithmType.Manual);
-            player2 = new Player("Manual2", false, AlgorithmType.Manual);
+            player1 = new Player("Manual1", true, AlgorithmType.MANUAL);
+            player2 = new Player("Manual2", false, AlgorithmType.MANUAL);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), false);
 
@@ -381,8 +381,8 @@ class ReversiModelTest {
             assertSame(reversi, data.getReversi());
             assertSame(player1, data.getPlayerBlack());
             assertSame(player2, data.getPlayerWhite());
-            assertEquals(ResultType.None, data.getResult());
-            assertSame(ResultType.None, data.getResult());
+            assertEquals(ResultType.NONE, data.getResult());
+            assertSame(ResultType.NONE, data.getResult());
         }
     }
 }

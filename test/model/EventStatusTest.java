@@ -37,8 +37,8 @@ class EventStatusTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.Random);
-            player2 = new Player("COM2", false, AlgorithmType.Random);
+            player1 = new Player("COM1", true, AlgorithmType.RANDOM);
+            player2 = new Player("COM2", false, AlgorithmType.RANDOM);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
             eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);
@@ -83,8 +83,8 @@ class EventStatusTest {
 
         @BeforeEach
         void setUp() throws Exception {
-            player1 = new Player("COM1", true, AlgorithmType.Random);
-            player2 = new Player("COM2", false, AlgorithmType.Random);
+            player1 = new Player("COM1", true, AlgorithmType.RANDOM);
+            player2 = new Player("COM2", false, AlgorithmType.RANDOM);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
             eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);
@@ -153,8 +153,8 @@ class EventStatusTest {
         @BeforeEach
         void setUp() throws Exception {
             // COM のテストとは違い、プレイヤーのアルゴリズムがマニュアルになっている
-            player1 = new Player("Manual1", true, AlgorithmType.Manual);
-            player2 = new Player("Manual2", false, AlgorithmType.Manual);
+            player1 = new Player("Manual1", true, AlgorithmType.MANUAL);
+            player2 = new Player("Manual2", false, AlgorithmType.MANUAL);
             reversi = new Reversi(player1, player2);
             model = new ReversiModel(new ReversiData(reversi, player1, player2, true), true);
             eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);

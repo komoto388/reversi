@@ -5,11 +5,11 @@ package algorithm;
  * @author komoto
  */
 public enum AlgorithmType {
-    Manual ("プレイヤー"), 
-    Random ("COM: ランダム"),
-    Original_01 ("COM: オリジナル1"),
-    Original_02 ("COM: 深さ探索1"),
-    MiniMax_01 ("COM: Mini-Max1"),
+    MANUAL ("プレイヤー"), 
+    RANDOM ("COM: ランダム"),
+    ORIGINAL_01 ("COM: オリジナル1"),
+    ORIGINAL_02 ("COM: 深さ探索1"),
+    MINI_MAX_01 ("COM: Mini-Max1"),
     ;
     
     /** アルゴリズムの名前 */

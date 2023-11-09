@@ -10,8 +10,8 @@ import reversi.Reversi;
 
 class ReversiDataTest {
 
-    Player player1 = new Player("TEST1", true, AlgorithmType.Manual);
-    Player player2 = new Player("TEST2", false, AlgorithmType.Random);
+    Player player1 = new Player("TEST1", true, AlgorithmType.MANUAL);
+    Player player2 = new Player("TEST2", false, AlgorithmType.RANDOM);
     Reversi reversi = new Reversi(player1, player2);
     ReversiData data = new ReversiData(reversi, player1, player2, true);
 

@@ -88,7 +88,7 @@ public class Player {
      * @return 使用アルゴリズムがマニュアルの場合は真 {@code true}, それ以外の場合は偽 {@code false}
      */
     public Boolean isManual() {
-        if (algorithmType == AlgorithmType.Manual) {
+        if (algorithmType == AlgorithmType.MANUAL) {
             return true;
         } else {
             return false;
@@ -126,23 +126,23 @@ public class Player {
         Algorithm algorithm;
 
         switch (algorithmType) {
-        case Random: {
+        case RANDOM: {
             algorithm = new RandomAlgorithm(board, isPlayerBlack);
             break;
         }
-        case Original_01: {
+        case ORIGINAL_01: {
             algorithm = new Original01(board, isPlayerBlack);
             break;
         }
-        case Original_02: {
+        case ORIGINAL_02: {
             algorithm = new Original02(board, isPlayerBlack);
             break;
         }
-        case MiniMax_01:{
+        case MINI_MAX_01:{
             algorithm = new MiniMax01(board, isPlayerBlack);
             break;
         }
-        case Manual: {
+        case MANUAL: {
             throw new UnexpectedException("このメソッドは手動アルゴリズム時の実行は想定されていません: " + algorithmType);
         }
         default:

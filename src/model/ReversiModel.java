@@ -54,7 +54,7 @@ public class ReversiModel extends BaseModel {
         this.isDebug = data.getIsDebug();
 
         this.eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);
-        this.result = ResultType.None;
+        this.result = ResultType.NONE;
         this.isFinish = false;
         this.latestTarget = null;
         this.statusString = null;
@@ -205,7 +205,7 @@ public class ReversiModel extends BaseModel {
         }
         case JUDGE: {
             judge();
-            if (result != ResultType.None) {
+            if (result != ResultType.NONE) {
                 eventStatus.set(EventStatusValue.FINISH);
             } else {
                 eventStatus.set(EventStatusValue.PLAY);
@@ -277,7 +277,7 @@ public class ReversiModel extends BaseModel {
     private void judge() {
         result = reversi.judge(gameRecord);
 
-        if (result == ResultType.None) {
+        if (result == ResultType.NONE) {
             // イベントステータスを更新し、次のターンに進める
             reversi.next();
             eventStatus.set(EventStatusValue.PLAY);

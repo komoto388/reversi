@@ -123,14 +123,14 @@ public class Reversi {
 
         if (isGameFinish(gameRecord)) {
             if (board.getDiscNum(true) == board.getDiscNum(false)) {
-                result = ResultType.Drow;
+                result = ResultType.DRAW;
             } else if (board.getDiscNum(true) > board.getDiscNum(false)) {
-                result = ResultType.Black;
+                result = ResultType.BLACK;
             } else {
-                result = ResultType.White;
+                result = ResultType.WHITE;
             }
         } else {
-            result = ResultType.None;
+            result = ResultType.NONE;
         }
         return result;
     }
