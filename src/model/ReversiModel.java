@@ -53,7 +53,7 @@ public class ReversiModel extends BaseModel {
 
         this.isDebug = data.getIsDebug();
 
-        this.eventStatus = new EventStatus(reversi, EventStatusValue.WAIT);
+        this.eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);
         this.result = ResultType.None;
         this.isFinish = false;
         this.latestTarget = null;
@@ -104,11 +104,17 @@ public class ReversiModel extends BaseModel {
     }
 
     /**
-     * イベントステータスの名前を取得する
+     * イベントステータスを取得する<br>
+     * 待機フレームが1以上で待機中の場合は、文字列に「(待機中)」を追加して表示する。
      * @return イベントステータスの名前の文字列
      */
     public String getEventStatus() {
-        return eventStatus.getName();
+        String eventStatusString = eventStatus.getName();
+        if (waitFrame > 0) {
+            eventStatusString += " (待機中)";
+        }
+
+        return eventStatusString;
     }
 
     /**
@@ -141,17 +147,40 @@ public class ReversiModel extends BaseModel {
      */
     public Dimension run() {
         Dimension target = null;
-        Player currentPlayer = reversi.getCurrentPlayer();
 
-        // ステータスを設定する
-        if (eventStatus.getStatus() == EventStatusValue.PLAY_MANUAL
-                || eventStatus.getStatus() == EventStatusValue.PLAY_COM) {
-            if (reversi.isSkip()) {
+        // 待機フレーム数を元にイベント処理を行うか判断する。
+        // 待機フレーム数が1以上の時はインターバル中でイベント処理は行わない。
+        // 待機フレーム数が0の時はイベント処理を進める。
+        if (waitFrame > 0) {
+            // 待機フレーム数の更新
+            waitFrame--;
+        } else {
+            // スキップ処理
+            if (eventStatus.getStatus() == EventStatusValue.PLAY && reversi.isSkip()) {
                 eventStatus.set(EventStatusValue.SKIP);
+            }
+
+            // イベントステータス PLAY のステータス付け替え
+            if (eventStatus.getStatus() == EventStatusValue.PLAY) {
+                eventStatus.relabelPlayerStatus();
+            }
+
+            // イベントステータスに基づいたイベントを処理する
+            try {
+                target = runBasedEventStatus(eventStatus.getStatus());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
-        switch (eventStatus.getStatus()) {
+        return target;
+    }
+
+    private Dimension runBasedEventStatus(EventStatusValue eventStatusValue) throws IllegalArgumentException {
+        Dimension target = null;
+        Player currentPlayer = reversi.getCurrentPlayer();
+
+        switch (eventStatusValue) {
         case PLAY_MANUAL: {
             // プレイヤーが手動入力の時は、何もしない
             break;
@@ -170,45 +199,29 @@ public class ReversiModel extends BaseModel {
             // 石がどこにも置けない時のスキップ処理を定義
             statusString = Convert.getPlayerColor(currentPlayer.isBlack()) + " はスキップします。";
             reversi.next();
-            eventStatus.set(EventStatusValue.WAIT);
+            eventStatus.set(EventStatusValue.PLAY);
             setWaitTime(waitInterval);
-            break;
-        }
-        case WAIT: {
-            // 待ち状態の場合は何もせず、画面描画のみ行う
-            if (waitFrame <= 0) {
-                eventStatus.set(EventStatusValue.PLAY);
-            }
             break;
         }
         case JUDGE: {
             judge();
             if (result != ResultType.None) {
-                eventStatus.set(EventStatusValue.WAIT_FINAL);
+                eventStatus.set(EventStatusValue.FINISH);
             } else {
-                eventStatus.set(EventStatusValue.WAIT);
+                eventStatus.set(EventStatusValue.PLAY);
             }
             setWaitTime(waitInterval);
-            break;
-        }
-        case WAIT_FINAL: {
-            if (waitFrame <= 0) {
-                eventStatus.set(EventStatusValue.FINISH);
-            }
             break;
         }
         case FINISH: {
             isFinish = true;
             break;
         }
-        case PLAY:
-        default:
-            throw new IllegalArgumentException("Unexpected value: " + eventStatus);
+        case PLAY: {
+            throw new IllegalArgumentException("イベントステータスが \"PLAY\" での本メソッドでの使用は想定されていません: " + eventStatusValue);
         }
-
-        // 待機フレーム数の更新
-        if (waitFrame > 0) {
-            waitFrame--;
+        default:
+            throw new IllegalArgumentException("Unexpected value: " + eventStatusValue);
         }
 
         return target;
@@ -250,7 +263,6 @@ public class ReversiModel extends BaseModel {
             String playerString = Convert.getPlayerColor(currentPlayer.isBlack());
             statusString = String.format("%s は %s に石を置きました。", playerString, target.getString());
             eventStatus.set(EventStatusValue.JUDGE);
-            setWaitTime(waitInterval);
         } else {
             /** 石の設置に失敗した場合、次のターンに進めない */
             debugString = String.format("%s には石を置けません", target.getString());
@@ -268,7 +280,7 @@ public class ReversiModel extends BaseModel {
         if (result == ResultType.None) {
             // イベントステータスを更新し、次のターンに進める
             reversi.next();
-            eventStatus.set(EventStatusValue.WAIT);
+            eventStatus.set(EventStatusValue.PLAY);
             setWaitTime(waitInterval);
         }
     }

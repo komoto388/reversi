@@ -6,9 +6,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +13,6 @@ import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 import test.ReflectMember;
-import test.TestIO;
 
 class MiniMax01Test {
 
@@ -117,5 +113,10 @@ class MiniMax01Test {
 
         int point7 = (int) reflEvaluateMini.invoke(miniMax01, 7, board, new Dimension(2, 4));
         assertEquals(200, point7);
+    }
+    
+    @Test
+    void testRun() {
+        assertNotNull(miniMax01.run());
     }
 }

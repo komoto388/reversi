@@ -6,9 +6,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import common.Global;
 import reversi.Board;
 import reversi.Dimension;
 import test.ReflectMember;
@@ -41,6 +41,8 @@ class Original02Test {
 
     @Test
     void testCalcPoint() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        assertFalse(Global.IS_ADD_RANDOM);
+        
         // ゲーム開始直後の評価
         assertEquals(0, (int) reflCalcPoint.invoke(original02, board, true));
         assertEquals(0, (int) reflCalcPoint.invoke(original02, board, false));
@@ -54,6 +56,8 @@ class Original02Test {
 
     @Test
     void testEvaluate() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        assertFalse(Global.IS_ADD_RANDOM);
+        
         int point0 = (int) reflEvaluate.invoke(original02, 0, board, true, new Dimension(3, 2));
         assertEquals(300, point0);
 
