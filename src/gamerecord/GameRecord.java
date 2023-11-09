@@ -50,7 +50,7 @@ public class GameRecord {
     /**
      * 棋譜に記録を１行追加する
      * @param turn ターン数（手番）
-     * @param playerIsBlack プレイヤーの石の色を表す。
+     * @param playerIsBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      * @param blackDiscNum 黒石の数
      * @param whiteDiscNum 白石の数
      * @param dim プレイヤーが置いた石の座標の文字列。{@code NULL} の場合はスキップとして扱う。
@@ -74,7 +74,7 @@ public class GameRecord {
     /**
      * 棋譜にスキップの記録を１行追加する
      * @param turn ターン数（手番）
-     * @param playerIsBlack プレイヤーの石の色を表す。
+     * @param playerIsBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      * @param blackDiscNum 黒石の数
      * @param whiteDiscNum 白石の数
      */

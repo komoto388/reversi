@@ -13,7 +13,7 @@ public abstract class BaseModel {
 
     /** リバーシを制御するインスタンス */
     protected Reversi reversi;
-    
+
     /** リバーシ盤の状態を表すインスタンス */
     protected Board board;
 
@@ -46,7 +46,7 @@ public abstract class BaseModel {
 
     /**
      * リバーシ盤の情報を取得する
-     * @return リバーシ盤の情報を返す
+     * @return リバーシ盤の情報
      */
     public Board getBoard() {
         return reversi.getBoard();
@@ -54,7 +54,7 @@ public abstract class BaseModel {
 
     /**
      * リバーシ盤のサイズを取得する
-     * @return リバーシ盤のサイズを返す
+     * @return リバーシ盤のサイズ
      */
     public Dimension getBoardSize() {
         return reversi.getBoard().getSize();

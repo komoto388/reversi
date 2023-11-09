@@ -32,7 +32,7 @@ class RecordData {
     /**
      * 棋譜の行情報を記録する。
      * @param turn ターン数（手番）
-     * @param isPlayerBlack プレイヤーの石の色を表す。
+     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      * @param blackDiscNum 黒石の数
      * @param whiteDiscNum 白石の数
      * @param increaseBlackNum 前回からの黒石の増減量

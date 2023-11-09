@@ -27,6 +27,9 @@ public class ResultController {
         resultModel = new ResultModel(data);
     }
 
+    /**
+     * 対戦結果をプロンプトに表示する
+     */
     public void run() {
         Output.printLine(LINE_LENGTH, LINE_CHARACTER);
 
@@ -50,8 +53,10 @@ public class ResultController {
         Output.printLine(LINE_LENGTH, LINE_CHARACTER);
     }
 
+    /**
+     * 棋譜に記録された、各手番の記録と対戦終了理由をプロンプトに表示する
+     */
     private void outputRecord() {
-        // 譜面記録を表示する。
         GameRecord record = resultModel.getRecord();
         System.out.printf("\n棋譜\n");
 

@@ -44,7 +44,7 @@ public class PlayerSelectController {
 
     /**
      * プレイヤーが使用するアルゴリズムを選択する
-     * @param 対象のプレイヤー (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      * @return 選択したアルゴリズム種別
      */
     private AlgorithmType selectAlgorithm(Boolean isPlayerBlack) {

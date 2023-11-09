@@ -36,7 +36,8 @@ class Fps {
     }
 
     /**
-     * 現在の時間と描画フレーム数を更新する。本メソッドはフレーム描画時に使用する。
+     * 現在の時間と描画フレーム数を更新する<br>
+     * 本メソッドはフレーム描画時に使用する。
      */
     public void update() {
         long currentTime = System.currentTimeMillis();

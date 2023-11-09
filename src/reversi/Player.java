@@ -29,7 +29,7 @@ public class Player {
      * プレイヤーの初期設定を行う。
      * 使用するアルゴリズムを決定する。
      * @param name プレイヤーの名前
-     * @param isPlayerBlack プレイヤーの石の色が黒かどうか
+     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      * @param type 使用するアルゴリズムの種類
      */
 
@@ -72,8 +72,8 @@ public class Player {
     }
 
     /**
-     * プレイヤーの石の色が黒かどうか
-     * @return 使用する石の色が黒の場合は真 {@code true}, 白の場合は偽 {@code false} を返す。
+     * プレイヤーの石の色を取得する
+     * @return 黒の場合は真 {@code true}, 白の場合は偽 {@code false}
      */
     public Boolean isBlack() {
         if (isPlayerBlack) {
@@ -84,8 +84,8 @@ public class Player {
     }
 
     /**
-     * プレイヤーの使用するアルゴリズムが手動か返す
-     * @return 使用アルゴリズムがマニュアルの場合は真 {@code true}, それ以外の場合は偽 {@code false} を返す。
+     * プレイヤーの使用するアルゴリズムが手動かの真偽値を取得する
+     * @return 使用アルゴリズムがマニュアルの場合は真 {@code true}, それ以外の場合は偽 {@code false}
      */
     public Boolean isManual() {
         if (algorithmType == AlgorithmType.Manual) {
@@ -98,7 +98,7 @@ public class Player {
     /**
      * 石を置く座標を決定する
      * @param board リバーシ盤の状態
-     * @return 決定した石を置く座標を返す。例外などにより決定できなかった場合は{@code NULL} を返す。
+     * @return 決定した石を置く座標を返す。例外などにより決定できなかった場合は {@code NULL}
      */
     public Dimension run(Board board) {
         Algorithm algorithm = null;

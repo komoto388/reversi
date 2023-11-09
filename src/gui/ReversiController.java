@@ -107,7 +107,7 @@ public class ReversiController {
      * リバーシ盤を初期化する
      * @param sceneSwitch シーン切替処理を行うインスタンス
      * @param reversiData ゲーム処理を実行するために必要なデータの集合
-     * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false} を返す。
+     * @param isDebug デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は {@code false}
      */
     public void init(SceneSwitch sceneSwitch, ReversiData reversiData) {
         // 引数の正常性確認

@@ -19,10 +19,10 @@ public class Convert {
     }
 
     /**
-     * 小文字のアルファベットを数値に変換する。
+     * 小文字のアルファベットを数値に変換する
      * a => 0, b => 1, c => 2 ...
      * @param c 0以上の整数
-     * @return 変換した数値。正しく変換できなかった場合は {@code -1} を返す。
+     * @return 変換した数値。正しく変換できなかった場合は {@code -1}
      */
     public static int convertCharToInt(char c) throws IllegalArgumentException {
         int num = c - 'a';
@@ -34,7 +34,7 @@ public class Convert {
     }
 
     /**
-     * 先手後手、石の色といった、プレイヤー情報の文字列を返す
+     * プレイヤーの石の色を元に、「先手・黒」「後手・白」文字列を取得する
      * @param isBlack プレイヤーの色を表す。黒の場合は真 {@code true}、白の場合は偽 {@code false} とする。
      * @return プレイヤーを表す文字列（先手後手、石の色）
      */

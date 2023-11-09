@@ -15,14 +15,14 @@ public class MiniMax01 extends Algorithm {
     /**
      * 初期化を行う
      * @param board 現在のリバーシ盤の状態
-     * @param isPlayerBlack 使用するプレイヤーの石の色
+     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      */
     public MiniMax01(Board board, Boolean isPlayerBlack) {
         super(board, isPlayerBlack);
     }
 
     /**
-     * 全てのマスに対して評価を行い、評価値が最大となる座標を算出する。
+     * 全てのマスに対して評価を行い、評価値が最大となる座標を算出する
      */
     @Override
     public Dimension run() {
@@ -55,7 +55,7 @@ public class MiniMax01 extends Algorithm {
      * @param depth 手を読む深さ
      * @param currnetBoard 現在のリバーシ盤の状態
      * @param target 石を置く予定の座標。この座標に石をおいた場合について評価する。
-     * @return この盤面での評価値を返す
+     * @return この盤面での評価値
      * @throws CloneNotSupportedException 評価用にリバーシ盤を複製するのに失敗した
      * @throws RuntimeException 石を設置できない座標が指定された
      */

@@ -10,12 +10,21 @@ enum EventStatusValue {
     PLAY("プレイヤー操作中"), PLAY_MANUAL("プレイヤー操作中(マニュアル)"), PLAY_COM("プレイヤー操作中(COM)"), SKIP("スキップ処理"), WAIT(
             "インターバル中"), JUDGE("判定処理"), WAIT_FINAL("終了待ち"), FINISH("終了");
 
+    /** イベントステータスの名前 */
     private final String name;
 
+    /**
+     * 値を設定する
+     * @param name イベントステータスの名前
+     */
     private EventStatusValue(String name) {
         this.name = name;
     }
 
+    /**
+     * イベントステータスの名前を取得する
+     * @return イベントステータスの名前
+     */
     public String getName() {
         return name;
     }
@@ -35,13 +44,13 @@ class EventStatus {
     /**
      * ユーザーがリバーシ盤を操作可能かを表すフラグ
      * 操作可能の場合は真 {@code true}, 操作不可の場合は偽 {@code false}
-     * */
+     */
     private Boolean canUserControll;
 
     /**
      * イベントステータスを初期化する
      * @param reversi リバーシを制御するインスタンス
-     * @param status イベントステータスの初期値
+     * @param status イベントステータスの初期値として設定する値
      */
     public EventStatus(Reversi reversi, EventStatusValue status) {
         this.reversi = reversi;
@@ -58,7 +67,7 @@ class EventStatus {
 
     /**
      * リバーシ盤が操作可能（ユーザの操作待ち状態）かどうかを表す
-     * @return 操作可能の場合は真 {@code true}, 操作不可の場合は偽 {@code false} を返す
+     * @return 操作可能の場合は真 {@code true}, 操作不可の場合は偽 {@code false}
      */
     public Boolean canUserControll() {
         return canUserControll;

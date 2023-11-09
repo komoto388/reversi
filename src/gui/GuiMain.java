@@ -19,7 +19,7 @@ public class GuiMain extends Application {
     }
 
     /**
-     * プログラム起動時の画面を描画する。
+     * プログラム起動時の画面を描画する
      * @param primaryStage ウィンドウのインスタンス
      */
     @Override

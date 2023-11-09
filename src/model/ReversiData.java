@@ -18,7 +18,7 @@ public class ReversiData {
     /** 後手・白のプレイヤーのインスタンス */
     private final Player playerWhite;
 
-    /** デバッグ情報を表示するか */
+    /** デバッグ情報の表示有無 (表示する場合は真 {@code true}, 表示しない場合は偽 {@code false}) */
     private final Boolean isDebug;
 
     /**
@@ -26,7 +26,7 @@ public class ReversiData {
      * @param reversi リバーシのインスタンス
      * @param playerBlack 先手・黒のプレイヤーのインスタンス
      * @param playerWhite 後手・白のプレイヤーのインスタンス
-     * @param isDebug デバッグ情報を表示するかを表す
+     * @param isDebug デバッグ情報の表示有無 (表示する場合は真 {@code true}, 表示しない場合は偽 {@code false})
      */
     public ReversiData(Reversi reversi, Player playerBlack, Player playerWhite, Boolean isDebug) {
         this.reversi = reversi;
@@ -61,7 +61,7 @@ public class ReversiData {
 
     /**
      * デバッグ情報の表示・非表示を表す値を取得する
-     * @return デバッグ情報を表示するかを表す
+     * @return デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は偽 {@code false}
      */
     public Boolean getIsDebug() {
         return isDebug;

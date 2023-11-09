@@ -30,7 +30,7 @@ public class Original01 extends Algorithm {
     /**
      * ランダムアルゴリズムの初期化を行う
      * @param board 現在のリバーシ盤の状態
-     * @param isPlayerBlack 使用するプレイヤーの石の色
+     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      */
     public Original01(Board board, Boolean isPlayerBlack) {
         super(board, isPlayerBlack);
@@ -57,7 +57,7 @@ public class Original01 extends Algorithm {
     /**
      * マスに対して評価値を求める。
      * @param board リバーシ盤の状態
-     * @param playerIsBlack プレイヤーの石の色が黒かどうか
+     * @param playerIsBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      * @param target 対象の座標
      * @return 算出した評価点
      */

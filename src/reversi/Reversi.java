@@ -50,7 +50,7 @@ public class Reversi {
     }
 
     /**
-     * リバーシ盤の状態を返す
+     * リバーシ盤の状態を取得する
      * @return リバーシ盤の状態
      */
     public Board getBoard() {
@@ -66,7 +66,7 @@ public class Reversi {
     }
 
     /**
-     * 現在の経過ターン数を返す
+     * 現在の経過ターン数を取得する
      * @return 現在の経過ターン数
      */
     public int getTurnCount() {
@@ -75,7 +75,7 @@ public class Reversi {
 
     /**
      * プレイヤーが石を置けず、スキップが必要か判定する
-     * @return スキップの場合は真 {@code true}、石を置ける場所がありスキップでない場合は偽 {@code false} を返す。
+     * @return スキップの場合は真 {@code true}、石を置ける場所がありスキップでない場合は偽 {@code false}
      */
     public Boolean isSkip() {
         // 全てのマスに対してプレイヤーが石を置けるか調べる
@@ -90,8 +90,8 @@ public class Reversi {
     /**
      * 現在のプレイヤーの石をリバーシ盤に置く
      * @param target 石を置く座標
-     * @return 対象の座標に石を置いた場合は真 {@code true}、ルールにより石を置けない場合は偽 {@code false} を返す。
-     * @throws IllegalArgumentException 引数 {@code target} が {@code NULL} の場合、エラーを返す。
+     * @return 対象の座標への石の設置に成功した場合は真 {@code true}、失敗した場合は偽 {@code false}
+     * @throws IllegalArgumentException 引数 {@code target} が {@code NULL} の場合はエラーとする。
      */
     public Boolean put(Dimension target) throws IllegalArgumentException {
         // 引数の正常性確認
@@ -116,7 +116,7 @@ public class Reversi {
 
     /**
      * 勝敗結果を判定する。
-     * @return 結果を返す。勝敗がつかない場合は {@code Result.None} を返す。
+     * @return 対戦結果の値 (勝敗がつかない場合は {@code Result.None})
      */
     public ResultType judge(GameRecord gameRecord) {
         ResultType result;
@@ -137,7 +137,7 @@ public class Reversi {
 
     /**
      * ゲーム終了を判定する
-     * @return ゲーム終了の場合は真 {@code true}, 続行の場合は偽 {@code false} を返す。
+     * @return ゲーム終了の場合は真 {@code true}, 続行の場合は偽 {@code false}
      */
     private Boolean isGameFinish(GameRecord gameRecord) {
         // 盤上に空きがない場合

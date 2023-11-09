@@ -14,7 +14,7 @@ public class Original02 extends Algorithm {
     /**
      * 初期化を行う
      * @param board 現在のリバーシ盤の状態
-     * @param isPlayerBlack 使用するプレイヤーの石の色
+     * @param isPlayerBlack プレイヤーの石の色 (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      */
     public Original02(Board board, Boolean isPlayerBlack) {
         super(board, isPlayerBlack);

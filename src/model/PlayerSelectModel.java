@@ -68,7 +68,7 @@ public class PlayerSelectModel {
 
     /**
      * デバッグ情報の表示・非表示の値を取得する
-     * @return デバッグ情報の表示・非表示の値
+     * @return デバッグ情報を表示する場合は真 {@code true}, 表示しない場合は偽 {@code false}
      */
     public Boolean getIsDebug() {
         return isDebug;
@@ -79,7 +79,7 @@ public class PlayerSelectModel {
      * 引数 {@code name} が {@code NULL} の場合は設定変更せず、前の値かデフォルト値のままにする。
      * @param isPlayerBlack 対象のプレイヤー (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      * @param name プレイヤーの名前
-     * @return 設定できた場合は真 {@code true}, 設定できなかった場合は偽 {@code false} を返す。
+     * @return 設定変更に成功した場合は真 {@code true}, 失敗した場合は偽 {@code false}
      */
     public Boolean setPlayerName(Boolean isPlayerBlack, String name) {
         if (name == null || name.length() == 0) {
@@ -102,7 +102,7 @@ public class PlayerSelectModel {
      * 引数 {@code algorithmType} が {@code NULL} の場合は設定変更せず、前の値かデフォルト値のままにする。
      * @param isPlayerBlack 対象のプレイヤー (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
      * @param algorithmType 設定するアルゴリズム種別
-     * @return 設定できた場合は真 {@code true}, 設定できなかった場合は偽 {@code false} を返す。
+     * @return 設定変更に成功した場合は真 {@code true}, 失敗した場合は偽 {@code false}
      */
     public Boolean setPlayerAlgorithm(Boolean isPlayerBlack, AlgorithmType algorithmType) {
         if (algorithmType == null) {
@@ -122,7 +122,7 @@ public class PlayerSelectModel {
 
     /**
      * デバッグ情報の表示・非表示の値を設定する。
-     * @param isDebug デバッグ情報の表示・非表示の値
+     * @param isDebug デバッグ情報の表示・非表示 (表示する場合は真 {@code true}, 表示しない場合は偽 {@code false})
      */
     public void setIsDebug(Boolean isDebug) {
         this.isDebug = isDebug;
