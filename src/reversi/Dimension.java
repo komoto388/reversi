@@ -49,7 +49,7 @@ public class Dimension implements Cloneable {
     }
 
     /**
-     * 行の値を返す
+     * 行の値を取得する
      * @return 行の値
      */
     public int getRow() {
@@ -57,7 +57,7 @@ public class Dimension implements Cloneable {
     }
 
     /**
-     * 列の値を返す
+     * 列の値を取得する
      * @return 列の値
      */
     public int getColumn() {
@@ -65,7 +65,7 @@ public class Dimension implements Cloneable {
     }
 
     /**
-     * 座標の文字列を(x,y)表記で返す
+     * 座標の文字列を(x,y)表記を取得する
      * @return (x,y)表記の座標の文字列
      */
     public String getString() {

@@ -6,7 +6,6 @@ import algorithm.Algorithm;
 import algorithm.AlgorithmType;
 import algorithm.MiniMax01;
 import algorithm.Original01;
-import algorithm.Original02;
 import algorithm.RandomAlgorithm;
 import common.Global;
 
@@ -19,8 +18,8 @@ public class Player {
     /** プレイヤーの名前 */
     private String name;
 
-    /** プレイヤーの石が黒かどうか */
-    private Boolean isPlayerBlack;
+    /** プレイヤーが使用する石 */
+    private Disc disc;
 
     /** プレイヤーが使用するアルゴリズムの種類 */
     private AlgorithmType algorithmType;
@@ -29,15 +28,15 @@ public class Player {
      * プレイヤーの初期設定を行う。
      * 使用するアルゴリズムを決定する。
      * @param name プレイヤーの名前
-     * @param isPlayerBlack プレイヤーの石の色が黒かどうか
+     * @param disc プレイヤーが使用する石
      * @param type 使用するアルゴリズムの種類
      */
 
-    public Player(String name, Boolean isPlayerBlack, AlgorithmType type) {
+    public Player(String name, Disc disc, AlgorithmType type) {
         // 引数の正常性確認
         try {
-            if (isPlayerBlack == null) {
-                throw new IllegalArgumentException("引数 \"isPlayerBlack\" の値が NULL です");
+            if (disc == null) {
+                throw new IllegalArgumentException("引数 \"disc\" の値が NULL です");
             }
             if (type == null) {
                 throw new IllegalArgumentException("引数 \"reversi\" の値が NULL です");
@@ -51,8 +50,8 @@ public class Player {
 
         // フィールドの初期化
         this.name = name;
+        this.disc = disc;
         this.algorithmType = type;
-        this.isPlayerBlack = isPlayerBlack;
     }
 
     /**
@@ -64,6 +63,14 @@ public class Player {
     }
 
     /**
+     * プレイヤーが使用する石を取得する
+     * @return プレイヤーが使用する石
+     */
+    public Disc getUseDisc() {
+        return disc;
+    }
+
+    /**
      * プレイヤーの使用するアルゴリズムタイプを取得する
      * @return プレイヤーの使用するアルゴリズムタイプ
      */
@@ -72,23 +79,11 @@ public class Player {
     }
 
     /**
-     * プレイヤーの石の色が黒かどうか
-     * @return 使用する石の色が黒の場合は真 {@code true}, 白の場合は偽 {@code false} を返す。
-     */
-    public Boolean isBlack() {
-        if (isPlayerBlack) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * プレイヤーの使用するアルゴリズムが手動か返す
-     * @return 使用アルゴリズムがマニュアルの場合は真 {@code true}, それ以外の場合は偽 {@code false} を返す。
+     * プレイヤーの使用するアルゴリズムが手動かの真偽値を取得する
+     * @return 使用アルゴリズムがマニュアルの場合は真 {@code true}, それ以外の場合は偽 {@code false}
      */
     public Boolean isManual() {
-        if (algorithmType == AlgorithmType.Manual) {
+        if (algorithmType == AlgorithmType.MANUAL) {
             return true;
         } else {
             return false;
@@ -98,7 +93,7 @@ public class Player {
     /**
      * 石を置く座標を決定する
      * @param board リバーシ盤の状態
-     * @return 決定した石を置く座標を返す。例外などにより決定できなかった場合は{@code NULL} を返す。
+     * @return 決定した石を置く座標を返す。例外などにより決定できなかった場合は {@code NULL}
      */
     public Dimension run(Board board) {
         Algorithm algorithm = null;
@@ -109,7 +104,7 @@ public class Player {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("例外発生のため、「ランダムアルゴリズム」を使用します");
-            algorithm = new RandomAlgorithm(board, isPlayerBlack);
+            algorithm = new RandomAlgorithm(board, disc);
         }
 
         // アルゴリズムに基づいて石を置く座標を求める
@@ -126,23 +121,19 @@ public class Player {
         Algorithm algorithm;
 
         switch (algorithmType) {
-        case Random: {
-            algorithm = new RandomAlgorithm(board, isPlayerBlack);
+        case RANDOM: {
+            algorithm = new RandomAlgorithm(board, disc);
             break;
         }
-        case Original_01: {
-            algorithm = new Original01(board, isPlayerBlack);
+        case ORIGINAL_01: {
+            algorithm = new Original01(board, disc);
             break;
         }
-        case Original_02: {
-            algorithm = new Original02(board, isPlayerBlack);
+        case MINI_MAX_01:{
+            algorithm = new MiniMax01(board, disc);
             break;
         }
-        case MiniMax_01:{
-            algorithm = new MiniMax01(board, isPlayerBlack);
-            break;
-        }
-        case Manual: {
+        case MANUAL: {
             throw new UnexpectedException("このメソッドは手動アルゴリズム時の実行は想定されていません: " + algorithmType);
         }
         default:

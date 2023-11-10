@@ -1,5 +1,6 @@
 package gui;
 
+import common.Global;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -19,13 +20,13 @@ public class GuiMain extends Application {
     }
 
     /**
-     * プログラム起動時の画面を描画する。
+     * プログラム起動時の画面を描画する
      * @param primaryStage ウィンドウのインスタンス
      */
     @Override
     public void start(Stage primaryStage) {
         // フレームの設定
-        primaryStage.setTitle("リバーシ");
+        primaryStage.setTitle(Global.APP_TITLE);
         primaryStage.setResizable(false);
 
         Image icon = new Image(getClass().getResourceAsStream("../resource/icon.png"));

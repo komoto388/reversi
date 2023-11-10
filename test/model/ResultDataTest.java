@@ -6,16 +6,17 @@ import org.junit.jupiter.api.Test;
 
 import algorithm.AlgorithmType;
 import gamerecord.GameRecord;
+import reversi.Disc;
 import reversi.Player;
 import reversi.ResultType;
 import reversi.Reversi;
 
 class ResultDataTest {
 
-    Player player1 = new Player("TEST1", true, AlgorithmType.Manual);
-    Player player2 = new Player("TEST2", false, AlgorithmType.Random);
+    Player player1 = new Player("TEST1", Disc.WHITE, AlgorithmType.MANUAL);
+    Player player2 = new Player("TEST2", Disc.BLACK, AlgorithmType.RANDOM);
     Reversi reversi = new Reversi(player1, player2);
-    ResultData data = new ResultData(reversi, player1, player2, ResultType.Drow, new GameRecord());
+    ResultData data = new ResultData(reversi, player1, player2, ResultType.DRAW, new GameRecord());
 
     @Test
     void testGetReversi() {
@@ -34,8 +35,8 @@ class ResultDataTest {
 
     @Test
     void testGetResult() {
-        assertEquals(ResultType.Drow, data.getResult());
-        assertSame(ResultType.Drow, data.getResult());
+        assertEquals(ResultType.DRAW, data.getResult());
+        assertSame(ResultType.DRAW, data.getResult());
     }
 
 }

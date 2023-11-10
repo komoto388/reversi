@@ -54,13 +54,9 @@ public class ReflectMember {
     }
 
     /**
-     * クラスで定義される Private メソッドを、参照可能な状態で取得する。<br>
-     * 取得した変数は以下の操作例のように操作する。<br>
-     * 実行: {@code num = (int) reflectMethod.invoke(classInstance, args);}<br>
-     * {@code classInstance} は対象のPrivateメンバを定義しているクラスのインスタンスを指す。
-     * ({@code Sample sample} の場合では、{@code sample} を指定する)
-     * @param name 参照したい Private メソッドの名前 ({@code private int sample(int a, String b)} の場合では、{@code "sample"} と指定する)
-     * @param clazzArgs 対象のPrivateメソッドが宣言する引数のクラス ({@code private int sample(int a, String b)} の場合では、{@code int.clas, String.class} と複数指定する)
+     * クラスで定義される Private メソッドを、参照可能な状態で取得する。
+     * @param name 参照したい Private メソッドの名前
+     * @param clazzArgs 対象のPrivateメソッドが宣言する引数のクラス
      * @return {@code name}で指定した名前のメソッド
      */
     public Method getMethod(String name, Class<?>... clazzArgs) {
@@ -80,7 +76,7 @@ public class ReflectMember {
         // スーパークラスを含めてフィールドが見つからなかった時
         try {
             if (method == null) {
-                throw new NoSuchFieldError("スーパークラスを含め対象のメソッドは定義されていません: " + name);
+                throw new NoSuchFieldError("スーパークラスを含め対象のメソッドは定義されていないか、引数の宣言が異なります: " + name);
             }
         } catch (Exception e) {
             e.printStackTrace();

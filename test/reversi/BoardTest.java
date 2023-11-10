@@ -18,8 +18,8 @@ class BoardTest {
     void testBoard() {
         assertEquals(8, board.getSize().getRow());
         assertEquals(8, board.getSize().getColumn());
-        assertEquals(2, board.getDiscNum(true));
-        assertEquals(2, board.getDiscNum(false));
+        assertEquals(2, board.getDiscNum(Disc.BLACK));
+        assertEquals(2, board.getDiscNum(Disc.WHITE));
         assertEquals(60, board.getEmptyDiscNum());
 
         assertTrue(board.isDiscEmpty(new Dimension(0, 0)));
@@ -29,65 +29,59 @@ class BoardTest {
 
     @Test
     void testCanPutAll() {
-        Boolean playerIsBlack = true;
-
-        assertTrue(board.canPutAll(playerIsBlack));
-        assertTrue(board.canPutAll(!playerIsBlack));
+        assertTrue(board.canPutAll(Disc.BLACK));
+        assertTrue(board.canPutAll(Disc.WHITE));
     }
 
     @Test
     void testCanPut() {
-        Boolean playerIsBlack = true;
 
         // 石を置ける場合
-        assertTrue(board.put(new Dimension(3, 2), playerIsBlack));
-        assertTrue(board.put(new Dimension(2, 4), !playerIsBlack));
+        assertTrue(board.put(new Dimension(3, 2), Disc.BLACK));
+        assertTrue(board.put(new Dimension(2, 4), Disc.WHITE));
 
         // 既に石がある場合
-        assertFalse(board.put(new Dimension(3, 3), playerIsBlack));
-        assertFalse(board.put(new Dimension(4, 4), !playerIsBlack));
+        assertFalse(board.put(new Dimension(3, 3), Disc.BLACK));
+        assertFalse(board.put(new Dimension(4, 4), Disc.WHITE));
 
         // 空きマスだが、石を置けない場合
-        assertFalse(board.put(new Dimension(0, 0), playerIsBlack));
-        assertFalse(board.put(new Dimension(7, 7), !playerIsBlack));
-        assertFalse(board.put(new Dimension(3, 2), !playerIsBlack));
-        assertFalse(board.put(new Dimension(2, 4), playerIsBlack));
+        assertFalse(board.put(new Dimension(0, 0), Disc.BLACK));
+        assertFalse(board.put(new Dimension(7, 7), Disc.WHITE));
+        assertFalse(board.put(new Dimension(3, 2), Disc.WHITE));
+        assertFalse(board.put(new Dimension(2, 4), Disc.BLACK));
     }
 
     @Test
     void testCountReversibleDisc() {
-        Boolean playerIsBlack = true;
 
         // 石を置ける場合
-        assertEquals(1, board.countReversibleDisc(new Dimension(3, 2), playerIsBlack));
-        assertEquals(1, board.countReversibleDisc(new Dimension(2, 4), !playerIsBlack));
+        assertEquals(1, board.countReversibleDisc(new Dimension(3, 2), Disc.BLACK));
+        assertEquals(1, board.countReversibleDisc(new Dimension(2, 4), Disc.WHITE));
 
         // 既に石がある場合
-        assertEquals(0, board.countReversibleDisc(new Dimension(3, 3), playerIsBlack));
-        assertEquals(0, board.countReversibleDisc(new Dimension(4, 4), !playerIsBlack));
+        assertEquals(0, board.countReversibleDisc(new Dimension(3, 3), Disc.BLACK));
+        assertEquals(0, board.countReversibleDisc(new Dimension(4, 4), Disc.WHITE));
 
         // 空きマスだが、石を置けない場合
-        assertEquals(0, board.countReversibleDisc(new Dimension(0, 0), playerIsBlack));
-        assertEquals(0, board.countReversibleDisc(new Dimension(0, 0), !playerIsBlack));
+        assertEquals(0, board.countReversibleDisc(new Dimension(0, 0), Disc.BLACK));
+        assertEquals(0, board.countReversibleDisc(new Dimension(0, 0), Disc.WHITE));
     }
 
     @Test
     void testPut() {
-        Boolean playerIsBlack = true;
-
         // 石を置ける場合
-        assertTrue(board.put(new Dimension(3, 2), playerIsBlack));
-        assertTrue(board.put(new Dimension(2, 4), !playerIsBlack));
+        assertTrue(board.put(new Dimension(3, 2), Disc.BLACK));
+        assertTrue(board.put(new Dimension(2, 4), Disc.WHITE));
 
         // 既に石がある場合
-        assertFalse(board.put(new Dimension(3, 3), playerIsBlack));
-        assertFalse(board.put(new Dimension(4, 4), !playerIsBlack));
+        assertFalse(board.put(new Dimension(3, 3), Disc.BLACK));
+        assertFalse(board.put(new Dimension(4, 4), Disc.WHITE));
 
         // 空きマスだが、石を置けない場合
-        assertFalse(board.put(new Dimension(0, 0), playerIsBlack));
-        assertFalse(board.put(new Dimension(7, 7), !playerIsBlack));
-        assertFalse(board.put(new Dimension(3, 2), !playerIsBlack));
-        assertFalse(board.put(new Dimension(2, 4), playerIsBlack));
+        assertFalse(board.put(new Dimension(0, 0), Disc.BLACK));
+        assertFalse(board.put(new Dimension(7, 7), Disc.WHITE));
+        assertFalse(board.put(new Dimension(3, 2), Disc.WHITE));
+        assertFalse(board.put(new Dimension(2, 4), Disc.BLACK));
     }
 
     @Test
@@ -103,7 +97,7 @@ class BoardTest {
             assertNotSame(boardClone, board);
             assertNotSame(boardClone.getSize(), board.getSize());
 
-            boardClone.put(target, true);
+            boardClone.put(target, Disc.BLACK);
             assertAll("コピー先の操作がコピー元に反映されないことを確認する",
                     () -> assertTrue(board.isDiscEmpty(target), "コピー元のマスに、置いていない石があります"),
                     () -> assertFalse(boardClone.isDiscEmpty(target), "コピー先のマスに、置いた石がありません"));
@@ -122,7 +116,7 @@ class BoardTest {
             assertNotSame(boardClone, board);
             assertNotSame(boardClone.getSize(), board.getSize());
 
-            board.put(target, true);
+            board.put(target, Disc.BLACK);
             assertAll("コピー元の操作がコピー先に反映されないことを確認する",
                     () -> assertFalse(board.isDiscEmpty(target), "コピー元のマスに、置いた石がありません"),
                     () -> assertTrue(boardClone.isDiscEmpty(target), "コピー先のマスに、置いていない石があります"));

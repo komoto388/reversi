@@ -4,6 +4,7 @@ import common.Convert;
 import common.Global;
 import gamerecord.GameRecord;
 import reversi.Dimension;
+import reversi.Disc;
 import reversi.Player;
 import reversi.ResultType;
 
@@ -53,8 +54,8 @@ public class ReversiModel extends BaseModel {
 
         this.isDebug = data.getIsDebug();
 
-        this.eventStatus = new EventStatus(reversi, EventStatusValue.WAIT);
-        this.result = ResultType.None;
+        this.eventStatus = new EventStatus(reversi, EventStatusValue.PLAY);
+        this.result = ResultType.NONE;
         this.isFinish = false;
         this.latestTarget = null;
         this.statusString = null;
@@ -104,11 +105,17 @@ public class ReversiModel extends BaseModel {
     }
 
     /**
-     * イベントステータスの名前を取得する
+     * イベントステータスを取得する<br>
+     * 待機フレームが1以上で待機中の場合は、文字列に「(待機中)」を追加して表示する。
      * @return イベントステータスの名前の文字列
      */
     public String getEventStatus() {
-        return eventStatus.getName();
+        String eventStatusString = eventStatus.getName();
+        if (waitFrame > 0) {
+            eventStatusString += " (待機中)";
+        }
+
+        return eventStatusString;
     }
 
     /**
@@ -137,81 +144,77 @@ public class ReversiModel extends BaseModel {
 
     /**
      * リバーシのゲームイベントを処理する
-     * @param プレイヤーが石をおいた座標。処理中に石を置かなかった場合には {@code NULL} を返す。
      */
-    public Dimension run() {
-        Dimension target = null;
-        Player currentPlayer = reversi.getCurrentPlayer();
-
-        // ステータスを設定する
-        if (eventStatus.getStatus() == EventStatusValue.PLAY_MANUAL
-                || eventStatus.getStatus() == EventStatusValue.PLAY_COM) {
-            if (reversi.isSkip()) {
+    public void run() {
+        // 待機フレーム数を元にイベント処理を行うか判断する。
+        // 待機フレーム数が1以上の時はインターバル中でイベント処理は行わない。
+        // 待機フレーム数が0の時はイベント処理を進める。
+        if (waitFrame > 0) {
+            // 待機フレーム数の更新
+            waitFrame--;
+        } else {
+            // スキップ処理
+            if (eventStatus.getStatus() == EventStatusValue.PLAY && reversi.isSkip()) {
                 eventStatus.set(EventStatusValue.SKIP);
             }
-        }
 
-        switch (eventStatus.getStatus()) {
+            // イベントステータス PLAY のステータス付け替え
+            if (eventStatus.getStatus() == EventStatusValue.PLAY) {
+                eventStatus.relabelPlayerStatus();
+            }
+
+            // イベントステータスに基づいたイベントを処理する
+            try {
+                runBasedEventStatus(eventStatus.getStatus());
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * イベントステータスに従い、イベントを処理する
+     * @param eventStatusValue イベントステータスの値
+     * @throws IllegalArgumentException イベントステータスの値が PLAY, または未定義の不正な値
+     */
+    private void runBasedEventStatus(EventStatusValue eventStatusValue) throws IllegalArgumentException {
+        Player currentPlayer = reversi.getCurrentPlayer();
+
+        switch (eventStatusValue) {
         case PLAY_MANUAL: {
             // プレイヤーが手動入力の時は、何もしない
             break;
         }
         case PLAY_COM: {
             // アルゴリズムに従い処理を行う
-            target = currentPlayer.run(board);
+            Dimension target = currentPlayer.run(board);
             put(target);
             break;
         }
         case SKIP: {
             // 棋譜にスキップを記録する
-            gameRecord.addAsSkip(reversi.getTurnCount(), currentPlayer.isBlack(), board.getDiscNum(true),
-                    board.getDiscNum(false));
+            gameRecord.addAsSkip(reversi.getTurnCount(), currentPlayer, board.getDiscNum(Disc.BLACK),
+                    board.getDiscNum(Disc.WHITE));
+            statusString = currentPlayer.getUseDisc().getPrefixForPlayerName() + " はスキップします。";
 
-            // 石がどこにも置けない時のスキップ処理を定義
-            statusString = Convert.getPlayerColor(currentPlayer.isBlack()) + " はスキップします。";
-            reversi.next();
-            eventStatus.set(EventStatusValue.WAIT);
-            setWaitTime(waitInterval);
-            break;
-        }
-        case WAIT: {
-            // 待ち状態の場合は何もせず、画面描画のみ行う
-            if (waitFrame <= 0) {
-                eventStatus.set(EventStatusValue.PLAY);
-            }
+            reversi.increaseSkipCount();
+            eventStatus.set(EventStatusValue.JUDGE);
             break;
         }
         case JUDGE: {
             judge();
-            if (result != ResultType.None) {
-                eventStatus.set(EventStatusValue.WAIT_FINAL);
-            } else {
-                eventStatus.set(EventStatusValue.WAIT);
-            }
-            setWaitTime(waitInterval);
-            break;
-        }
-        case WAIT_FINAL: {
-            if (waitFrame <= 0) {
-                eventStatus.set(EventStatusValue.FINISH);
-            }
             break;
         }
         case FINISH: {
             isFinish = true;
             break;
         }
-        case PLAY:
+        case PLAY: {
+            throw new IllegalArgumentException("イベントステータスが \"PLAY\" での本メソッドでの使用は想定されていません: " + eventStatusValue);
+        }
         default:
-            throw new IllegalArgumentException("Unexpected value: " + eventStatus);
+            throw new IllegalArgumentException("Unexpected value: " + eventStatusValue);
         }
-
-        // 待機フレーム数の更新
-        if (waitFrame > 0) {
-            waitFrame--;
-        }
-
-        return target;
     }
 
     /**
@@ -219,22 +222,20 @@ public class ReversiModel extends BaseModel {
      * @param target プレイヤーが石を置く座標
      * @return 石の設置ができた場合は真 {@code true}, 既に石が存在している等で設置できなかった場合は偽 {@code false} を返す。
      */
-    public Boolean put(Dimension target) {
+    public Boolean put(Dimension target) throws IllegalArgumentException {
         Boolean isPut = false;
         Player currentPlayer = reversi.getCurrentPlayer();
 
         // 石の設置処理
         try {
             isPut = reversi.put(target);
-        } catch (IllegalArgumentException e) {
-            // 例外が発生した場合、石を置けないと判断して処理を続ける。
+        } catch (Exception e) {
             e.printStackTrace();
-            debugString = "出力された石の座標が NULL のため、プレイヤーの手はスキップとします";
+
+            // スキップ処理に進める
+            debugString = "プレイヤーが石を置く座標を NULL と指定したのため、プレイヤーはスキップしたと判断します";
             System.err.println(debugString);
-
             eventStatus.set(EventStatusValue.SKIP);
-            setWaitTime(waitInterval);
-
             return false;
         }
 
@@ -242,15 +243,14 @@ public class ReversiModel extends BaseModel {
             /** 石の設置に成功した場合は値の更新処理を行い、イベントステータスを変更して判定処理に進める */
 
             // 棋譜を記録する
-            gameRecord.add(reversi.getTurnCount(), currentPlayer.isBlack(), board.getDiscNum(true),
-                    board.getDiscNum(false), target.getString());
+            gameRecord.add(reversi.getTurnCount(), currentPlayer, board.getDiscNum(Disc.BLACK),
+                    board.getDiscNum(Disc.WHITE), target.getString());
 
             // 表示文字列、イベントステータスなど値の更新
             latestTarget = target;
-            String playerString = Convert.getPlayerColor(currentPlayer.isBlack());
-            statusString = String.format("%s は %s に石を置きました。", playerString, target.getString());
+            statusString = String.format("%s は %s に石を置きました。", currentPlayer.getUseDisc().getPrefixForPlayerName(),
+                    target.getString());
             eventStatus.set(EventStatusValue.JUDGE);
-            setWaitTime(waitInterval);
         } else {
             /** 石の設置に失敗した場合、次のターンに進めない */
             debugString = String.format("%s には石を置けません", target.getString());
@@ -265,12 +265,14 @@ public class ReversiModel extends BaseModel {
     private void judge() {
         result = reversi.judge(gameRecord);
 
-        if (result == ResultType.None) {
+        if (result == ResultType.NONE) {
             // イベントステータスを更新し、次のターンに進める
             reversi.next();
-            eventStatus.set(EventStatusValue.WAIT);
-            setWaitTime(waitInterval);
+            eventStatus.set(EventStatusValue.PLAY);
+        } else {
+            eventStatus.set(EventStatusValue.FINISH);
         }
+        setWaitTime(waitInterval);
     }
 
     /**

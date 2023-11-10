@@ -46,19 +46,21 @@ public class ResultModel extends BaseModel {
         String resutlStr;
 
         switch (result) {
-        case Black: {
-            resutlStr = String.format("先手・黒「%s」の勝ちです！", playerBlack.getName());
+        case BLACK: {
+            resutlStr = String.format("%s 「%s」 の勝ちです！", playerBlack.getUseDisc().getPrefixForPlayerName(),
+                    playerBlack.getName());
             break;
         }
-        case White: {
-            resutlStr = String.format("後手・白「%s」の勝ちです！", playerWhite.getName());
+        case WHITE: {
+            resutlStr = String.format("%s 「%s」 の勝ちです！", playerWhite.getUseDisc().getPrefixForPlayerName(),
+                    playerWhite.getName());
             break;
         }
-        case Drow: {
+        case DRAW: {
             resutlStr = "引き分けです！";
             break;
         }
-        case None:
+        case NONE:
         default:
             throw new IllegalArgumentException("Unexpected value: " + result);
         }

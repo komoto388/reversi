@@ -12,7 +12,7 @@ import reversi.Reversi;
 /**
  * CUI向けのリバーシのゲーム処理を行うコントローラー
  */
-public class ReversiController {
+class ReversiController {
 
     /** ゲーム実行のデータ処理を行うインスタンス（モデル） */
     private ReversiModel reversiModel;
@@ -37,6 +37,12 @@ public class ReversiController {
     public ResultData run() {
         int currnetTurn = 0;
 
+        // 初期状態のリバーシ盤を表示する
+        System.out.println("(初期状態)");
+        CuiMain.showBoardOnly(reversiModel.getReversi());
+        System.out.println();
+        
+        // リバーシのゲーム処理を行う
         do {
             Reversi reversi = reversiModel.getReversi();
 

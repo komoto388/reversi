@@ -9,16 +9,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import algorithm.AlgorithmType;
+import reversi.Disc;
+import reversi.Player;
 import test.ReflectMember;
 
 class GameRecordTest {
-
-    // テスト対象クラスのインスタンス
-    GameRecord record;
     
     @DisplayName("インスタンス生成直後の初期状態でのテスト")
     @Nested
     class Init {
+        
+        // テスト対象クラスのインスタンス
+        GameRecord record;
         
         @Test
         void testGameRecord() {
@@ -46,21 +50,29 @@ class GameRecordTest {
     @DisplayName("3手分の棋譜を追加した状態でのGetter系テスト")
     @Nested
     class TestGetter {
-
+        
+        // テスト対象クラスのインスタンス
+        GameRecord record;
+        
+        Player player1, player2;
+        
         @BeforeEach
         void setUp() throws Exception {
+            player1 = new Player("COM1", Disc.BLACK, AlgorithmType.MANUAL);
+            player2 = new Player("COM2", Disc.WHITE, AlgorithmType.MANUAL);
+            
             record = new GameRecord();
 
-            record.add(10, true, 3, 1, "a1");
-            record.add(15, false, 0, 10, "b2");
-            record.add(20, false, 10, 0, null);
+            record.add(10, player1, 3, 1, "a1");
+            record.add(15, player2, 0, 10, "b2");
+            record.add(20, player1, 10, 0, null);
         }
 
         @Test
         void testSize() {
             assertEquals(3, record.size());
 
-            record.add(1, true, 1, 1, "a1");
+            record.add(1, player2, 1, 1, "a1");
             assertEquals(4, record.size());
         }
 
@@ -79,7 +91,8 @@ class GameRecordTest {
         @Test
         void testGetPlayerString() {
             assertEquals("先手・黒", record.getPlayerString(0));
-            assertEquals("後手・白", record.getPlayerString(2));
+            assertEquals("後手・白", record.getPlayerString(1));
+            assertEquals("先手・黒", record.getPlayerString(2));
 
             // 範囲外のアクセス
             assertThrows(IndexOutOfBoundsException.class,
@@ -158,12 +171,20 @@ class GameRecordTest {
     @DisplayName("Setterまたはリスト追加のテスト")
     @Nested
     class AddData {
-
+        
+        // テスト対象クラスのインスタンス
+        GameRecord record;
+        
+        Player player1, player2;
+        
         ReflectMember reflClazz;
         Field reflRecordDataList;
 
         @BeforeEach
         void setUp() throws Exception {
+            player1 = new Player("COM1", Disc.BLACK, AlgorithmType.MANUAL);
+            player2 = new Player("COM2", Disc.WHITE, AlgorithmType.MANUAL);
+            
             record = new GameRecord();
 
             reflClazz = new ReflectMember(GameRecord.class);
@@ -186,7 +207,7 @@ class GameRecordTest {
         @Test
         void testAdd() throws IllegalArgumentException, IllegalAccessException {
 
-            record.add(1, true, 1, 1, "a1");
+            record.add(1, player1, 1, 1, "a1");
 
             @SuppressWarnings("unchecked")
             List<RecordData> recordDataList = (List<RecordData>) reflRecordDataList.get(record);
@@ -212,7 +233,7 @@ class GameRecordTest {
 
         @Test
         void testAddAsSkip() throws IllegalArgumentException, IllegalAccessException {
-            record.addAsSkip(1, true, 1, 1);
+            record.addAsSkip(1, player1, 1, 1);
 
             @SuppressWarnings("unchecked")
             List<RecordData> recordDataList = (List<RecordData>) reflRecordDataList.get(record);

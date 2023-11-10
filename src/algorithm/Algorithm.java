@@ -4,6 +4,7 @@ import java.util.Random;
 
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 
 /**
  * アルゴリズムの処理を定義する抽象クラス
@@ -23,8 +24,8 @@ public abstract class Algorithm {
     /** リバーシ盤の状態 */
     protected Board board;
 
-    /** 使用するプレイヤーの石の色を表す */
-    protected Boolean isPlayerBlack;
+    /** 使用するプレイヤーの石 */
+    protected Disc playerDisc;
 
     /**
      * ランダム値を扱う静的変数
@@ -35,11 +36,11 @@ public abstract class Algorithm {
     /**
      * アルゴリズム動作に必要な初期設定を行う
      * @param board リバーシ盤の状態
-     * @param isPlayerBlack 使用するプレイヤーの石の色
+     * @param playerDisc プレイヤーが使用する石
      */
-    public Algorithm(Board board, Boolean isPlayerBlack) {
+    public Algorithm(Board board, Disc playerDisc) {
         this.board = board;
-        this.isPlayerBlack = isPlayerBlack;
+        this.playerDisc = playerDisc;
     }
 
     /**

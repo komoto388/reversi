@@ -4,9 +4,10 @@ import java.util.Scanner;
 
 import algorithm.AlgorithmType;
 import model.ReversiData;
+import reversi.Disc;
 import model.PlayerSelectModel;
 
-public class PlayerSelectController {
+class PlayerSelectController {
 
     /** プレイヤー選択・設定のデータ処理を行うインスタンス（モデル） */
     private PlayerSelectModel playerSelectModel;
@@ -28,13 +29,9 @@ public class PlayerSelectController {
      * @return 次のゲーム処理に渡すデータ
      */
     public ReversiData run() {
-        // 先手・黒のアルゴリズム種別を決める
-        Boolean playerIsBlack = true;
-        playerSelectModel.setPlayerAlgorithm(playerIsBlack, selectAlgorithm(playerIsBlack));
-
-        // 後手・白のアルゴリズム種別を決める
-        playerIsBlack = false;
-        playerSelectModel.setPlayerAlgorithm(playerIsBlack, selectAlgorithm(playerIsBlack));
+        // アルゴリズム種別を決める
+        playerSelectModel.setPlayerAlgorithm(Disc.BLACK, selectAlgorithm(Disc.BLACK));
+        playerSelectModel.setPlayerAlgorithm(Disc.WHITE, selectAlgorithm(Disc.WHITE));
 
         // プレイヤーとリバーシのインスタンスを作成する
         ReversiData data = playerSelectModel.exportForReversi();
@@ -44,18 +41,16 @@ public class PlayerSelectController {
 
     /**
      * プレイヤーが使用するアルゴリズムを選択する
-     * @param 対象のプレイヤー (黒の場合は真 {@code true}, 白の場合は偽 {@code false})
+     * @param playerDisc プレイヤーの石の色
      * @return 選択したアルゴリズム種別
      */
-    private AlgorithmType selectAlgorithm(Boolean isPlayerBlack) {
+    private AlgorithmType selectAlgorithm(Disc playerDisc) {
         AlgorithmType[] typeList = AlgorithmType.values();
         int inputNum = 0;
 
-        String name = playerSelectModel.getName(isPlayerBlack);
-
         do {
             System.out.printf("%sが使用するアルゴリズムを選択してください。手動で操作したい場合は、「%s」を選択してください。\n",
-                    name, AlgorithmType.Manual.getName());
+                    playerDisc.getPrefixForPlayerName(), AlgorithmType.MANUAL.getName());
 
             // 選択肢の表示
             for (int i = 0; i < typeList.length; i++) {

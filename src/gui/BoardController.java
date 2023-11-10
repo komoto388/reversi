@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import reversi.Board;
 import reversi.Dimension;
+import reversi.Disc;
 
 /**
  * GUIでリバーシ盤の描画を行うクラス
@@ -116,7 +117,7 @@ public class BoardController {
     }
 
     /**
-     * 描画するリバーシ盤のマスを返す
+     * 描画するリバーシ盤のマスを取得する
      * @param row マスの座標(行)
      * @param column マスの座標(列)
      * @return 描画するリバーシ盤のマスのペイン
@@ -126,7 +127,7 @@ public class BoardController {
     }
 
     /**
-     * 描画するリバーシ盤のマスを返す
+     * 描画するリバーシ盤のマスを取得する
      * @param target マスの座標
      * @return 描画するリバーシ盤のマスのペイン
      */
@@ -135,7 +136,7 @@ public class BoardController {
     }
 
     /**
-     * リバーシ盤を更新し、石の再描画とプレイヤーの操作可否を設定する。
+     * リバーシ盤を更新し、石の再描画とプレイヤーの操作可否を設定する
      * @param board リバーシ盤の盤面情報
      * @param isControll リバーシ盤をプレイヤーが操作できる場合は真 {@code true}、できない場合は偽 {@code false}
      */
@@ -154,9 +155,9 @@ public class BoardController {
                     circle.setLayoutY(gridSize / 2.0);
 
                     if (board.isDiscBlack(target)) {
-                        circle.setId("disc-black");
+                        circle.setId(Disc.BLACK.getFxId());
                     } else {
-                        circle.setId("disc-white");
+                        circle.setId(Disc.WHITE.getFxId());
                     }
                     boardPane[i][j].getChildren().add(circle);
                 }
@@ -179,7 +180,7 @@ public class BoardController {
     }
 
     /**
-     * マスのペインに fxid を割り当てる。
+     * マスのペインに fxid を割り当てる<br>
      * 列番号と行番号の和が偶数かどうかで割り当てる fxid を変える 
      * @param pane fxidを割り当てる対象のペイン
      * @param row リバーシ盤の行番号
