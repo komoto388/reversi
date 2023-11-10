@@ -41,8 +41,6 @@ class ReversiController {
         System.out.println("(初期状態)");
         CuiMain.showBoardOnly(reversiModel.getReversi());
         System.out.println();
-
-        Output.printLine(50, '*');
         
         // リバーシのゲーム処理を行う
         do {

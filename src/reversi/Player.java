@@ -6,7 +6,6 @@ import algorithm.Algorithm;
 import algorithm.AlgorithmType;
 import algorithm.MiniMax01;
 import algorithm.Original01;
-import algorithm.Original02;
 import algorithm.RandomAlgorithm;
 import common.Global;
 
@@ -79,19 +78,6 @@ public class Player {
         return algorithmType;
     }
 
-//    /**
-//     * プレイヤーの石の色を取得する
-//     * @return 黒の場合は真 {@code true}, 白の場合は偽 {@code false}
-//     */
-//    public Boolean isBlack() {
-//        if (disc == Disc.BLACK) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-    
-
     /**
      * プレイヤーの使用するアルゴリズムが手動かの真偽値を取得する
      * @return 使用アルゴリズムがマニュアルの場合は真 {@code true}, それ以外の場合は偽 {@code false}
@@ -141,10 +127,6 @@ public class Player {
         }
         case ORIGINAL_01: {
             algorithm = new Original01(board, disc);
-            break;
-        }
-        case ORIGINAL_02: {
-            algorithm = new Original02(board, disc);
             break;
         }
         case MINI_MAX_01:{

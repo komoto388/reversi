@@ -7,8 +7,7 @@ package algorithm;
 public enum AlgorithmType {
     MANUAL ("プレイヤー"), 
     RANDOM ("COM: ランダム"),
-    ORIGINAL_01 ("COM: オリジナル1"),
-    ORIGINAL_02 ("COM: 深さ探索1"),
+    ORIGINAL_01 ("COM: 端取り優先"),
     MINI_MAX_01 ("COM: Mini-Max1"),
     ;
     

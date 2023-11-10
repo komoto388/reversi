@@ -31,7 +31,16 @@ public class CuiMain {
         ResultController resultController = new ResultController(resultData);
         resultController.run();
 
+        // .exe実行時に、自動的にウィンドウを閉じないようにするための対処
+        System.out.print("\nプログラムを終了するには Enter キーを入力してください (Press Enter key):");
+        try {
+            System.in.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         scanner.close();
+        System.out.println("終了します");
     }
 
     /**
