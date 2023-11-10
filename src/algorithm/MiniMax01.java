@@ -33,17 +33,19 @@ public class MiniMax01 extends Algorithm {
         for (int i = 0; i < boardSize.getRow(); i++) {
             for (int j = 0; j < boardSize.getColumn(); j++) {
                 Dimension target = new Dimension(i, j);
-                evaluate.set(target, MIN_POINT);
 
                 if (board.canPut(target, playerDisc)) {
-                    // 置ける場合、評価を行う
+                    // 石を置けない場合は評価点を設定する
                     try {
                         int point = evaluateMax(DEPTH, board, target);
-                        evaluate.add(target, point);
+                        evaluate.set(target, point);
                     } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
                         System.err.println("対象マスでの評価に失敗したため、評価値の加算はありません: " + target.getString());
                     }
+                } else {
+                    // 石を置けない場合は最小値を設定する
+                    evaluate.set(target, MIN_POINT);
                 }
             }
         }
@@ -143,15 +145,8 @@ public class MiniMax01 extends Algorithm {
      */
     private int calcPoint(Board currnetBoard) {
         // 現在の盤面での、自分の石と相手の石の個数で評価する
-        int playerDiscNum, enemyDiscNum;
-
-        if (playerDisc == Disc.BLACK) {
-            playerDiscNum = currnetBoard.getDiscNum(Disc.BLACK);
-            enemyDiscNum = currnetBoard.getDiscNum(Disc.WHITE);
-        } else {
-            playerDiscNum = currnetBoard.getDiscNum(Disc.WHITE);
-            enemyDiscNum = currnetBoard.getDiscNum(Disc.BLACK);
-        }
+        int playerDiscNum = currnetBoard.getDiscNum(playerDisc);
+        int enemyDiscNum = currnetBoard.getDiscNum(playerDisc.next());
 
         int point = (playerDiscNum - enemyDiscNum) * 100;
         if (Global.IS_ADD_RANDOM) {

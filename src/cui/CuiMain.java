@@ -3,6 +3,7 @@ package cui;
 import java.util.Scanner;
 
 import common.Convert;
+import common.Global;
 import model.ResultData;
 import model.ReversiData;
 import reversi.Reversi;
@@ -18,6 +19,9 @@ public class CuiMain {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        
+        System.out.println(Global.APP_TITLE);
+        Output.printLine(50, '-');
 
         // プレイヤー選択処理
         PlayerSelectController playerSelectController = new PlayerSelectController(scanner);

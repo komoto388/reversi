@@ -1,5 +1,6 @@
 package gui;
 
+import common.Global;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -25,7 +26,7 @@ public class GuiMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         // フレームの設定
-        primaryStage.setTitle("リバーシ");
+        primaryStage.setTitle(Global.APP_TITLE);
         primaryStage.setResizable(false);
 
         Image icon = new Image(getClass().getResourceAsStream("../resource/icon.png"));

@@ -20,6 +20,9 @@ public class Reversi {
 
     /** 経過したターン数 */
     private int turnCount;
+    
+    /** 連続してスキップした回数 */
+    private int skipCount;
 
     /**
      * リバーシ盤の初期化を行う
@@ -47,6 +50,7 @@ public class Reversi {
         this.players[1] = playerWhite;
         this.currentPlayerIndex = 0;
         this.turnCount = 1;
+        this.skipCount = 0;
     }
 
     /**
@@ -96,6 +100,14 @@ public class Reversi {
     public int getTurnCount() {
         return turnCount;
     }
+    
+    /**
+     * スキップ回数の値に1加算する<br>
+     * 使用例: プレイヤー側でパスを選択した時
+     */
+    public void increaseSkipCount() {
+        skipCount++;
+    }
 
     /**
      * プレイヤーが石を置けず、スキップが必要か判定する
@@ -127,12 +139,17 @@ public class Reversi {
         Boolean isPut = false;
         try {
             isPut = board.put(target, getCurrentPlayer().getUseDisc());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             // 石を置く処理で例外が発生した場合、異常終了する
             int exitCode = Global.EXIT_FAILURE;
             e.printStackTrace();
             System.err.println("プログラムを異常終了します。 code: " + exitCode);
             System.exit(exitCode);
+        }
+        
+        // 石が置けた場合、連続スキップ数の値をリセットする
+        if(isPut) {
+            skipCount = 0;
         }
 
         return isPut;
@@ -186,12 +203,8 @@ public class Reversi {
         }
 
         // 両プレイヤーともに石を置く位置がなく、ともにスキップする場合
-        if (board.canPutAll(Disc.BLACK) == false && board.canPutAll(Disc.WHITE) == false) {
-            // 両方のプレイヤーのスキップを棋譜に追加する
-            gameRecord.addAsSkip(++turnCount, getCurrentPlayer(), blackDiscNum, whiteDiscNum);
-            gameRecord.addAsSkip(++turnCount, getNextPlayer(), blackDiscNum, whiteDiscNum);
-            gameRecord.setComment("両プレイヤーともにスキップが選択されました");
-
+        if (skipCount > 1) {
+            gameRecord.setComment("両方のプレイヤーがスキップをしました");
             return true;
         }
 

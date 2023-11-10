@@ -3,6 +3,15 @@ package common;
 public class Global {
 
     /* システムに関する定数 */
+    /** アプリの名前 */
+    public static final String APP_NAME = "リバーシ";
+    
+    /** アプリのバージョン */
+    public static final String APP_VERSION = "v1.0.0";
+
+    /** アプリのタイトル (名前とバージョンを合わせた文字列) */
+    public static final String APP_TITLE = String.format("%s [%s]", APP_NAME, APP_VERSION);
+    
     /** 正常終了時の終了コード */
     public static final int EXIT_SUCCESS = 0;
 

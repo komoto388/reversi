@@ -145,9 +145,7 @@ public class ReversiModel extends BaseModel {
     /**
      * リバーシのゲームイベントを処理する
      */
-    public Dimension run() {
-        Dimension target = null;
-
+    public void run() {
         // 待機フレーム数を元にイベント処理を行うか判断する。
         // 待機フレーム数が1以上の時はインターバル中でイベント処理は行わない。
         // 待機フレーム数が0の時はイベント処理を進める。
@@ -167,23 +165,19 @@ public class ReversiModel extends BaseModel {
 
             // イベントステータスに基づいたイベントを処理する
             try {
-                target = runBasedEventStatus(eventStatus.getStatus());
-            } catch (Exception e) {
+                runBasedEventStatus(eventStatus.getStatus());
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
         }
-
-        return target;
     }
 
     /**
      * イベントステータスに従い、イベントを処理する
      * @param eventStatusValue イベントステータスの値
-     * @return プレイヤーが算出した設置した石の座標。プレイヤー処理がない場合は {@code NULL}
      * @throws IllegalArgumentException イベントステータスの値が PLAY, または未定義の不正な値
      */
-    private Dimension runBasedEventStatus(EventStatusValue eventStatusValue) throws IllegalArgumentException {
-        Dimension target = null;
+    private void runBasedEventStatus(EventStatusValue eventStatusValue) throws IllegalArgumentException {
         Player currentPlayer = reversi.getCurrentPlayer();
 
         switch (eventStatusValue) {
@@ -193,7 +187,7 @@ public class ReversiModel extends BaseModel {
         }
         case PLAY_COM: {
             // アルゴリズムに従い処理を行う
-            target = currentPlayer.run(board);
+            Dimension target = currentPlayer.run(board);
             put(target);
             break;
         }
@@ -201,12 +195,10 @@ public class ReversiModel extends BaseModel {
             // 棋譜にスキップを記録する
             gameRecord.addAsSkip(reversi.getTurnCount(), currentPlayer, board.getDiscNum(Disc.BLACK),
                     board.getDiscNum(Disc.WHITE));
-
-            // 石がどこにも置けない時のスキップ処理を定義
             statusString = currentPlayer.getUseDisc().getPrefixForPlayerName() + " はスキップします。";
-            reversi.next();
-            eventStatus.set(EventStatusValue.PLAY);
-            setWaitTime(waitInterval);
+
+            reversi.increaseSkipCount();
+            eventStatus.set(EventStatusValue.JUDGE);
             break;
         }
         case JUDGE: {
@@ -223,8 +215,6 @@ public class ReversiModel extends BaseModel {
         default:
             throw new IllegalArgumentException("Unexpected value: " + eventStatusValue);
         }
-
-        return target;
     }
 
     /**
@@ -232,22 +222,20 @@ public class ReversiModel extends BaseModel {
      * @param target プレイヤーが石を置く座標
      * @return 石の設置ができた場合は真 {@code true}, 既に石が存在している等で設置できなかった場合は偽 {@code false} を返す。
      */
-    public Boolean put(Dimension target) {
+    public Boolean put(Dimension target) throws IllegalArgumentException {
         Boolean isPut = false;
         Player currentPlayer = reversi.getCurrentPlayer();
 
         // 石の設置処理
         try {
             isPut = reversi.put(target);
-        } catch (IllegalArgumentException e) {
-            // 例外が発生した場合、石を置けないと判断して処理を続ける。
+        } catch (Exception e) {
             e.printStackTrace();
-            debugString = "出力された石の座標が NULL のため、プレイヤーの手はスキップとします";
+
+            // スキップ処理に進める
+            debugString = "プレイヤーが石を置く座標を NULL と指定したのため、プレイヤーはスキップしたと判断します";
             System.err.println(debugString);
-
             eventStatus.set(EventStatusValue.SKIP);
-            setWaitTime(waitInterval);
-
             return false;
         }
 

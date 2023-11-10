@@ -8,7 +8,7 @@ public enum AlgorithmType {
     MANUAL ("プレイヤー"), 
     RANDOM ("COM: ランダム"),
     ORIGINAL_01 ("COM: 端取り優先"),
-    MINI_MAX_01 ("COM: Mini-Max1"),
+    MINI_MAX_01 ("COM: Mini-Max"),
     ;
     
     /** アルゴリズムの名前 */

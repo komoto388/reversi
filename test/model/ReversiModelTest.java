@@ -223,7 +223,7 @@ class ReversiModelTest {
 
         @Test
         void testRun() {
-            assertNull(model.run());
+            fail("未実装です");
         }
 
         @Test
@@ -236,7 +236,7 @@ class ReversiModelTest {
 
             assertAll("置ける場所の値がNULLの時、False を返してイベントステータスをSkipにする",
                     () -> assertFalse(model.put(null)),
-                    () -> assertEquals("出力された石の座標が NULL のため、プレイヤーの手はスキップとします", model.getDebugString()),
+                    () -> assertEquals("プレイヤーが石を置く座標を NULL と指定したのため、プレイヤーはスキップしたと判断します", model.getDebugString()),
                     () -> assertEquals(EventStatusValue.SKIP,
                             ((EventStatus) reflEventStatusField.get(model)).getStatus()),
                     () -> assertEquals(Global.WAIT_MILLISEC_INTERVAL, (int) reflWaitInterval.get(model)));
@@ -323,7 +323,7 @@ class ReversiModelTest {
 
         @Test
         void testRun() {
-            assertNull(model.run());
+            fail("未実装です");
         }
 
         @Test
