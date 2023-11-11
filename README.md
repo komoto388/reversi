@@ -1,5 +1,4 @@
-# ![icon](https://github.com/komoto388/Reversi/assets/146818126/86d1743b-cf2f-47f2-8f74-36413c0899fc) Reversi : リバーシ
-
+# ![icon](https://github.com/komoto388/reversi/assets/146818126/5fd5aafb-2417-4c24-9b9e-0b33c548781b) Reversi : リバーシ
 
 **「Reversi : リバーシ」** はシンプルなリバーシのボードゲームです。
 
@@ -7,17 +6,17 @@
 
 ## GUI 画面
 
-<img src="https://github.com/komoto388/Reversi/assets/146818126/e04f6949-d83d-40ea-af94-8237d60d4fdf" width="480">
+<img src="https://github.com/komoto388/reversi/assets/146818126/7170a1de-c728-4e11-9ea3-1d0a5f0bfb2e" width="400">
 
-<img src="https://github.com/komoto388/Reversi/assets/146818126/d8d6b87d-f3b6-471c-82ac-330677a7d6e0" width="480">
+<img src="https://github.com/komoto388/reversi/assets/146818126/2aa21ad8-bd54-4c97-9c5c-8e91898e7ab6" width="400">
 
-<img src="https://github.com/komoto388/Reversi/assets/146818126/40776c76-3185-4d98-96e1-b21e6fc26561" width="480">
+<img src="https://github.com/komoto388/reversi/assets/146818126/2b133cdd-ed01-49b8-8f41-ec91bfe8abe8" width="400">
 
-<img src="https://github.com/komoto388/Reversi/assets/146818126/1b7740b8-1c71-4d02-821c-1b820b9775ee" width="480">
+<img src="https://github.com/komoto388/reversi/assets/146818126/014f93c1-b48f-415b-8db7-59b822835185" width="400">
 
 ## CUI 画面
 
-<img src="https://github.com/komoto388/Reversi/assets/146818126/0fdaf7e2-8515-4785-86eb-d54d739dacb7" width="480">
+<img src="https://github.com/komoto388/reversi/assets/146818126/5f83a4bb-13b1-48fb-8917-8c0de9935015" width="400">
 
 # 特徴
 
@@ -28,8 +27,7 @@
 
 # 要件
 
-「Windows 11 22H2」での動作することを確認しています。
-他のOSでも動作可能と思われますが、未検証です。
+「Windows 11 22H2」での動作することを確認しています。（他のOSでの動作は未検証です）
 
 本プログラムのプログラミング言語は Java を使用しています。
 また、GUIフレームワークは JavaFX を使用しています。
