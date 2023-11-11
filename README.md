@@ -1,10 +1,8 @@
 # ![icon](https://github.com/komoto388/reversi/assets/146818126/5fd5aafb-2417-4c24-9b9e-0b33c548781b) Reversi : リバーシ
 
-**「Reversi : リバーシ」** はシンプルなリバーシのボードゲームです。
+**「Reversi : リバーシ」** はシンプルなリバーシです。
 
 # 動作イメージ
-
-## GUI 画面
 
 <img src="https://github.com/komoto388/reversi/assets/146818126/7170a1de-c728-4e11-9ea3-1d0a5f0bfb2e" width="400">
 
@@ -13,10 +11,6 @@
 <img src="https://github.com/komoto388/reversi/assets/146818126/2b133cdd-ed01-49b8-8f41-ec91bfe8abe8" width="400">
 
 <img src="https://github.com/komoto388/reversi/assets/146818126/014f93c1-b48f-415b-8db7-59b822835185" width="400">
-
-## CUI 画面
-
-<img src="https://github.com/komoto388/reversi/assets/146818126/5f83a4bb-13b1-48fb-8917-8c0de9935015" width="400">
 
 # 特徴
 
